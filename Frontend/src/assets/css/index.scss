@@ -1,0 +1,335 @@
+// Variables
+:root {
+  --theme-color: #e8edfa;
+}
+
+// Base Styles
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+}
+
+.img-fluid {
+  width: 100%;
+  height: auto;
+}
+
+.theme-btn {
+  background-color: var(--theme-color) !important;
+}
+
+.swal2-toast {
+  color: #000 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  padding: 10px !important;
+}
+
+.success-toast {
+  // background-color: rgb(132, 255, 156) !important;
+
+  .swal2-timer-progress-bar {
+    height: 6px !important;
+    border-radius: 4px !important;
+    background: #e8edfa !important;
+  }
+}
+
+.error-toast {
+  background-color: rgb(255, 241, 241) !important;
+
+  .swal2-timer-progress-bar {
+    height: 6px !important;
+    border-radius: 4px !important;
+    background: rgb(255, 173, 173) !important;
+  }
+}
+
+.theme-bg {
+  background-color: var(--theme-color) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.border-dashed {
+  border: 2px dashed #d1d6e3;
+}
+
+.font-work-sans {
+  font-family: "Work Sans", sans-serif !important;
+}
+
+.form-control {
+  border-color: #d1d6e3 !important;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+}
+
+.form-select:focus {
+  box-shadow: none !important;
+}
+
+.form-control::placeholder,
+.form-control-text-color {
+  color: #57618f !important;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.light-black {
+  color: #121417;
+}
+.bootstrap-select {
+  .dropdown-toggle {
+    padding: 16px 8px;
+    background-color: #fff;
+    border: 1px solid #d1d6e3;
+    border-radius: 16px;
+    color: #000 !important;
+    &:hover,
+    &.show {
+      background-color: #fff !important;
+    }
+  }
+  .dropdown-toggle::after {
+    content: "\f107";
+    border: none !important;
+    margin: 0 !important;
+    font-family: "Font Awesome 5 Free"; // or your icon font family
+    font-weight: 900; // required for some icon fonts
+  }
+}
+
+.bootstrap-select {
+  .dropdown-toggle {
+    background-color: #f8f9fa;
+    &:hover {
+      background-color: #f8f9fa !important;
+      border-color: #d9dde8;
+    }
+  }
+}
+
+.gridjs-search {
+  display: none;
+}
+
+// Font Sizes
+$font-sizes: (14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 48);
+
+@each $size in $font-sizes {
+  .fs-#{$size} {
+    font-size: #{$size}px !important;
+  }
+}
+
+// Tablet Responsive Font Sizes
+@media screen and (max-width: 768px) and (min-width: 481px) {
+  @each $size in $font-sizes {
+    .fs-md-#{$size} {
+      font-size: #{$size}px !important;
+    }
+  }
+}
+
+// Mobile Responsive Font Sizes
+@media screen and (max-width: 480px) {
+  @each $size in $font-sizes {
+    .fs-sm-#{$size} {
+      font-size: #{$size}px !important;
+    }
+  }
+}
+
+// Boostrap Modal Css
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 700px !important;
+  }
+}
+
+.modal-dialog-scrollable .modal-content {
+  height: 75%;
+}
+
+// Verified bagde
+
+.verified-badge {
+  position: absolute;
+  top: -5%;
+  right: -15%;
+  color: #fff;
+  background-color: rgb(30, 187, 30);
+  rotate: 45deg;
+  padding: 8px 30px 0;
+  font-size: 14px;
+  i {
+    rotate: -45deg;
+  }
+}
+
+//Theme tooltip
+.custom-tooltip {
+  --bs-tooltip-bg: #f4f4f4 !important;
+  --bs-tooltip-color: #111 !important;
+  border-radius: 5px;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.44);
+  font-size: 12px !important;
+}
+
+// Header Section Starts
+
+#header-section {
+  .navbar {
+    .navbar-toggler {
+      border: none !important;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      &:focus {
+        box-shadow: none !important;
+      }
+
+      .navbar-toggler-icon {
+        background-image: url("../images/menu_icon.png") !important;
+      }
+    }
+    .navbar-nav {
+      .dropdown-toggle::after {
+        display: none;
+      }
+      .nav-link {
+        &.theme-btn {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// Header Section Ends
+
+// Home Page Starts
+#home-page {
+  // Hero Section Starts
+  #hero-section {
+    height: calc(100vh - 100px);
+    background: {
+      image: url("../images/banner_image.png");
+      size: contain;
+      repeat: no-repeat;
+      position: center;
+    }
+
+    @media screen and (max-width: 991px) and (min-width: 770px) {
+      height: 70vh;
+    }
+    @media screen and (max-width: 768px) and (min-width: 480px) {
+      height: 55vh;
+    }
+
+    @media screen and (max-width: 480px) {
+      height: 60vh;
+      background-size: 188% 110%;
+    }
+  }
+
+  // Hero Section Ends
+
+  // Notes Section Starts
+
+  #notes-section {
+    .owl-carousel {
+      .owl-stage {
+        padding: 20px 0;
+      }
+
+      .owl-item {
+        height: 100%;
+      }
+    }
+  }
+
+  // Notes Section Ends
+}
+
+// Home Page Ends
+
+// Registration Page and Login Page Starts
+
+#register-page,
+#login-page {
+  #register-section,
+  #login-section {
+    .card {
+      box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.14);
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #register-page,
+  #login-page {
+    #register-section,
+    #login-section {
+      .card {
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// Registration Page and Login Page Ends
+
+// Upload Notes Page Starts
+
+#upload-notes-page {
+  @media screen and (max-width: 1360px) and (min-width: 770px) {
+    #pdfContainer {
+      height: 88vh !important;
+    }
+  }
+  @media screen and (max-width: 770px) {
+    #pdfContainer {
+      height: 50vh !important;
+    }
+  }
+}
+
+// Upload Notes Page Ends
+
+//Notes Library Page Starts
+
+#notes-library-page {
+  @media screen and (max-width: 770px) {
+    .filters-col {
+      // border: 1px solid #e1e1e1;
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.14);
+      padding: 8px 12px;
+      border-radius: 12px;
+    }
+  }
+}
+
+//Notes Library Page Starts
+
+//Profile Page Starts
+
+#profile-page{
+   @media screen and (min-width: 770px) {
+  .profile-card{
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.14);
+  }
+}
+}
+//Profile Page Ends

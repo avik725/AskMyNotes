@@ -1,0 +1,39 @@
+# Node modules
+node_modules
+
+# Build output
+dist
+build
+
+# Logs
+*.log
+
+# Environment variables
+*.env
+.env
+.env.*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage
+
+# Git
+.git
+.gitignore
+
+# Public assets or static files (optional)
+public
+static
+
+# Database and uploads (if any)
+uploads
+*.sqlite
+*.db
+
+# Optional: Ignore package lock files if not formatting them
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
