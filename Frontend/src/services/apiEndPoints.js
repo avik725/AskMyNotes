@@ -7,6 +7,7 @@ export const userLogout = API_BASE_URL + "users/logout";
 export const checkUsernameIfAvailable =
   API_BASE_URL + "users/checkUsernameIfAvailable";
 export const userRegistration = API_BASE_URL + "users/register";
+export const updateUserProfile = API_BASE_URL + "users/update-profile"
 
 
 // Notes Api End Points

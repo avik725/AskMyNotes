@@ -101,16 +101,26 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
   //fetch notes from db by user_id
   //return response
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, search = "", column, dir } = req.query;
 
     const filters = {
       owner: req.user._id,
+      ...(search && { title: { $regex: search, $options: "i" } }),
     };
+
+    let sortingOrder;
+    if (column && dir) {
+      const allowedColumns = ["title", "course"];
+      if (allowedColumns.includes(column)) {
+        const sortDir = String(dir).toLowerCase() === "desc" ? -1 : 1;
+        sortingOrder = { [column]: sortDir };
+      }
+    }
 
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
-      sort: { createdAt: -1 },
+      sort: sortingOrder || { createdAt: -1 },
       populate: [
         { path: "stream", select: "name" },
         { path: "course", select: "name" },
@@ -144,13 +154,16 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
 const getStreamWiseNotes = asyncHandler(async (req, res, next) => {
   try {
     const streams = await Stream.find().select("name");
-    const all_notes = await Notes.find().populate({path: "course", select: "name"});
+    const all_notes = await Notes.find().populate({
+      path: "course",
+      select: "name",
+    });
 
     let streamWiseNotes = [];
 
     streams.map((stream) => {
       let notes = all_notes.filter((note) => {
-        return ((String(note.stream) === String(stream._id)) && note.thumbnail);
+        return String(note.stream) === String(stream._id) && note.thumbnail;
       });
       if (Array.isArray(notes) && notes.length > 0) {
         streamWiseNotes.push({ stream: stream.name, notes: notes });
@@ -163,9 +176,7 @@ const getStreamWiseNotes = asyncHandler(async (req, res, next) => {
 
     return res
       .status(200)
-      .json(
-        new apiResponse(200, top2, "Data Fetched Successfully !!")
-      );
+      .json(new apiResponse(200, top2, "Data Fetched Successfully !!"));
   } catch (error) {
     throw new apiError(500, "Something went wrong", error);
   }

@@ -22,6 +22,8 @@ export default function UploadNotes() {
   const [courses, setCourses] = useState([]);
   const [semesters, setSemesters] = useState([]);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   function refreshSelectpickers(identifier) {
     $(identifier).selectpicker("refresh");
   }
@@ -94,6 +96,8 @@ export default function UploadNotes() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    setIsUploading(true)
+
     // Validation
     if (!formData.title.trim()) {
       fireSweetAlert({
@@ -155,6 +159,7 @@ export default function UploadNotes() {
 
       const result = await uploadNotesHandler(formDataObj);
 
+    setIsUploading(false)
       fireSweetAlert({
         success: result.success,
         message:
@@ -476,7 +481,11 @@ export default function UploadNotes() {
                     type="submit"
                     className="btn uploadBtn border-0 fs-18 fs-sm-16 theme-btn w-100 rounded-pill fw-bold py-2"
                   >
-                    Upload
+                    {!isUploading ? "Upload" : <span
+                      class="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                      ></span>} 
                   </button>
                 </div>
               </form>

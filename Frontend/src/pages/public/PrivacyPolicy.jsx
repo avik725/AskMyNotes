@@ -11,9 +11,9 @@ export default function PrivacyPolicy() {
           <div className="introduction mb-4">
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Introduction</h4>
             <p className="fw-light text-justify fs-sm-15">
-              Welcome to Notes Gallery's Privacy Policy. This policy outlines
+              Welcome to AskMyNotes's Privacy Policy. This policy outlines
               how we collect, use, and protect your personal information when
-              you use our platform. By using Notes Gallery, you agree to the
+              you use our platform. By using AskMyNotes, you agree to the
               terms of this policy. We are committed to protecting your privacy
               and ensuring the security of your data.
             </p>

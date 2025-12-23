@@ -35,7 +35,7 @@ export default function Header() {
             href={routeSet.public.home}
           >
             <img src={logo} alt="icon" />
-            <h5 className="mb-0 ms-2">Notes Gallery</h5>
+            <h5 className="mb-0 ms-2">AskMyNotes</h5>
           </a>
           <button
             className="navbar-toggler"

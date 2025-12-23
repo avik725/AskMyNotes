@@ -34,7 +34,7 @@ export default function Footer() {
           </div>
           <div className="col-lg-12">
             <p className="text-black-50 text-center fs-sm-14 my-3">
-              &copy;2025 Notes Gallery. All rights reserved.
+              &copy;2025 AskMyNotes. All rights reserved.
             </p>
           </div>
         </div>

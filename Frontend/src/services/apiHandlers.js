@@ -7,6 +7,7 @@ import {
   userLogout,
   userRegistration,
   uploadNotes,
+  updateUserProfile,
 } from "./apiEndPoints";
 
 export async function getCurrentUserHandler() {
@@ -65,6 +66,17 @@ export async function userRegistrationHandler(formData) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function userProfileUpdateHandler(formData) {
+  const response = await fetch(updateUserProfile, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
   });
 
   const result = await response.json();

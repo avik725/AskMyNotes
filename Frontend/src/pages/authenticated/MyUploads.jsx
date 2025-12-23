@@ -1,4 +1,12 @@
+import React, { useState } from "react";
+import { html } from "gridjs";
+import { DataTable } from "@/components";
+import { getMyUploads } from "@/services/apiEndPoints";
+
 export default function MyUploads() {
+  const [totalUploads, setTotalUploads] = useState(0);
+  const [totalDownloads, setTotalDownloads] = useState(0);
+
   return (
     <main id="myuploads-page">
       {/* My Uploads Section Starts */}
@@ -14,19 +22,105 @@ export default function MyUploads() {
             <div className="col-md-6">
               <div className="card rounded-4 border-secondary-subtle p-4">
                 <p className="">Total Uploads</p>
-                <h4 className="fw-bold fs-26 total_uploads">0</h4>
+                <h4 className="fw-bold fs-26 total_uploads">{totalUploads}</h4>
               </div>
             </div>
             <div className="col-md-6">
               <div className="card rounded-4 border-secondary-subtle p-4 mt-4 mt-md-0">
                 <p className="">Total Downloads</p>
-                <h4 className="fw-bold fs-26 total_downloads">0</h4>
+                <h4 className="fw-bold fs-26 total_downloads">
+                  {totalDownloads}
+                </h4>
               </div>
             </div>
           </div>
           <div className="uploaded-notes mt-5">
             <h5 className="fw-bold fs-22 mb-4 ps-2">Uploaded Notes</h5>
-            <div id="table-wrapper"></div>
+            <div id="table-wrapper">
+              <DataTable
+                columns={[
+                  { name: "Title", sort: true },
+                  { name: "Course", sort: true },
+                  { name: "Semester / Year", sort: false },
+                  { name: "Action", sort: false },
+                ]}
+                url={getMyUploads}
+                thenFn={(data) =>
+                  data.data.uploads.docs.map((note) => [
+                    html(`<span class="text-capitalize">${note.title}</span>`),
+                    note.course.name,
+                    `${note.semester ? note.semester : note.year}${
+                      (note.semester || note.year) === 1
+                        ? "st"
+                        : (note.semester || note.year) === 2
+                        ? "nd"
+                        : (note.semester || note.year) === 3
+                        ? "rd"
+                        : "th"
+                    } ${note.semester ? "semester" : "year"}`,
+                    html(
+                      `<div>
+                  <div class="row">
+                      <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
+                        <a href="#" onclick="buildModal('${note.title}','${note.file_url}')" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
+                        View
+                        </a>
+                        <span class="d-none d-lg-inline-block">|</span>
+                      </div>
+                      <div class="col-lg-auto p-0 col-12">
+                        <a href="#" onclick="downloadNote('${note.title}','${note.file_url}')" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  </div>`
+                    ),
+                  ])
+                }
+                handleFn={async (res) => {
+                  let resJson = await res.json();
+                  if (resJson.success) {
+                    setTotalUploads(resJson.data.total_uploads);
+                    setTotalDownloads(resJson.data.total_downloads);
+                    return resJson;
+                  } else {
+                    return { data: [] };
+                  }
+                }}
+                totalFn={(data) => data.data.uploads.totalDocs}
+                paginationLimit={5}
+                paginationUrlFn={(prev, page, limit) => {
+                  const separator = prev.includes("?") ? "&" : "?";
+                  return `${prev}${separator}limit=${limit}&page=${page + 1}`;
+                }}
+                isSearchEnabled={true}
+                searchConfig={{
+                  debounceTimeout: 1000,
+                  server: {
+                    url: (prevUrl, keyword) => {
+                      const separator = prevUrl.includes("?") ? "&" : "?";
+                      return `${prevUrl}${separator}search=${keyword}`;
+                    },
+                  },
+                }}
+                isSortEnabled={true}
+                sortConfig={{
+                  server: {
+                    url: (prevUrl, columns) => {
+                      if (!columns.length) return prevUrl;
+                      const col = columns[0];
+                      if (col?.index > 1) return null;
+                      const separator = prevUrl.includes("?") ? "&" : "?";
+
+                      let colName = ["title", "course"][col.index];
+                      const dir = col.direction === 1 ? "asc" : "desc";
+                      return `${prevUrl}${separator}column=${colName}&dir=${dir}`;
+                    },
+                  },
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>

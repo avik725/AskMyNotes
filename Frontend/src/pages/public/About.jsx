@@ -9,7 +9,7 @@ export default function About() {
       {/* About Section Starts */}
       <section id="about-section" className="pt-5 light-black">
         <div className="container px-4">
-          <h3 className="fs-32 fw-bold mb-4 pb-3">About Notes Gallery</h3>
+          <h3 className="fs-32 fw-bold mb-4 pb-3">About AskMyNotes</h3>
 
           <div className="row mb-lg-5 mb-4">
             <div className="col-lg-5">
@@ -19,7 +19,7 @@ export default function About() {
               <div className="introduction ps-lg-4 pt-4 pt-lg-0">
                 <h4 className="fs-24 fw-bold mb-3">Introduction</h4>
                 <p className="fw-light text-justify fs-sm-15">
-                  Notes Gallery is a student-centric academic platform crafted
+                  AskMyNotes is a student-centric academic platform crafted
                   to simplify access to a vast and diverse range of educational
                   materials. Designed for learners at every stage, we support
                   students pursuing Undergraduate (UG), Postgraduate (PG),
@@ -33,7 +33,7 @@ export default function About() {
                   exactly what they need — whether they're preparing for exams,
                   catching up on missed lectures, or revising key concepts. From
                   science and engineering to commerce, arts, and professional
-                  courses, Notes Gallery aims to be your go-to academic
+                  courses, AskMyNotes aims to be your go-to academic
                   companion throughout your educational journey.
                 </p>
                 <p className="fw-light text-justify fs-sm-15">
@@ -52,7 +52,7 @@ export default function About() {
                 <p className="fw-light text-justify fs-sm-15">
                   Our mission is simple yet powerful — to empower students by
                   offering a centralized, community-driven platform for sharing
-                  and accessing quality academic notes. At Notes Gallery, we
+                  and accessing quality academic notes. At AskMyNotes, we
                   believe that collaborative learning, peer support, and open
                   access to educational content are the cornerstones of academic
                   excellence.
@@ -79,7 +79,7 @@ export default function About() {
               <div className="who-can-use-this pe-lg-4 mt-4 mt-lg-0">
                 <h4 className="fs-24 fw-bold mb-3">Who Can Use This?</h4>
                 <p className="fw-light text-justify fs-sm-15">
-                  Notes Gallery is built with inclusivity at its core — a
+                  AskMyNotes is built with inclusivity at its core — a
                   platform thoughtfully designed for students from all walks of
                   academic life. Whether you're a science enthusiast
                   experimenting with theories, a commerce student navigating
@@ -90,7 +90,7 @@ export default function About() {
                 <p className="fw-light text-justify fs-sm-15">
                   It doesn't stop there — from undergraduates and postgraduates
                   to diploma holders, polytechnic students, and even open
-                  university learners, Notes Gallery offers curated academic
+                  university learners, AskMyNotes offers curated academic
                   support tailored to your stream, course, and semester. Whether
                   you're diving into physics, chemistry, mathematics, computer
                   science, economics, business studies, law, literature,
@@ -101,7 +101,7 @@ export default function About() {
                 <p className="fw-light text-justify fs-sm-15">
                   Our mission is to ensure that no student ever feels left
                   behind. Regardless of your academic level, institution, or
-                  specialization, Notes Gallery is your academic companion,
+                  specialization, AskMyNotes is your academic companion,
                   helping you learn better, faster, and more efficiently.
                 </p>
                 <p className="fw-light text-justify fs-sm-15">
@@ -162,7 +162,7 @@ export default function About() {
               <div className="get-involved mb-4">
                 <h4 className="fs-24 fw-bold mb-3">Get Involved</h4>
                 <p className="fw-light mb-4 text-justify fs-sm-15">
-                  We encourage all students to contribute to the Notes Gallery
+                  We encourage all students to contribute to the AskMyNotes
                   community. Register yourself, Upload your notes, participate
                   in discussions, and help us build a valuable resource for
                   students everywhere.
