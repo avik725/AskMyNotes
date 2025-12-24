@@ -6,6 +6,11 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import { truncateFileName } from "@/utils/helpers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
+import { SelectPicker } from "@/components";
+import {
+  destroySelectpickers,
+  renderSelectpickers,
+} from "@/utils/selectPicker";
 
 export default function UploadNotes() {
   const [formData, setFormData] = useState({
@@ -23,18 +28,6 @@ export default function UploadNotes() {
   const [semesters, setSemesters] = useState([]);
 
   const [isUploading, setIsUploading] = useState(false);
-
-  function refreshSelectpickers(identifier) {
-    $(identifier).selectpicker("refresh");
-  }
-
-  function destroySelectpickers(identifier) {
-    $(identifier).selectpicker("destroy");
-  }
-
-  function renderSelectpickers(identifier) {
-    $(identifier).selectpicker("render");
-  }
 
   useEffect(() => {
     destroySelectpickers("#stream");
@@ -96,7 +89,7 @@ export default function UploadNotes() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    setIsUploading(true)
+    setIsUploading(true);
 
     // Validation
     if (!formData.title.trim()) {
@@ -159,7 +152,7 @@ export default function UploadNotes() {
 
       const result = await uploadNotesHandler(formDataObj);
 
-    setIsUploading(false)
+      setIsUploading(false);
       fireSweetAlert({
         success: result.success,
         message:
@@ -284,67 +277,55 @@ export default function UploadNotes() {
                     </div>
                   </div>
                   <div className="col-lg-12 col-md-6">
-                    <div className="mb-3">
-                      <label htmlFor="course" className="form-label">
-                        Course
-                      </label>
-                      <select
-                        name="course"
-                        id="course"
-                        value={formData.course}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            course: e.target.value,
-                            semester: "",
-                          });
-                          setSemesters([]);
-                          destroySelectpickers("#semester");
-                          $("#semester").val("");
-                          if (e.target.value) {
-                            setSemester(e.target.value);
-                          }
-                        }}
-                        className="form-control selectpicker bg-light rounded-4 fs-sm-14"
-                        data-live-search="true"
-                      >
-                        {courses?.map((course) => {
-                          return (
-                            <option key={course._id} value={course._id}>
-                              {course.name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                    <SelectPicker
+                      name={"course"}
+                      id={"course"}
+                      label={"Course"}
+                      value={formData.course}
+                      onChangeFn={(e) => {
+                        setFormData({
+                          ...formData,
+                          course: e.target.value,
+                          semester: "",
+                        });
+                        setSemesters([]);
+                        destroySelectpickers("#semester");
+                        $("#semester").val("");
+                        if (e.target.value) {
+                          setSemester(e.target.value);
+                        }
+                      }}
+                    >
+                      {courses?.map((course) => {
+                        return (
+                          <option key={course._id} value={course._id}>
+                            {course.name}
+                          </option>
+                        );
+                      })}
+                    </SelectPicker>
                   </div>
                   <div className="col-lg-12 col-md-6">
-                    <div className="mb-3">
-                      <label htmlFor="semester" className="form-label">
-                        Semester / Year
-                      </label>
-                      <select
-                        name="semester"
-                        id="semester"
-                        value={formData.semester}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            semester: e.target.value,
-                          });
-                        }}
-                        className="form-control selectpicker bg-light rounded-4 fs-sm-14"
-                        data-live-search="true"
-                      >
-                        {semesters?.map((semester) => {
-                          return (
-                            <option key={semester.value} value={semester.value}>
-                              {semester.key}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                    <SelectPicker
+                      name={"semester"}
+                      id={"semester"}
+                      label={"Semester / Year"}
+                      value={formData.semester}
+                      onChangeFn={(e) => {
+                        setFormData({
+                          ...formData,
+                          semester: e.target.value,
+                        });
+                      }}
+                    >
+                      {semesters?.map((semester) => {
+                        return (
+                          <option key={semester.value} value={semester.value}>
+                            {semester.key}
+                          </option>
+                        );
+                      })}
+                    </SelectPicker>
                   </div>
                   <div className="col-lg-12">
                     <div className="mb-4 pb-2">
@@ -481,11 +462,15 @@ export default function UploadNotes() {
                     type="submit"
                     className="btn uploadBtn border-0 fs-18 fs-sm-16 theme-btn w-100 rounded-pill fw-bold py-2"
                   >
-                    {!isUploading ? "Upload" : <span
-                      class="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                      ></span>} 
+                    {!isUploading ? (
+                      "Upload"
+                    ) : (
+                      <span
+                        class="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    )}
                   </button>
                 </div>
               </form>

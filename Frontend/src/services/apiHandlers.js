@@ -8,6 +8,7 @@ import {
   userRegistration,
   uploadNotes,
   updateUserProfile,
+  getFeaturesNotes,
 } from "./apiEndPoints";
 
 export async function getCurrentUserHandler() {
@@ -112,6 +113,18 @@ export async function uploadNotesHandler(formData) {
     method: "POST",
     credentials: "include",
     body: formData,
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function getFeaturedNotesHandler() {
+  const response = await fetch(getFeaturesNotes, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const result = await response.json();

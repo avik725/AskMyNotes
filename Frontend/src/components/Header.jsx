@@ -62,12 +62,12 @@ export default function Header() {
                 </button>
               </li>
               <li className="nav-item">
-                <a
+                <button
                   className="nav-link me-3 text-black"
-                  href="notes_library.html"
+                  onClick={()=>navigate(routeSet.public.notesGallery)}
                 >
                   Notes Library
-                </a>
+                </button>
               </li>
 
               {!isLoggedIn ? (
