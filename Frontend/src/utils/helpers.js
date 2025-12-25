@@ -10,4 +10,17 @@ const truncateFileName = (fileName, maxLength = 25) => {
   return `${truncatedName}...${extension}`;
 };
 
-export { truncateFileName };
+function downloadNote(title, fileUrl) {
+  const downloadUrl = fileUrl.includes("upload/")
+    ? fileUrl.replace("upload/", "upload/fl_attachment/")
+    : fileUrl;
+
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = title;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+export { truncateFileName, downloadNote };

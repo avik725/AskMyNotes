@@ -57,7 +57,10 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
 
     let notes_file;
     if (notesFileLocalPath) {
-      notes_file = await uploadOnCloudinary(notesFileLocalPath);
+      notes_file = await uploadOnCloudinary(
+        notesFileLocalPath,
+        "public_notes/documents"
+      );
       if (!notes_file) {
         clearFiles(req);
         throw new apiError(400, "Something went wrong with cloudinary");
@@ -66,7 +69,10 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
 
     let thumbnail;
     if (thumbnailLocalPath) {
-      thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+      thumbnail = await uploadOnCloudinary(
+        thumbnailLocalPath,
+        "public_notes/thumbnails"
+      );
       if (!thumbnail) {
         clearFiles(req);
         throw new apiError(400, "Something went wrong with cloudinary");

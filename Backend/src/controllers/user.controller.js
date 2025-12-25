@@ -65,7 +65,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const profilePicLocalPath = req.file?.path;
   let profilePic;
   if (profilePicLocalPath) {
-    profilePic = await uploadOnCloudinary(profilePicLocalPath, "users");
+    profilePic = await uploadOnCloudinary(profilePicLocalPath, "users/profile_pictures");
     if (!profilePic) {
       throw new apiError(400, "Something Went wrong with cloudinary");
     }
@@ -247,7 +247,7 @@ const updateUserDetails = asyncHandler(async (req, res, next) => {
   const profilePicLocalPath = req.file?.path;
   let profilePic;
   if (profilePicLocalPath) {
-    profilePic = await uploadOnCloudinary(profilePicLocalPath, "users");
+    profilePic = await uploadOnCloudinary(profilePicLocalPath, "users/profile_pictures");
     if (!profilePic) {
       clearFiles(req);
       throw new apiError(400, "Something went wrong with cloudinary");

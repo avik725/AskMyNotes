@@ -1,11 +1,38 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { html } from "gridjs";
-import { DataTable } from "@/components";
+import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
+import { downloadNote } from "@/utils/helpers";
 
 export default function MyUploads() {
   const [totalUploads, setTotalUploads] = useState(0);
   const [totalDownloads, setTotalDownloads] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentNote, setCurrentNote] = useState({
+    title: "",
+    file_url: "",
+    downloadEnable: false,
+  });
+
+  const openNoteModal = useCallback((title, file_url, downloadBtn = false) => {
+    setCurrentNote({ title, file_url, downloadEnable: downloadBtn });
+    setModalOpen(true);
+  }, []);
+
+  // Expose function to window for use in DataTable HTML strings
+  useEffect(() => {
+    window.buildModal = (title, file_url) => {
+      openNoteModal(title, file_url);
+    };
+
+    window.downloadNote = (title, file_url) => {
+      downloadNote(title, file_url);
+    }
+    return () => {
+      delete window.buildModal;
+      delete window.downloadNote; 
+    };
+  }, [openNoteModal]);
 
   return (
     <main id="myuploads-page">
@@ -62,14 +89,14 @@ export default function MyUploads() {
                       `<div>
                   <div class="row">
                       <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                        <a href="#" onclick="buildModal('${note.title}','${note.file_url}')" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
                         class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
                         View
                         </a>
                         <span class="d-none d-lg-inline-block">|</span>
                       </div>
                       <div class="col-lg-auto p-0 col-12">
-                        <a href="#" onclick="downloadNote('${note.title}','${note.file_url}')" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                        <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
                           Download
                         </a>
                       </div>
@@ -124,46 +151,42 @@ export default function MyUploads() {
           </div>
         </div>
       </section>
-      {/* My Uploads Section Starts */}
+      {/* My Uploads Section Ends */}
 
-      {/* Modal Box Starts */}
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        title={currentNote.title || "View Note"}
+        size="modal-xl"
+        footerContent={
+          currentNote.downloadEnable ? (
+            <button
+              type="button"
+              onClick={() =>
+                downloadNote(currentNote.title, currentNote.file_url)
+              }
+              className="btn theme-btn fw-bold rounded-pill py-2 px-3"
+            >
+              Download
+            </button>
+          ) : (
+            ""
+          )
+        }
+        closeBtn={false}
       >
-        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
-                Modal title
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">...</div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Modal Box Ends */}
+        {currentNote.file_url && (
+          <iframe
+            src={currentNote.file_url}
+            style={{
+              width: "100%",
+              height: "70vh",
+              border: "none",
+            }}
+            title={currentNote.title}
+          />
+        )}
+      </Modal>
     </main>
   );
 }

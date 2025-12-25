@@ -4,5 +4,6 @@ import DataTable from "./DataTable";
 import SelectPicker from "./SelectPicker";
 import Carousel from "./Carousel";
 import Card from "./Card";
+import Modal from "./Modal";
 
-export {Header,Footer, DataTable, Carousel, SelectPicker, Card}
+export {Header,Footer, DataTable, Carousel, SelectPicker, Card, Modal}

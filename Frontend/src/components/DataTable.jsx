@@ -43,6 +43,9 @@ export default function DataTable({
             : isSearchEnabled
           : isSearchEnabled
       }
+      // update={{
+      //   pagination: ()=>{} 
+      // }}
     ></Grid>
   );
 }

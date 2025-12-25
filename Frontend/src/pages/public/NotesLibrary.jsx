@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { DataTable, Carousel, Card, SelectPicker } from "@/components";
+import React, { useEffect, useState, useCallback } from "react";
+import { DataTable, Carousel, Card, SelectPicker, Modal } from "@/components";
 import { getNotes } from "@/services/apiEndPoints";
 import {
   getCoursesHandler,
@@ -13,11 +13,26 @@ import {
   destroySelectpickers,
   renderSelectpickers,
 } from "@/utils/selectPicker";
+import { downloadNote } from "@/utils/helpers";
 
 export default function NotesLibrary() {
   const [streams, setStreams] = useState([]);
   const [courses, setCourses] = useState([]);
   const [semesters, setSemesters] = useState([]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentNote, setCurrentNote] = useState({
+    title: "",
+    file_url: "",
+    downloadEnable: false,
+  });
+
+  const [selectedFilters, setSelectedFilters] = useState({
+    stream: "",
+    course: "",
+    semesterOrYear: "",
+    sortOrder: "",
+  });
 
   const [featuredNotes, setFeaturedNotes] = useState([]);
 
@@ -100,13 +115,32 @@ export default function NotesLibrary() {
     getStreams();
   }, []);
 
+  const openNoteModal = useCallback((title, file_url, downloadBtn = false) => {
+    setCurrentNote({ title, file_url, downloadEnable: downloadBtn });
+    setModalOpen(true);
+  }, []);
+
+  // Expose function to window for use in DataTable HTML strings
+  useEffect(() => {
+    window.buildModal = (title, file_url) => {
+      openNoteModal(title, file_url);
+    };
+    window.downloadNote = (title, file_url) => {
+      downloadNote(title, file_url);
+    };
+    return () => {
+      delete window.buildModal;
+      delete window.downloadNote;
+    };
+  }, [openNoteModal]);
+
   useEffect(() => {
     getFeaturedNotes();
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]'
     );
     [...tooltipTriggerList].forEach((el) => new bootstrap.Tooltip(el));
-    renderSelectpickers("#sort")
+    renderSelectpickers("#sort");
   }, []);
   return (
     <section id="library-section" className="py-5">
@@ -119,14 +153,18 @@ export default function NotesLibrary() {
                 <i className="fa-solid fa-chevron-down"></i>
               </span>
             </h4>
-            <form action="#" className="mb-3 mb-lg-0">
+            <div className="mb-3 mb-lg-0">
               <div className="row">
                 <div className="col-lg-12 col-md-6">
                   <SelectPicker
                     name={"stream"}
                     id={"stream"}
                     label={"Stream"}
+                    value={selectedFilters.stream}
                     onChangeFn={(e) => {
+                      setSelectedFilters((prev) => {
+                        return { ...prev, stream: e.target.value };
+                      });
                       setCourses([]);
                       setSemesters([]);
                       if (e.target.value) {
@@ -151,7 +189,11 @@ export default function NotesLibrary() {
                     id={"course"}
                     name={"course"}
                     label={"Course"}
+                    value={selectedFilters.course}
                     onChangeFn={(e) => {
+                      setSelectedFilters((prev) => {
+                        return { ...prev, course: e.target.value };
+                      });
                       setSemesters([]);
                       destroySelectpickers("#semester");
                       $("#semester").val("");
@@ -175,7 +217,12 @@ export default function NotesLibrary() {
                     id={"semester"}
                     name={"semester"}
                     label={"Semester"}
-                    onChangeFn={() => {}}
+                    value={selectedFilters.semesterOrYear}
+                    onChangeFn={(e) => {
+                      setSelectedFilters((prev) => {
+                        return { ...prev, semesterOrYear: e.target.value };
+                      });
+                    }}
                   >
                     {semesters?.map((semester) => {
                       return (
@@ -187,16 +234,21 @@ export default function NotesLibrary() {
                   </SelectPicker>
                 </div>
                 <div className="col-lg-12 col-md-6">
-                    <SelectPicker
-                      name={"sort"}
-                      id={"sort"}
-                      label={"Sort"}
-                      onChangeFn={() => {}}
-                    >
-                      <option value="1">Newest To Oldest</option>
-                      <option value="2">Oldest to Newest</option>
-                      <option value="3">Alphabetically (Title)</option>
-                    </SelectPicker>
+                  <SelectPicker
+                    name={"sort"}
+                    id={"sort"}
+                    label={"Sort"}
+                    value={selectedFilters.sortOrder}
+                    onChangeFn={(e) => {
+                      setSelectedFilters((prev) => {
+                        return { ...prev, sortOrder: e.target.value };
+                      });
+                    }}
+                  >
+                    <option value="-1">Newest To Oldest</option>
+                    <option value="1">Oldest to Newest</option>
+                    {/* <option value="3">Alphabetically (Title)</option> */}
+                  </SelectPicker>
                 </div>
                 <div className="col-lg-12 col-md-6">
                   <button className="btn apply-filters theme-btn rounded-pill fw-bold fs-14 py-2 px-3">
@@ -204,7 +256,7 @@ export default function NotesLibrary() {
                   </button>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
           <div className="col-lg-9 col-12">
             <div className="section-title">
@@ -240,10 +292,8 @@ export default function NotesLibrary() {
                   {featuredNotes.map((note) => (
                     <Card
                       onClick={() =>
-                        buildModal(note.title, note.file_url, true)
+                        openNoteModal(note.title, note.file_url, true)
                       }
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
                       cardImg={note.thumbnail}
                       title={
                         <>
@@ -314,14 +364,14 @@ export default function NotesLibrary() {
                         `<div>
                             <div class="row">
                                 <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                                    <a href="#" onclick="buildModal('${note.title}','${note.file_url}')" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
                                     class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
                                     View
                                     </a>
                                     <span class="d-none d-lg-inline-block">|</span>
                                 </div>
                                 <div class="col-lg-auto p-0 col-12">
-                                    <a href="#" onclick="downloadNote('${note.title}','${note.file_url}')" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                                    <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
                                     Download
                                     </a>
                                 </div>
@@ -367,6 +417,41 @@ export default function NotesLibrary() {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        title={currentNote.title || "View Note"}
+        size="modal-xl"
+        footerContent={
+          currentNote.downloadEnable ? (
+            <button
+              type="button"
+              onClick={() =>
+                downloadNote(currentNote.title, currentNote.file_url)
+              }
+              className="btn theme-btn fw-bold rounded-pill py-2 px-3"
+            >
+              Download
+            </button>
+          ) : (
+            ""
+          )
+        }
+        closeBtn={false}
+      >
+        {currentNote.file_url && (
+          <iframe
+            src={currentNote.file_url}
+            style={{
+              width: "100%",
+              height: "70vh",
+              border: "none",
+            }}
+            title={currentNote.title}
+          />
+        )}
+      </Modal>
     </section>
   );
 }
