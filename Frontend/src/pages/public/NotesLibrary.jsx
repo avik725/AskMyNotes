@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { DataTable, Carousel, Card, SelectPicker, Modal } from "@/components";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { DataTable, Carousel, Card, Modal } from "@/components";
 import { getNotes } from "@/services/apiEndPoints";
 import {
   getCoursesHandler,
@@ -9,11 +9,8 @@ import {
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { html } from "gridjs";
 import { CircleCheck } from "lucide-react";
-import {
-  destroySelectpickers,
-  renderSelectpickers,
-} from "@/utils/selectPicker";
 import { downloadNote } from "@/utils/helpers";
+import ReactSelect from "@/components/ReactSelect";
 
 export default function NotesLibrary() {
   const [streams, setStreams] = useState([]);
@@ -48,21 +45,6 @@ export default function NotesLibrary() {
       console.error("Fetching error:", error);
     }
   }
-
-  useEffect(() => {
-    destroySelectpickers("#stream");
-    renderSelectpickers("#stream");
-  }, [streams]);
-
-  useEffect(() => {
-    destroySelectpickers("#course");
-    renderSelectpickers("#course");
-  }, [courses]);
-
-  useEffect(() => {
-    destroySelectpickers("#semester");
-    renderSelectpickers("#semester");
-  }, [semesters]);
 
   async function getCourses(stream_id) {
     const response = await getCoursesHandler(stream_id);
@@ -140,8 +122,92 @@ export default function NotesLibrary() {
       '[data-bs-toggle="tooltip"]'
     );
     [...tooltipTriggerList].forEach((el) => new bootstrap.Tooltip(el));
-    renderSelectpickers("#sort");
   }, []);
+
+  const columns = useMemo(
+    () => [
+      { name: "Title", sort: true },
+      { name: "Course", sort: true },
+      { name: "Semester / Year", sort: false },
+      { name: "Action", sort: false },
+    ],
+    []
+  );
+
+  const thenFn = useCallback(
+    (data) =>
+        data.data.docs.map((note) => [
+          html(`<span class="text-capitalize">${note.title}</span>`),
+          note.course.name,
+          `${note.semester ? note.semester : note.year}${
+            (note.semester || note.year) === 1
+              ? "st"
+              : (note.semester || note.year) === 2
+              ? "nd"
+              : (note.semester || note.year) === 3
+              ? "rd"
+              : "th"
+          } ${note.semester ? "semester" : "year"}`,
+          html(
+            `<div>
+                <div class="row">
+                    <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
+                        <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
+                        class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
+                        View
+                        </a>
+                        <span class="d-none d-lg-inline-block">|</span>
+                    </div>
+                    <div class="col-lg-auto p-0 col-12">
+                        <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                        Download
+                        </a>
+                    </div>
+                </div>
+            </div>`
+          ),
+        ]),
+    []
+  );
+
+  const totalFn = useCallback((data) => data.data.totalDocs, []);
+
+  const paginationUrlFn = useCallback((prev, page, limit) => {
+    const separator = prev.includes("?") ? "&" : "?";
+    return `${prev}${separator}limit=${limit}&page=${page + 1}`;
+  }, []);
+
+  const searchConfig = useMemo(
+    () => ({
+      debounceTimeout: 1000,
+      server: {
+        url: (prevUrl, keyword) => {
+          const separator = prevUrl.includes("?") ? "&" : "?";
+          return `${prevUrl}${separator}search=${keyword}`;
+        },
+      },
+    }),
+    []
+  );
+
+  const sortConfig = useMemo(
+    () => ({
+      server: {
+        url: (prevUrl, columns) => {
+          if (!columns.length) return prevUrl;
+          const col = columns[0];
+          if (col?.index > 1) return null;
+          const separator = prevUrl.includes("?") ? "&" : "?";
+
+          let colName = ["title", "course"][col.index];
+          const dir = col.direction === 1 ? "asc" : "desc";
+          return `${prevUrl}${separator}column=${colName}&dir=${dir}`;
+        },
+      },
+    }),
+    []
+  );
+
   return (
     <section id="library-section" className="py-5">
       <div className="container-fluid px-5">
@@ -156,99 +222,86 @@ export default function NotesLibrary() {
             <div className="mb-3 mb-lg-0">
               <div className="row">
                 <div className="col-lg-12 col-md-6">
-                  <SelectPicker
+                  <ReactSelect
                     name={"stream"}
                     id={"stream"}
                     label={"Stream"}
+                    placeholder={"Select Stream"}
                     value={selectedFilters.stream}
                     onChangeFn={(e) => {
                       setSelectedFilters((prev) => {
-                        return { ...prev, stream: e.target.value };
+                        return { ...prev, stream: e.value };
                       });
                       setCourses([]);
                       setSemesters([]);
-                      if (e.target.value) {
-                        getCourses(e.target.value);
+                      if (e.value) {
+                        getCourses(e.value);
                       }
-                      destroySelectpickers("#course");
                       $("#course").val("");
                     }}
                     divSpacing={"mb-3 mt-4"}
-                  >
-                    {streams?.map((stream) => {
-                      return (
-                        <option key={stream._id} value={stream._id}>
-                          {stream.name}
-                        </option>
-                      );
+                    options={streams?.map((stream) => {
+                      return { value: stream._id, label: stream.name };
                     })}
-                  </SelectPicker>
+                  />
                 </div>
                 <div className="col-lg-12 col-md-6">
-                  <SelectPicker
+                  <ReactSelect
                     id={"course"}
                     name={"course"}
                     label={"Course"}
+                    placeholder={"Select Course"}
                     value={selectedFilters.course}
                     onChangeFn={(e) => {
                       setSelectedFilters((prev) => {
-                        return { ...prev, course: e.target.value };
+                        return { ...prev, course: e.value };
                       });
                       setSemesters([]);
-                      destroySelectpickers("#semester");
                       $("#semester").val("");
-                      if (e.target.value) {
-                        setSemester(e.target.value);
+                      if (e.value) {
+                        setSemester(e.value);
                       }
                     }}
                     divSpacing={"mb-3 mt-md-4 mt-lg-0"}
-                  >
-                    {courses?.map((course) => {
-                      return (
-                        <option key={course._id} value={course._id}>
-                          {course.name}
-                        </option>
-                      );
+                    options={courses?.map((course) => {
+                      return { value: course._id, label: course.name };
                     })}
-                  </SelectPicker>
+                  />
                 </div>
                 <div className="col-lg-12 col-md-6">
-                  <SelectPicker
+                  <ReactSelect
                     id={"semester"}
                     name={"semester"}
                     label={"Semester"}
+                    placeholder={"Select Semester"}
                     value={selectedFilters.semesterOrYear}
                     onChangeFn={(e) => {
                       setSelectedFilters((prev) => {
-                        return { ...prev, semesterOrYear: e.target.value };
+                        return { ...prev, semesterOrYear: e.value };
                       });
                     }}
-                  >
-                    {semesters?.map((semester) => {
-                      return (
-                        <option key={semester.value} value={semester.value}>
-                          {semester.key}
-                        </option>
-                      );
+                    options={semesters?.map((semester) => {
+                      return { value: semester.value, label: semester.key };
                     })}
-                  </SelectPicker>
+                  />
                 </div>
                 <div className="col-lg-12 col-md-6">
-                  <SelectPicker
+                  <ReactSelect
                     name={"sort"}
                     id={"sort"}
                     label={"Sort"}
+                    placeholder={"Select Sort Order"}
                     value={selectedFilters.sortOrder}
                     onChangeFn={(e) => {
                       setSelectedFilters((prev) => {
-                        return { ...prev, sortOrder: e.target.value };
+                        return { ...prev, sortOrder: e.value };
                       });
                     }}
-                  >
-                    <option value="-1">Newest To Oldest</option>
-                    <option value="1">Oldest to Newest</option>
-                    {/* <option value="3">Alphabetically (Title)</option> */}
-                  </SelectPicker>
+                    options={[
+                      { value: -1, label: "Newest To Oldest" },
+                      { value: 1, label: "Oldest to Newest" },
+                    ]}
+                  />
                 </div>
                 <div className="col-lg-12 col-md-6">
                   <button className="btn apply-filters theme-btn rounded-pill fw-bold fs-14 py-2 px-3">
@@ -338,79 +391,16 @@ export default function NotesLibrary() {
 
               <div id="table-wrapper" className="overflow-hidden">
                 <DataTable
-                  columns={[
-                    { name: "Title", sort: true },
-                    { name: "Course", sort: true },
-                    { name: "Semester / Year", sort: false },
-                    { name: "Action", sort: false },
-                  ]}
+                  columns={columns}
                   url={getNotes}
-                  thenFn={(data) =>
-                    data.data.docs.map((note) => [
-                      html(
-                        `<span class="text-capitalize">${note.title}</span>`
-                      ),
-                      note.course.name,
-                      `${note.semester ? note.semester : note.year}${
-                        (note.semester || note.year) === 1
-                          ? "st"
-                          : (note.semester || note.year) === 2
-                          ? "nd"
-                          : (note.semester || note.year) === 3
-                          ? "rd"
-                          : "th"
-                      } ${note.semester ? "semester" : "year"}`,
-                      html(
-                        `<div>
-                            <div class="row">
-                                <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                                    <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
-                                    class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
-                                    View
-                                    </a>
-                                    <span class="d-none d-lg-inline-block">|</span>
-                                </div>
-                                <div class="col-lg-auto p-0 col-12">
-                                    <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
-                                    Download
-                                    </a>
-                                </div>
-                            </div>
-                        </div>`
-                      ),
-                    ])
-                  }
-                  totalFn={(data) => data.data.totalDocs}
+                  thenFn={thenFn}
+                  totalFn={totalFn}
                   paginationLimit={5}
-                  paginationUrlFn={(prev, page, limit) => {
-                    const separator = prev.includes("?") ? "&" : "?";
-                    return `${prev}${separator}limit=${limit}&page=${page + 1}`;
-                  }}
+                  paginationUrlFn={paginationUrlFn}
                   isSearchEnabled={true}
-                  searchConfig={{
-                    debounceTimeout: 1000,
-                    server: {
-                      url: (prevUrl, keyword) => {
-                        const separator = prevUrl.includes("?") ? "&" : "?";
-                        return `${prevUrl}${separator}search=${keyword}`;
-                      },
-                    },
-                  }}
+                  searchConfig={searchConfig}
                   isSortEnabled={true}
-                  sortConfig={{
-                    server: {
-                      url: (prevUrl, columns) => {
-                        if (!columns.length) return prevUrl;
-                        const col = columns[0];
-                        if (col?.index > 1) return null;
-                        const separator = prevUrl.includes("?") ? "&" : "?";
-
-                        let colName = ["title", "course"][col.index];
-                        const dir = col.direction === 1 ? "asc" : "desc";
-                        return `${prevUrl}${separator}column=${colName}&dir=${dir}`;
-                      },
-                    },
-                  }}
+                  sortConfig={sortConfig}
                 />
               </div>
             </div>

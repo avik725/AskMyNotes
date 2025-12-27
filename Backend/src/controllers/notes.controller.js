@@ -198,6 +198,8 @@ const getNotes = asyncHandler(async (req, res, next) => {
       semester,
       sort,
       search,
+      column,
+      dir,
     } = req.query;
 
     const filters = {};
@@ -206,15 +208,19 @@ const getNotes = asyncHandler(async (req, res, next) => {
     if (semester) filters.semester = semester;
     if (search) filters.title = { $regex: search, $options: "i" };
 
+    let sortingOrder;
+    if (column && dir) {
+      const allowedColumns = ["title", "course"];
+      if (allowedColumns.includes(column)) {
+        const sortDir = String(dir).toLowerCase() === "desc" ? -1 : 1;
+        sortingOrder = { [column]: sortDir };
+      }
+    }
+
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
-      sort:
-        sort == 2
-          ? { createdAt: 1 }
-          : sort == 3
-            ? { title: 1 }
-            : { createdAt: -1 },
+      sort: sortingOrder || { createdAt: -1 },
       populate: [
         { path: "stream", select: "name" },
         { path: "course", select: "name" },

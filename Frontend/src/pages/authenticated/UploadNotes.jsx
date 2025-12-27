@@ -6,7 +6,7 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import { truncateFileName } from "@/utils/helpers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
-import { SelectPicker } from "@/components";
+import { ReactSelect } from "@/components";
 import {
   destroySelectpickers,
   renderSelectpickers,
@@ -240,44 +240,32 @@ export default function UploadNotes() {
                     </div>
                   </div>
                   <div className="col-lg-12">
-                    <div className="mb-3">
-                      <label htmlFor="stream" className="form-label">
-                        Stream
-                      </label>
-                      <select
-                        name="stream"
-                        id="stream"
-                        value={formData.stream}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            stream: e.target.value,
-                            course: "",
-                            semester: "",
-                          });
-                          setCourses([]);
-                          setSemesters([]);
-                          if (e.target.value) {
-                            getCourses(e.target.value);
-                          }
-                          destroySelectpickers("#course");
-                          $("#course").val("");
-                        }}
-                        className="form-control selectpicker bg-light rounded-4 fs-sm-14"
-                        data-live-search="true"
-                      >
-                        {streams?.map((stream) => {
-                          return (
-                            <option key={stream._id} value={stream._id}>
-                              {stream.name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                    <ReactSelect
+                      name="stream"
+                      id="stream"
+                      label={"Stream"}
+                      value={formData.stream}
+                      onChangeFn={(e) => {
+                        setFormData({
+                          ...formData,
+                          stream: e.value,
+                          course: "",
+                          semester: "",
+                        });
+                        setCourses([]);
+                        setSemesters([]);
+                        if (e.value) {
+                          getCourses(e.value);
+                        }
+                        $("#course").val("");
+                      }}
+                      options={streams?.map((stream) => {
+                        return { value: stream._id, label: stream.name };
+                      })}
+                    />
                   </div>
                   <div className="col-lg-12 col-md-6">
-                    <SelectPicker
+                    <ReactSelect
                       name={"course"}
                       id={"course"}
                       label={"Course"}
@@ -285,28 +273,25 @@ export default function UploadNotes() {
                       onChangeFn={(e) => {
                         setFormData({
                           ...formData,
-                          course: e.target.value,
+                          course: e.value,
                           semester: "",
                         });
                         setSemesters([]);
-                        destroySelectpickers("#semester");
                         $("#semester").val("");
-                        if (e.target.value) {
-                          setSemester(e.target.value);
+                        if (e.value) {
+                          setSemester(e.value);
                         }
                       }}
-                    >
-                      {courses?.map((course) => {
-                        return (
-                          <option key={course._id} value={course._id}>
-                            {course.name}
-                          </option>
-                        );
+                      options={courses?.map((course) => {
+                        return {
+                          value: course._id,
+                          label: course.name,
+                        };
                       })}
-                    </SelectPicker>
+                    />
                   </div>
                   <div className="col-lg-12 col-md-6">
-                    <SelectPicker
+                    <ReactSelect
                       name={"semester"}
                       id={"semester"}
                       label={"Semester / Year"}
@@ -314,18 +299,13 @@ export default function UploadNotes() {
                       onChangeFn={(e) => {
                         setFormData({
                           ...formData,
-                          semester: e.target.value,
+                          semester: e.value,
                         });
                       }}
-                    >
-                      {semesters?.map((semester) => {
-                        return (
-                          <option key={semester.value} value={semester.value}>
-                            {semester.key}
-                          </option>
-                        );
+                      options={semesters?.map((semester) => {
+                        return { value: semester.value, label: semester.key };
                       })}
-                    </SelectPicker>
+                    />
                   </div>
                   <div className="col-lg-12">
                     <div className="mb-4 pb-2">
