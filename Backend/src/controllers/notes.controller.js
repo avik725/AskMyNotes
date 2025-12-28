@@ -170,30 +170,77 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
 
 const getStreamWiseNotes = asyncHandler(async (req, res, next) => {
   try {
-    const streams = await Stream.find().select("name");
-    const all_notes = await Notes.find().populate({
-      path: "course",
-      select: "name",
-    });
+    const pipeline = [
+      {
+        $match: {
+          $expr: {
+            $ne: [{ $ifNull: ["$thumbnail", ""] }, ""],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "course",
+          foreignField: "_id",
+          as: "course",
+        },
+      },
+      {
+        $unwind: {
+          path: "$course",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$stream",
+          notesCount: { $sum: 1 },
+          notes: {
+            $push: {
+              _id: "$_id",
+              title: "$title",
+              thumbnail: "$thumbnail",
+              file_url: "$file_url",
+              is_verified: "$is_verified",
+              semester: "$semester",
+              year: "$year",
+              course: {
+                _id: "$course._id",
+                name: "$course.name",
+              },
+            },
+          },
+        },
+      },
+      { $sort: { notesCount: -1 } },
+      { $limit: 2 },
+      {
+        $lookup: {
+          from: "streams",
+          localField: "_id",
+          foreignField: "_id",
+          as: "stream",
+        },
+      },
+      { $unwind: "$stream" },
+      {
+        $project: {
+          _id: 0,
+          stream: {
+            _id: "$stream._id",
+            name: "$stream.name",
+          },
+          notes: { $slice: ["$notes", 10] }, //slices notes to 10
+        },
+      },
+    ];
 
-    let streamWiseNotes = [];
-
-    streams.map((stream) => {
-      let notes = all_notes.filter((note) => {
-        return String(note.stream) === String(stream._id) && note.thumbnail;
-      });
-      if (Array.isArray(notes) && notes.length > 0) {
-        streamWiseNotes.push({ stream: stream.name, notes: notes });
-      }
-    });
-
-    const top2 = streamWiseNotes
-      .sort((a, b) => b.notes.length - a.notes.length)
-      .slice(0, 2);
+    const data = await Notes.aggregate(pipeline);
 
     return res
       .status(200)
-      .json(new apiResponse(200, top2, "Data Fetched Successfully !!"));
+      .json(new apiResponse(200, data, "Data Fetched Successfully !!"));
   } catch (error) {
     throw new apiError(500, "Something went wrong", error);
   }
@@ -227,32 +274,17 @@ const getNotes = asyncHandler(async (req, res, next) => {
       }
     }
 
-    const pipeline = [
-      {
-        $lookup: {
-          from: "courses",
-          localField: "course",
-          foreignField: "_id",
-          as: "course",
-        },
-      },
-      {
-        $unwind: "$course",
-      },
-      { $sort: { ...sortingOrder } },
-    ];
-
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
-      // sort: sortingOrder || { createdAt: -1 },
-      // populate: [
-      //   { path: "stream", select: "name" },
-      //   { path: "course", select: "name" },
-      // ],
+      sort: sortingOrder || { createdAt: -1 },
+      populate: [
+        { path: "stream", select: "name" },
+        { path: "course", select: "name" },
+      ],
     };
 
-    const result = await Notes.aggregatePaginate(pipeline, options);
+    const result = await Notes.paginate(filters, options);
 
     if (!result) {
       throw new apiError(500, "Something went wrong");

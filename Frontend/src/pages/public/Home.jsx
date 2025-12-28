@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import logo from "@/assets/images/logo_icon.png";
 import cardImage1 from "@/assets/images/card-image-1.png";
 import cardImage2 from "@/assets/images/card-image-2.png";
@@ -6,12 +6,34 @@ import cardImage3 from "@/assets/images/card-image-3.png";
 import ThemeButton from "@/components/themeButton";
 import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
-import { Carousel } from "@/components";
+import { Carousel, Modal } from "@/components";
 import { getStreamWiseNotesHandler } from "@/services/apiHandlers";
 
 export default function Home() {
   const [carouselItems, setCarouselItems] = useState([]);
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentNote, setCurrentNote] = useState({
+    title: "",
+    file_url: "",
+    downloadEnable: false,
+  });
+
+  const openNoteModal = useCallback((title, file_url, downloadBtn = false) => {
+    setCurrentNote({ title, file_url, downloadEnable: downloadBtn });
+    setModalOpen(true);
+  }, []);
+
+  // Expose function to window for use in DataTable HTML strings
+  useEffect(() => {
+    window.buildModal = (title, file_url) => {
+      openNoteModal(title, file_url);
+    };
+
+    return () => {
+      delete window.buildModal;
+    };
+  }, [openNoteModal]);
 
   useEffect(() => {
     async function getStreamWiseData() {
@@ -54,8 +76,8 @@ export default function Home() {
           <div className="row">
             {carouselItems?.map((row) => {
               return (
-                <div className="col-12">
-                  <h3 className="fw-bold my-4 ps-2">{row?.stream}</h3>
+                <div key={row?.stream._id} className="col-12">
+                  <h3 className="fw-bold my-4 ps-2">{row?.stream?.name}</h3>
                   <Carousel
                     dots={false}
                     slidesToShow={3}
@@ -67,14 +89,20 @@ export default function Home() {
                   >
                     {row?.notes.map((note) => {
                       return (
-                        <div className="px-lg-3 px-md-2 px-3 h-100">
+                        <div
+                          key={note._id}
+                          onClick={() =>
+                            openNoteModal(note.title, note.file_url)
+                          }
+                          className="px-lg-3 px-md-2 px-3 h-100"
+                        >
                           <div className="card rounded-4 overflow-hidden border-0 shadow-sm h-100">
                             <div className="card-img w-100 rounded-3">
                               <img
                                 src={note.thumbnail}
                                 alt="card-image"
                                 className="img-fluid"
-                                style={{maxHeight: 250}}
+                                style={{ maxHeight: 250 }}
                               />
                             </div>
                             <div className="card-text px-4 py-3">
@@ -110,44 +138,40 @@ export default function Home() {
       </section>
       {/* Notes Section Ends */}
 
-      {/* Modal Box Starts */}
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
+      <Modal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        title={currentNote.title || "View Note"}
+        size="modal-xl"
+        footerContent={
+          currentNote.downloadEnable ? (
+            <button
+              type="button"
+              onClick={() =>
+                downloadNote(currentNote.title, currentNote.file_url)
+              }
+              className="btn theme-btn fw-bold rounded-pill py-2 px-3"
+            >
+              Download
+            </button>
+          ) : (
+            ""
+          )
+        }
+        closeBtn={false}
       >
-        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
-                Modal title
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">...</div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Modal Box Ends */}
+        {currentNote.file_url && (
+          <iframe
+            src={currentNote.file_url}
+            style={{
+              width: "100%",
+              height: "70vh",
+              border: "none",
+            }}
+            title={currentNote.title}
+          />
+        )}
+      </Modal>
     </main>
   );
 }

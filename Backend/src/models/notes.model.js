@@ -58,5 +58,6 @@ const notesSchema = new mongoose.Schema(
 );
 
 notesSchema.plugin(mongooseAggregatePaginate);
+notesSchema.plugin(mongoosePaginate)
 
 export const Notes = mongoose.model("Notes", notesSchema, "notes");
