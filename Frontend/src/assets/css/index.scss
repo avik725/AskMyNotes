@@ -148,6 +148,32 @@ $font-sizes: (14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 48);
   }
 }
 
+$responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
+
+@each $width in $responsive-widths {
+  .w-lg-#{$width} {
+    width: #{$width * 1%};
+  }
+}
+
+// Tablet Responsive Font Sizes
+@media screen and (max-width: 768px) and (min-width: 481px) {
+  @each $width in $responsive-widths {
+    .w-md-#{$width} {
+      width: #{$width * 1%} !important;
+    }
+  }
+}
+
+// Mobile Responsive Font Sizes
+@media screen and (max-width: 480px) {
+  @each $width in $responsive-widths {
+    .w-sm-#{$width} {
+      width: #{$width * 1%} !important;
+    }
+  }
+}
+
 // Boostrap Modal Css
 
 @media (min-width: 576px) {
@@ -325,11 +351,11 @@ $font-sizes: (14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 48);
 
 //Profile Page Starts
 
-#profile-page{
-   @media screen and (min-width: 770px) {
-  .profile-card{
-    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.14);
+#profile-page {
+  @media screen and (min-width: 770px) {
+    .profile-card {
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.14);
+    }
   }
-}
 }
 //Profile Page Ends

@@ -118,7 +118,23 @@ export default function Header() {
                       className="nav-link me-3 text-black"
                       onClick={() => navigate(routeSet.authenticated.myUploads)}
                     >
-                      Dashboard
+                      My Uploads
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link me-3 text-black"
+                      onClick={() => navigate(routeSet.authenticated.privateNotes)}
+                    >
+                      Private Notes
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link me-3 text-black"
+                      onClick={() => {}}
+                    >
+                      Ask AI
                     </button>
                   </li>
                   <li className="nav-item dropdown cursor-pointer">

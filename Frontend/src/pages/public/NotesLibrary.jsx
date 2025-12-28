@@ -318,7 +318,7 @@ export default function NotesLibrary() {
                 Explore notes from various courses and contributors.
               </p>
             </div>
-            <form action="#" className="position-relative">
+            <div className="position-relative">
               <span className="d-inline-block position-absolute top-0 left-0 bottom-0 align-content-center px-3">
                 <Search className="form-control-text-color"/>
               </span>
@@ -329,7 +329,7 @@ export default function NotesLibrary() {
                 placeholder="Search  for notes by title, course, or subject"
                 className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14"
               />
-            </form>
+            </div>
             <div className="featured-notes">
               <h5 className="fw-bold fs-18 my-4 ps-2">Featured Notes</h5>
               <div className="slider-container">

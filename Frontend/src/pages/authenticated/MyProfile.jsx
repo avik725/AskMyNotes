@@ -8,6 +8,7 @@ import {
 } from "@/services/apiHandlers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { login } from "@/store/authSlice";
+import { ReactSelect } from "@/components";
 
 export default function MyProfile() {
   const dispatch = useDispatch();
@@ -307,7 +308,7 @@ export default function MyProfile() {
                       </div>
                     </div>
                   </div>
-                  {/* Full Name */}
+
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Full Name</label>
                     <input
@@ -332,7 +333,6 @@ export default function MyProfile() {
                     />
                   </div>
 
-                  {/* Date of Birth */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Date of Birth</label>
                     <input
@@ -350,7 +350,6 @@ export default function MyProfile() {
                     />
                   </div>
 
-                  {/* Gender */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Gender</label>
                     <select
@@ -374,7 +373,6 @@ export default function MyProfile() {
                     </select>
                   </div>
 
-                  {/* Phone */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Phone Number</label>
                     <input
@@ -397,7 +395,6 @@ export default function MyProfile() {
                     />
                   </div>
 
-                  {/* Email */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Email Address</label>
                     <input
@@ -416,7 +413,6 @@ export default function MyProfile() {
                     />
                   </div>
 
-                  {/* Address */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Address</label>
                     <input
@@ -434,55 +430,45 @@ export default function MyProfile() {
                     />
                   </div>
 
-                  {/* Stream */}
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">Stream</label>
-                    <select
-                      id="prefered_stream"
-                      name="prefered_stream"
+                    <ReactSelect
+                      id={"prefered_stream"}
+                      name={"prefered_stream"}
+                      label={"Stream"}
                       value={formData?.prefered_stream || ""}
-                      onChange={(e) => {
+                      onChangeFn={(e) => {
                         setFormData((prev) => {
-                          return { ...prev, prefered_stream: e.target.value };
+                          return { ...prev, prefered_stream: e.value };
                         });
-                        // refreshSelectpickers("#prefered_stream");
                       }}
-                      className="form-control selectpicker bg-light rounded-4"
+                      options={streams?.map((stream) => {
+                        return { value: stream._id, label: stream.name };
+                      })}
                       required
-                    >
-                      {streams?.map((stream) => (
-                        <option key={stream._id} value={stream._id}>
-                          {stream.name}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
 
                   {/* Language */}
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">Language Preference</label>
-                    <select
-                      id="prefered_language"
-                      name="prefered_language"
+                    <ReactSelect
+                      id={"prefered_language"}
+                      name={"prefered_language"}
+                      label={"Language"}
                       value={formData?.prefered_language || ""}
-                      onChange={(e) => {
+                      onChangeFn={(e) => {
                         setFormData((prev) => {
-                          return { ...prev, prefered_language: e.target.value };
+                          return { ...prev, prefered_language: e.value };
                         });
-                        // refreshSelectpickers("#prefered_language");
                       }}
-                      className="form-control selectpicker bg-light rounded-4"
-                    >
-                      <option value="" disabled>
-                        Select Language
-                      </option>
-                      <option value="english">English</option>
-                      <option value="hindi">Hindi</option>
-                      <option value="marathi">Marathi</option>
-                    </select>
+                      options={[
+                        { value: "", label: "Select Language" },
+                        { value: "english", label: "English" },
+                        { value: "hindi", label: "Hindi" },
+                        { value: "marathi", label: "Marathi" },
+                      ]}
+                    />
                   </div>
 
-                  {/* Save Button */}
                   <div className="col-12 text-end mt-4">
                     <div className="row">
                       <div className="col-lg-3 offset-lg-9">
