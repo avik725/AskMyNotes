@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { html } from "gridjs";
 import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
@@ -27,10 +27,10 @@ export default function MyUploads() {
 
     window.downloadNote = (title, file_url) => {
       downloadNote(title, file_url);
-    }
+    };
     return () => {
       delete window.buildModal;
-      delete window.downloadNote; 
+      delete window.downloadNote;
     };
   }, [openNoteModal]);
 
@@ -65,47 +65,54 @@ export default function MyUploads() {
             <h5 className="fw-bold fs-22 mb-4 ps-2">Uploaded Notes</h5>
             <div id="table-wrapper">
               <DataTable
-                columns={[
-                  { name: "Title", sort: true },
-                  { name: "Course", sort: true },
-                  { name: "Semester / Year", sort: false },
-                  { name: "Action", sort: false },
-                ]}
+                columns={useMemo(
+                  () => [
+                    { name: "Title", sort: true },
+                    { name: "Course", sort: true },
+                    { name: "Semester / Year", sort: false },
+                    { name: "Action", sort: false },
+                  ],
+                  []
+                )}
                 url={getMyUploads}
-                thenFn={(data) =>
-                  data.data.uploads.docs.map((note) => [
-                    html(`<span class="text-capitalize">${note.title}</span>`),
-                    note.course.name,
-                    `${note.semester ? note.semester : note.year}${
-                      (note.semester || note.year) === 1
-                        ? "st"
-                        : (note.semester || note.year) === 2
-                        ? "nd"
-                        : (note.semester || note.year) === 3
-                        ? "rd"
-                        : "th"
-                    } ${note.semester ? "semester" : "year"}`,
-                    html(
-                      `<div>
-                  <div class="row">
-                      <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                        <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
-                        class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
-                        View
-                        </a>
-                        <span class="d-none d-lg-inline-block">|</span>
-                      </div>
-                      <div class="col-lg-auto p-0 col-12">
-                        <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
-                          Download
-                        </a>
-                      </div>
-                    </div>
-                  </div>`
-                    ),
-                  ])
-                }
-                handleFn={async (res) => {
+                thenFn={useCallback(
+                  (data) =>
+                    data.data.uploads.docs.map((note) => [
+                      html(
+                        `<span class="text-capitalize">${note.title}</span>`
+                      ),
+                      note.course.name,
+                      `${note.semester ? note.semester : note.year}${
+                        (note.semester || note.year) === 1
+                          ? "st"
+                          : (note.semester || note.year) === 2
+                          ? "nd"
+                          : (note.semester || note.year) === 3
+                          ? "rd"
+                          : "th"
+                      } ${note.semester ? "semester" : "year"}`,
+                      html(
+                        `<div>
+                            <div class="row">
+                                <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
+                                  <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
+                                  class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
+                                  View
+                                  </a>
+                                  <span class="d-none d-lg-inline-block">|</span>
+                                </div>
+                                <div class="col-lg-auto p-0 col-12">
+                                  <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                                    Download
+                                  </a>
+                                </div>
+                              </div>
+                            </div>`
+                      ),
+                    ]),
+                  []
+                )}
+                handleFn={useCallback(async (res) => {
                   let resJson = await res.json();
                   if (resJson.success) {
                     setTotalUploads(resJson.data.total_uploads);
@@ -114,38 +121,44 @@ export default function MyUploads() {
                   } else {
                     return { data: [] };
                   }
-                }}
-                totalFn={(data) => data.data.uploads.totalDocs}
+                }, [])}
+                totalFn={useCallback((data) => data.data.uploads.totalDocs, [])}
                 paginationLimit={5}
-                paginationUrlFn={(prev, page, limit) => {
+                paginationUrlFn={useCallback((prev, page, limit) => {
                   const separator = prev.includes("?") ? "&" : "?";
                   return `${prev}${separator}limit=${limit}&page=${page + 1}`;
-                }}
+                }, [])}
                 isSearchEnabled={true}
-                searchConfig={{
-                  debounceTimeout: 1000,
-                  server: {
-                    url: (prevUrl, keyword) => {
-                      const separator = prevUrl.includes("?") ? "&" : "?";
-                      return `${prevUrl}${separator}search=${keyword}`;
+                searchConfig={useMemo(
+                  () => ({
+                    debounceTimeout: 1000,
+                    server: {
+                      url: (prevUrl, keyword) => {
+                        const separator = prevUrl.includes("?") ? "&" : "?";
+                        return `${prevUrl}${separator}search=${keyword}`;
+                      },
                     },
-                  },
-                }}
+                  }),
+                  []
+                )}
                 isSortEnabled={true}
-                sortConfig={{
-                  server: {
-                    url: (prevUrl, columns) => {
-                      if (!columns.length) return prevUrl;
-                      const col = columns[0];
-                      if (col?.index > 1) return null;
-                      const separator = prevUrl.includes("?") ? "&" : "?";
+                sortConfig={useMemo(
+                  () => ({
+                    server: {
+                      url: (prevUrl, columns) => {
+                        if (!columns.length) return prevUrl;
+                        const col = columns[0];
+                        if (col?.index > 1) return null;
+                        const separator = prevUrl.includes("?") ? "&" : "?";
 
-                      let colName = ["title", "course"][col.index];
-                      const dir = col.direction === 1 ? "asc" : "desc";
-                      return `${prevUrl}${separator}column=${colName}&dir=${dir}`;
+                        let colName = ["title", "course"][col.index];
+                        const dir = col.direction === 1 ? "asc" : "desc";
+                        return `${prevUrl}${separator}column=${colName}&dir=${dir}`;
+                      },
                     },
-                  },
-                }}
+                  }),
+                  []
+                )}
               />
             </div>
           </div>

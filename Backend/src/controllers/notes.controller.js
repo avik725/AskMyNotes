@@ -111,7 +111,7 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
       page = 1,
       limit = 10,
       search = "",
-      column = "createdAt",
+      column = "createdAt", 
       dir = "desc",
     } = req.query;
 
@@ -128,11 +128,6 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
         sortingOrder = { [column]: sortDir };
       }
     }
-
-    // const pipeline = [
-    //   { $match: { }}
-    //   { $sort: { ...sortingOrder } }
-    // ];
 
     const options = {
       page: parseInt(page),
@@ -156,7 +151,7 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
       new apiResponse(
         200,
         {
-          total_uploads: notes.docs.length,
+          total_uploads: notes.totalDocs,
           total_downloads: downloads,
           uploads: notes,
         },

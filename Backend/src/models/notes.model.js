@@ -38,6 +38,7 @@ const notesSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      index: true,
     },
     downloads: {
       type: Number,
@@ -58,6 +59,6 @@ const notesSchema = new mongoose.Schema(
 );
 
 notesSchema.plugin(mongooseAggregatePaginate);
-notesSchema.plugin(mongoosePaginate)
+notesSchema.plugin(mongoosePaginate);
 
 export const Notes = mongoose.model("Notes", notesSchema, "notes");

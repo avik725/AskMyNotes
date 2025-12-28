@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
 import { Carousel, Modal } from "@/components";
 import { getStreamWiseNotesHandler } from "@/services/apiHandlers";
+import { truncateFileName, truncateText } from "@/utils/helpers";
 
 export default function Home() {
   const [carouselItems, setCarouselItems] = useState([]);
@@ -106,7 +107,17 @@ export default function Home() {
                               />
                             </div>
                             <div className="card-text px-4 py-3">
-                              <h5>{note.title}</h5>
+                              <h5
+                              className="text-capitalize"
+                                style={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  maxWidth: "100%",
+                                }}
+                              >
+                                {note.title}
+                              </h5>
                               <p className="text-black-50 fs-14">
                                 <span className="border-end border-1 pe-2 me-2 text-black-50">
                                   {note?.course?.name}

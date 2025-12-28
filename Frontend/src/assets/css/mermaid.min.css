@@ -282,9 +282,10 @@ th.gridjs-th:last-child {
 }
 .gridjs-search {
   float: left;
+  width: 100%;
 }
 .gridjs-search-input {
-  width: 250px;
+  width: 100%;
 }
 .gridjs-loading-bar {
   background-color: #fff;

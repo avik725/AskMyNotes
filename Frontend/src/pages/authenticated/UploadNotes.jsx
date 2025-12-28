@@ -7,10 +7,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { truncateFileName } from "@/utils/helpers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { ReactSelect } from "@/components";
-import {
-  destroySelectpickers,
-  renderSelectpickers,
-} from "@/utils/selectPicker";
 
 export default function UploadNotes() {
   const [formData, setFormData] = useState({
@@ -28,21 +24,6 @@ export default function UploadNotes() {
   const [semesters, setSemesters] = useState([]);
 
   const [isUploading, setIsUploading] = useState(false);
-
-  useEffect(() => {
-    destroySelectpickers("#stream");
-    renderSelectpickers("#stream");
-  }, [streams]);
-
-  useEffect(() => {
-    destroySelectpickers("#course");
-    renderSelectpickers("#course");
-  }, [courses]);
-
-  useEffect(() => {
-    destroySelectpickers("#semester");
-    renderSelectpickers("#semester");
-  }, [semesters]);
 
   async function getCourses(stream_id) {
     const response = await getCoursesHandler(stream_id);
@@ -163,32 +144,15 @@ export default function UploadNotes() {
       });
 
       if (result.success) {
-        // Reset form
-        // setFormData({
-        //   title: "",
-        //   stream: "",
-        //   course: "",
-        //   semester: "",
-        //   description: "",
-        // });
-        // setThumbnailFile(null);
-        // setNotesFile(null);
-        // setCourses([]);
-        // setSemesters([]);
-
-        // // Reset file inputs
-        // const thumbnailInput = document.querySelector("#thumbnail");
-        // const notesInput = document.querySelector("#notes_file");
-        // if (thumbnailInput) thumbnailInput.value = "";
-        // if (notesInput) notesInput.value = "";
-
-        // // Refresh selectpickers
-        // if (window.$ && typeof window.$.fn.selectpicker === "function") {
-        //   window.$("#stream").selectpicker("refresh");
-        //   window.$("#course").selectpicker("refresh");
-        //   window.$("#semester").selectpicker("refresh");
-        // }
-        window.location.reload();
+        setFormData({
+          title: "",
+          stream: "",
+          course: "",
+          semester: "",
+          description: "",
+        });
+        setThumbnailFile(null);
+        setNotesFile(null);
       }
     } catch (error) {
       fireSweetAlert({
