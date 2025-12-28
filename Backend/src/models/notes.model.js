@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Aggregate } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const notesSchema = new mongoose.Schema(
   {
@@ -17,7 +18,7 @@ const notesSchema = new mongoose.Schema(
     stream: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Stream",
-      required: true
+      required: true,
     },
     course: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,7 +49,7 @@ const notesSchema = new mongoose.Schema(
     },
     deleted_at: {
       type: Date,
-      default: null
+      default: null,
     },
   },
   {
@@ -56,6 +57,6 @@ const notesSchema = new mongoose.Schema(
   }
 );
 
-notesSchema.plugin(mongoosePaginate);
+notesSchema.plugin(mongooseAggregatePaginate);
 
 export const Notes = mongoose.model("Notes", notesSchema, "notes");

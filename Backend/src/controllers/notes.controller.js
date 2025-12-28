@@ -107,7 +107,13 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
   //fetch notes from db by user_id
   //return response
   try {
-    const { page = 1, limit = 10, search = "", column, dir } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      column = "createdAt",
+      dir = "desc",
+    } = req.query;
 
     const filters = {
       owner: req.user._id,
@@ -122,6 +128,11 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
         sortingOrder = { [column]: sortDir };
       }
     }
+
+    // const pipeline = [
+    //   { $match: { }}
+    //   { $sort: { ...sortingOrder } }
+    // ];
 
     const options = {
       page: parseInt(page),
@@ -196,10 +207,9 @@ const getNotes = asyncHandler(async (req, res, next) => {
       stream,
       course,
       semester,
-      sort,
       search,
-      column,
-      dir,
+      column = "createdAt",
+      dir = "desc",
     } = req.query;
 
     const filters = {};
@@ -210,24 +220,39 @@ const getNotes = asyncHandler(async (req, res, next) => {
 
     let sortingOrder;
     if (column && dir) {
-      const allowedColumns = ["title", "course"];
+      const allowedColumns = ["title", "course", "createdAt"];
       if (allowedColumns.includes(column)) {
         const sortDir = String(dir).toLowerCase() === "desc" ? -1 : 1;
         sortingOrder = { [column]: sortDir };
       }
     }
 
+    const pipeline = [
+      {
+        $lookup: {
+          from: "courses",
+          localField: "course",
+          foreignField: "_id",
+          as: "course",
+        },
+      },
+      {
+        $unwind: "$course",
+      },
+      { $sort: { ...sortingOrder } },
+    ];
+
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
-      sort: sortingOrder || { createdAt: -1 },
-      populate: [
-        { path: "stream", select: "name" },
-        { path: "course", select: "name" },
-      ],
+      // sort: sortingOrder || { createdAt: -1 },
+      // populate: [
+      //   { path: "stream", select: "name" },
+      //   { path: "course", select: "name" },
+      // ],
     };
 
-    const result = await Notes.paginate(filters, options);
+    const result = await Notes.aggregatePaginate(pipeline, options);
 
     if (!result) {
       throw new apiError(500, "Something went wrong");

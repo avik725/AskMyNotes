@@ -15,7 +15,7 @@ export default function Card({
     >
       <div
         className="card-img rounded-3 border border-1 overflow-hidden position-relative"
-        style={{ minHeight: 150 }}
+        style={{ height: 150, }}
       >
         <img src={cardImg} alt="icon" className="w-100 h-100" />
       </div>

@@ -9,6 +9,7 @@ import {
   uploadNotes,
   updateUserProfile,
   getFeaturesNotes,
+  getStreamWiseNotes,
 } from "./apiEndPoints";
 
 export async function getCurrentUserHandler() {
@@ -121,6 +122,18 @@ export async function uploadNotesHandler(formData) {
 
 export async function getFeaturedNotesHandler() {
   const response = await fetch(getFeaturesNotes, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function getStreamWiseNotesHandler() {
+  const response = await fetch(getStreamWiseNotes, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -8,7 +8,7 @@ import {
 } from "@/services/apiHandlers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { html } from "gridjs";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, Search } from "lucide-react";
 import { downloadNote } from "@/utils/helpers";
 import ReactSelect from "@/components/ReactSelect";
 
@@ -319,8 +319,8 @@ export default function NotesLibrary() {
               </p>
             </div>
             <form action="#" className="position-relative">
-              <span className="d-inline-block position-absolute top-0 left-0 bottom-0 align-content-center px-2">
-                <i className="fa-solid fa-magnifying-glass fs-22 form-control-text-color px-2 pt-1"></i>
+              <span className="d-inline-block position-absolute top-0 left-0 bottom-0 align-content-center px-3">
+                <Search className="form-control-text-color"/>
               </span>
               <input
                 type="text"
