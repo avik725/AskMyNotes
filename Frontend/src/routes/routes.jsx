@@ -16,7 +16,7 @@ import {
 } from "@/pages/public";
 import LoginPage from "@/pages/auth/Login";
 import RegisterPage from "@/pages/auth/Register";
-import { MyProfile, MyUploads, PrivateNotes, UploadNotes } from "@/pages/authenticated";
+import { MyProfile, PublishedNotes, PrivateNotes, UploadNotes } from "@/pages/authenticated";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,8 +39,8 @@ export const router = createBrowserRouter(
           element={<MyProfile />}
         />
         <Route
-          path={routeSet.authenticated.myUploads}
-          element={<MyUploads />}
+          path={routeSet.authenticated.publishedNotes}
+          element={<PublishedNotes />}
         />
         <Route
         path={routeSet.authenticated.privateNotes}

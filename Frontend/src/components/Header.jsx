@@ -106,19 +106,9 @@ export default function Header() {
                   <li className="nav-item">
                     <button
                       className="nav-link me-3 text-black"
-                      onClick={() =>
-                        navigate(routeSet.authenticated.uploadNotes)
-                      }
+                      onClick={() => navigate(routeSet.authenticated.publishedNotes)}
                     >
-                      Upload Notes
-                    </button>
-                  </li>
-                  <li className="nav-item">
-                    <button
-                      className="nav-link me-3 text-black"
-                      onClick={() => navigate(routeSet.authenticated.myUploads)}
-                    >
-                      My Uploads
+                      Published Notes
                     </button>
                   </li>
                   <li className="nav-item">

@@ -3,8 +3,12 @@ import { html } from "gridjs";
 import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
 import { downloadNote } from "@/utils/helpers";
+import { Funnel, Plus, Search } from "lucide-react";
+import { useNavigate } from "react-router";
+import { routeSet } from "@/routes/routeSet";
 
-export default function MyUploads() {
+export default function PublishedNotes() {
+  const navigate = useNavigate();
   const [totalUploads, setTotalUploads] = useState(0);
   const [totalDownloads, setTotalDownloads] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,21 +43,76 @@ export default function MyUploads() {
       {/* My Uploads Section Starts */}
       <section id="myuploads-section" className="py-5">
         <div className="container px-5">
-          <div className="section-title mb-4">
-            <h2 className="fw-bold">My Uploads</h2>
-            <p className="form-control-text-color fs-14">
-              Manage your shared notes and resources
-            </p>
+          <div className="row">
+            <div className="col-12">
+              <div className="section-title mb-4">
+                <h2 className="fw-bold">My Publications</h2>
+                <p className="form-control-text-color fs-14">
+                  Manage your shared notes and resources
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="row mb-4">
+            <div className="col-lg-9 col-md-8 col-12 px-2">
+              <div className="position-relative w-100 h-100">
+                <span className="d-inline-block position-absolute top-0 left-0 bottom-0 align-content-center px-3">
+                  <Search className="form-control-text-color" />
+                </span>
+                <input
+                  type="text"
+                  id="search_notes_input"
+                  name="search_notes_input"
+                  placeholder="Search public notes..."
+                  onInput={(e) => {
+                      const searchBox = document.querySelector(".gridjs-input");
+                      searchBox.value = e.target.value;
+
+                      const event = new Event("input", { bubbles: true });
+                      searchBox.dispatchEvent(event);
+                  }}
+                  className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
+                />
+              </div>
+            </div>
+            <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">
+              <button className="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100">
+                <Funnel />
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-3 col-9 px-2 pt-3 pt-md-0">
+              <button
+              onClick={()=>navigate(routeSet.authenticated.uploadNotes)}
+              className="btn bg-body-secondary w-100 py-2 py-md-3">
+                Upload New
+                <Plus />
+              </button>
+            </div>
           </div>
           <div className="row">
-            <div className="col-md-6">
-              <div className="card rounded-4 border-secondary-subtle p-4">
-                <p className="">Total Uploads</p>
+            <div className="col-md-4">
+              <div
+                style={{ backgroundColor: "#f4f4f4" }}
+                className="card rounded-4 border-secondary-subtle p-4"
+              >
+                <p className="">Total Publications</p>
                 <h4 className="fw-bold fs-26 total_uploads">{totalUploads}</h4>
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="card rounded-4 border-secondary-subtle p-4 mt-4 mt-md-0">
+            <div className="col-md-4">
+              <div
+                style={{ backgroundColor: "#f4f4f4" }}
+                className="card rounded-4 border-secondary-subtle p-4"
+              >
+                <p className="">Total Drafts</p>
+                <h4 className="fw-bold fs-26 total_uploads">0</h4>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div
+                style={{ backgroundColor: "#f4f4f4" }}
+                className="card rounded-4 border-secondary-subtle p-4 mt-4 mt-md-0"
+              >
                 <p className="">Total Downloads</p>
                 <h4 className="fw-bold fs-26 total_downloads">
                   {totalDownloads}

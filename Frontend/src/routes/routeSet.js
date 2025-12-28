@@ -13,7 +13,7 @@ export const routeSet = {
   },
   authenticated: {
     uploadNotes: "/upload-notes",
-    myUploads: "/my-uploads",
+    publishedNotes: "/my-publications",
     myProfile: "/profile",
     privateNotes: "/private-notes"
   }
