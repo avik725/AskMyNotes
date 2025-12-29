@@ -1,6 +1,5 @@
 import { createRoot } from "react-dom/client";
 import "@/assets/css/index.css";
-import "@/assets/css/bootstrap-select.css";
 import "@/assets/css/bootstrap.min.css";
 import "@/assets/css/sweetalert2.min.css";
 import "@/assets/css/mermaid.min.css";
