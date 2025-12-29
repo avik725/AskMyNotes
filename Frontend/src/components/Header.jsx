@@ -143,7 +143,7 @@ export default function Header() {
                         }
                         alt="icon"
                         className="rounded-circle"
-                        style={{ width: 40 }}
+                        style={{ width: 40, height: 35 }}
                       />
                     </span>
                     <ul className="dropdown-menu dropdown-menu-end mt-2 border-0 shadow-lg">

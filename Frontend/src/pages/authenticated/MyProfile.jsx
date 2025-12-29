@@ -289,20 +289,24 @@ export default function MyProfile() {
                             />
                           </div>
                           <div className="col-md-8 ps-md-4 text-center text-md-start align-content-center">
-                            <h4 className="fw-bold fs-26 fs-sm-22 d-none d-md-block profile_card_name">
-                              {userInfo?.fullname}
-                            </h4>
-                            <p className="form-control-text-color d-none d-md-block profile_card_email fs-14">
-                              {userInfo?.email}
-                            </p>
-                            <a
-                              className="btn d-md-none theme-btn rounded-4 fw-bold"
-                              onClick={() => {
-                                document.querySelector("#profile_pic").click();
-                              }}
-                            >
-                              Change Avatar
-                            </a>
+                            <div style={{ minWidth: 200 }}>
+                              <h4 className="fw-bold fs-26 fs-sm-22 d-none d-md-block profile_card_name">
+                                {userInfo?.fullname}
+                              </h4>
+                              <p className="form-control-text-color d-none d-md-block profile_card_email fs-14">
+                                {userInfo?.email}
+                              </p>
+                              <a
+                                className="btn d-md-none theme-btn rounded-4 fw-bold"
+                                onClick={() => {
+                                  document
+                                    .querySelector("#profile_pic")
+                                    .click();
+                                }}
+                              >
+                                Change Avatar
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
