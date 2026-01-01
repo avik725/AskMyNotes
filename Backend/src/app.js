@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import UserRouter from "./routes/user.routes.js";
 import NotesRouter from "./routes/notes.routes.js";
+import PrivateNotesRouter from "./routes/privateNotes.routes.js";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 
 const app = express();
@@ -29,6 +30,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/notes", NotesRouter);
+app.use("/api/v1/private-notes", PrivateNotesRouter);
 
 app.use((err, req, res, next) => globalErrorHandler(err, req, res, next));
 

@@ -1,5 +1,8 @@
 :root {
   --theme-color: #e8edfa;
+  --purple: #6a00f5;
+  --white: #fff;
+  --black: #2e2b29;
 }
 
 * {
@@ -110,7 +113,8 @@
   border-color: #d9dde8;
 }
 
-#library-section .gridjs-search, #myuploads-section .gridjs-search {
+#library-section .gridjs-search,
+#myuploads-section .gridjs-search {
   display: none;
 }
 

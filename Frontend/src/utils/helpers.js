@@ -15,7 +15,7 @@ const truncateText = (text, maxLength = 30) => {
   if (text.length <= maxLength) return text;
 
   const truncatedText = text.substring(0, maxLength - 4);
-  return `${truncatedText}...`
+  return `${truncatedText}...`;
 };
 
 function downloadNote(title, fileUrl) {
@@ -31,4 +31,39 @@ function downloadNote(title, fileUrl) {
   a.remove();
 }
 
-export { truncateFileName,truncateText, downloadNote };
+const NOTE_TYPE_LABELS = [
+  {
+    value: "pkm",
+    label: "Personal Knowledge",
+  },
+  {
+    value: "study",
+    label: "Study / Exam",
+  },
+  {
+    value: "thought",
+    label: "Thought Dump",
+  },
+  {
+    value: "task",
+    label: "Tasks / Todo",
+  },
+  {
+    value: "project",
+    label: "Project Notes",
+  },
+  {
+    value: "journal",
+    label: "Journal / Diary",
+  },
+  {
+    value: "memory",
+    label: "AI Memory",
+  },
+  {
+    value: "other",
+    label: "Other",
+  },
+];
+
+export { truncateFileName, truncateText, downloadNote, NOTE_TYPE_LABELS };

@@ -93,7 +93,7 @@ export default function PublishedNotes() {
             <div className="col-md-4">
               <div
                 style={{ backgroundColor: "#f4f4f4" }}
-                className="card rounded-4 border-secondary-subtle p-4"
+                className="card rounded-4 border-secondary-subtle p-4 mb-3 mb-md-0"
               >
                 <p className="">Total Publications</p>
                 <h4 className="fw-bold fs-26 total_uploads">{totalUploads}</h4>

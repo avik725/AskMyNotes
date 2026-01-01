@@ -18,7 +18,7 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
   //return response
 
   try {
-    const data = req.body;
+    const data = req?.body;
 
     if (
       !data.title ||

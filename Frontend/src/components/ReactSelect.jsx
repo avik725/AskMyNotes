@@ -31,7 +31,7 @@ export default function ReactSelect({
         }}
         defaultValue={""}
         onChange={onChangeFn}
-        value={options.filter((option) => {
+        value={options?.filter((option) => {
           return option.value === value;
         })}
         options={options}

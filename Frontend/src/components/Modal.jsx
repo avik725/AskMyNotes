@@ -48,7 +48,7 @@ export default function Modal({
         aria-hidden="false"
       >
         <div
-          className={`modal-dialog modal-dialog-centered modal-dialog-scrollable ${size}`}
+          className={`modal-dialog ${size}`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-content">
