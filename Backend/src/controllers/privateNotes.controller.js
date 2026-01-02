@@ -16,62 +16,132 @@ const createPrivateNotes = asyncHandler(async (req, res, next) => {
   //create chunks of the content text
   //create an object and add an document mongodb
   //return response
-  try {
-    const data = req?.body;
 
-    if (
-      !data.title ||
-      !data.type ||
-      !data.contentText ||
-      !data.contentJson ||
-      [data.title, data.type, data.contentJson, data.contentText].some(
-        (field) => typeof field !== "string" || field.trim() === ""
-      )
-    ) {
-      throw new apiError(400, "All Fields are Required");
-    }
+  const data = req?.body;
 
-    const notes = await PrivateNotes.create({
-      title: data?.title.toLowerCase(),
-      type: data?.type,
-      owner: req.user?._id,
-      contentText: data.contentText,
-      contentJson: data.contentJson,
-    });
-
-    if (!notes) {
-      throw new apiError(500, "Something went wrong while saving notes in DB");
-    }
-
-    const documents = [];
-    const textSplitter = getTextSplitter(500);
-    const texts = await textSplitter.splitText(data?.contentText);
-    for (let i = 0; i < texts.length; i++) {
-      const vector = await OpenAIembeddings.embedQuery(texts[i]);
-
-      documents.push({
-        note_id: notes?._id,
-        owner: req.user?._id,
-        chunk_index: i + 1,
-        chunk_text: texts[i],
-        embedding: vector,
-      });
-    }
-
-    if (!documents.length) {
-      throw new apiError(500, "Something Went Wrong whle Chunking");
-    }
-
-    await PrivateNotesChunks.insertMany(documents);
-
-    return res
-      .status(200)
-      .json(
-        new apiResponse(200, notes, "Private Notes Created Successfully !!")
-      );
-  } catch (error) {
-    throw new apiError(500, "Something went wrong", error);
+  if (
+    !data.title ||
+    !data.type ||
+    !data.contentText ||
+    !data.contentJson ||
+    [data.title, data.type, data.contentText].some(
+      (field) => typeof field !== "string" || field.trim() === ""
+    )
+  ) {
+    throw new apiError(400, "All Fields are Required");
   }
+
+  if (
+    ![
+      "pkm",
+      "study",
+      "thought",
+      "task",
+      "project",
+      "journal",
+      "memory",
+      "other",
+    ].includes(data?.type)
+  ) {
+    throw new apiError(400, "Invalid Private Note Type");
+  }
+
+  const notes = await PrivateNotes.create({
+    title: data?.title.toLowerCase(),
+    type: data?.type,
+    owner: req.user?._id,
+    contentText: data.contentText,
+    contentJson: data.contentJson,
+  });
+
+  if (!notes) {
+    throw new apiError(500, "Something went wrong while saving notes in DB");
+  }
+
+  const textSplitter = getTextSplitter(500);
+  const texts = await textSplitter.splitText(data?.contentText);
+
+  const vectors = await Promise.all(
+    texts.map((text) => OpenAIembeddings.embedQuery(text))
+  );
+
+  const documents = texts.map((text, i) => ({
+    note_id: notes._id,
+    owner: req.user._id,
+    chunk_index: i + 1,
+    chunk_text: text,
+    embedding: vectors[i],
+  }));
+
+  if (!documents.length) {
+    throw new apiError(500, "Something Went Wrong whle Chunking");
+  }
+
+  await PrivateNotesChunks.insertMany(documents);
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, notes, "Private Notes Created Successfully !!"));
 });
 
-export { createPrivateNotes };
+const getPrivateNotes = asyncHandler(async (req, res, next) => {
+  const notes = await PrivateNotes.find({
+    owner: req?.user?._id,
+    is_deleted: false,
+  }).select("-owner -is_deleted -deleted_at");
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, notes, "Private Notes Fetched Successfully !!"));
+});
+
+const updatePrivateNotes = asyncHandler(async (req, res, next) => {
+  const {
+    _id,
+    title = "",
+    type = "",
+    contentJson,
+    contentText = "",
+  } = req?.body;
+
+  if (!_id) {
+    throw new apiError(400, "Id is required !!");
+  }
+
+  if (
+    (contentText && typeof contentText !== "string") ||
+    (title && typeof title !== "string") ||
+    (type && typeof type !== "string")
+  ) {
+    throw new apiError(
+      400,
+      "Title, Type and Text Content should be in String !!"
+    );
+  }
+
+  const updates = {
+    ...(title && { title }),
+    ...(type && type),
+    ...(contentJson && { contentJson }),
+    ...(contentText && { contentText }),
+  };
+
+  const user = await PrivateNotes.findByIdAndUpdate(
+    req.user._id,
+    { $set: updates },
+    { new: true }
+  ).select("-owner -is_deleted -deleted_at");
+
+  if (!user) {
+    throw new apiError(
+      500,
+      "Something went wrong while updates private notes !!"
+    );
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, user, "Notes Updated Successfully !!"));
+});
+
+export { createPrivateNotes, getPrivateNotes, updatePrivateNotes };
