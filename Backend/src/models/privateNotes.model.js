@@ -57,6 +57,32 @@ privateNotesSchema.index({ owner: 1, createdAt: -1 });
 privateNotesSchema.plugin(mongooseAggregatePaginate);
 privateNotesSchema.plugin(mongoosePaginate);
 
+// Find Middleware (is_deleted = false)
+privateNotesSchema.pre(/^find/, function (next) {
+  if (!this.getOptions().withDeleted) {
+    this.where({ is_deleted: false });
+  }
+  next();
+});
+
+// Custom Query To get Deleted Records
+privateNotesSchema.query.withDeleted = function () {
+  return this.setOptions({ withDeleted: true });
+};
+
+// SoftDelete Method (Static)
+privateNotesSchema.statics.softDeleteById = function (id) {
+  return this.updateOne(
+    { _id: id, is_deleted: false },
+    {
+      $set: {
+        is_deleted: true,
+        deleted_at: new Date(),
+      },
+    }
+  );
+};
+
 export const PrivateNotes = mongoose.model(
   "PrivateNotes",
   privateNotesSchema,

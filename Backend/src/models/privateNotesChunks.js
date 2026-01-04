@@ -30,16 +30,6 @@ const privateNotesChunksSchema = new mongoose.Schema(
       type: [Number], // vector embeddings
       required: true,
     },
-
-    is_deleted: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
-    deleted_at: {
-      type: Date,
-      default: null,
-    },
   },
   {
     timestamps: true,

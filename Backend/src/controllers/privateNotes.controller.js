@@ -87,7 +87,6 @@ const createPrivateNotes = asyncHandler(async (req, res, next) => {
 const getPrivateNotes = asyncHandler(async (req, res, next) => {
   const notes = await PrivateNotes.find({
     owner: req?.user?._id,
-    is_deleted: false,
   }).select("-owner -is_deleted -deleted_at");
 
   return res
@@ -121,27 +120,78 @@ const updatePrivateNotes = asyncHandler(async (req, res, next) => {
 
   const updates = {
     ...(title && { title }),
-    ...(type && type),
+    ...(type && { type }),
     ...(contentJson && { contentJson }),
     ...(contentText && { contentText }),
   };
 
-  const user = await PrivateNotes.findByIdAndUpdate(
-    req.user._id,
+  const updatedNote = await PrivateNotes.findByIdAndUpdate(
+    _id,
     { $set: updates },
     { new: true }
   ).select("-owner -is_deleted -deleted_at");
 
-  if (!user) {
+  if (!updatedNote) {
     throw new apiError(
       500,
       "Something went wrong while updates private notes !!"
     );
   }
 
+  if (contentText && contentJson) {
+    PrivateNotesChunks.deleteMany({ note_id: _id }).catch((error) =>
+      console.error(error)
+    );
+
+    const textSplitter = getTextSplitter(500);
+    const texts = await textSplitter.splitText(contentText);
+
+    const vectors = await Promise.all(
+      texts.map((text) => OpenAIembeddings.embedQuery(text))
+    );
+
+    const documents = texts.map((text, i) => ({
+      note_id: updatedNote._id,
+      owner: req.user._id,
+      chunk_index: i + 1,
+      chunk_text: text,
+      embedding: vectors[i],
+    }));
+
+    if (!documents.length) {
+      throw new apiError(500, "Something Went Wrong whle Chunking");
+    }
+    await PrivateNotesChunks.insertMany(documents);
+  }
+
   return res
     .status(200)
-    .json(new apiResponse(200, user, "Notes Updated Successfully !!"));
+    .json(new apiResponse(200, updatedNote, "Notes Updated Successfully !!"));
 });
 
-export { createPrivateNotes, getPrivateNotes, updatePrivateNotes };
+const deletePrivateNotes = asyncHandler(async (req, res, next) => {
+  const { id } = req?.params;
+
+  if (!id) {
+    throw new apiError(400, "Note Id is Required !!");
+  }
+
+  const result = await PrivateNotes.softDeleteById(id);
+
+  await PrivateNotesChunks.deleteMany({ note_id: id });
+
+  if (result.matchedCount === 0) {
+    throw new apiError(404, "Note not found or already deleted");
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, null, "Note deleted Successfully !!"));
+});
+
+export {
+  createPrivateNotes,
+  getPrivateNotes,
+  updatePrivateNotes,
+  deletePrivateNotes,
+};
