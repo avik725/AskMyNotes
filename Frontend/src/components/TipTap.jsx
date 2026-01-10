@@ -250,7 +250,7 @@ function MenuBar({ editor }) {
     </div>
   );
 }
-function Tiptap({ label, getData = () => {} }) {
+function Tiptap({ label, getTextData = () => {}, getJsonData = () => {} }) {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
     extensions: [
@@ -262,11 +262,11 @@ function Tiptap({ label, getData = () => {} }) {
       }),
     ], // define your extension array
     content: "", // initial content
+    onUpdate: ({ editor }) => {
+      getJsonData(editor.getJSON());
+      getTextData(editor.getText());
+    },
   });
-
-  useEffect(()=>{
-    getData(editor.getText())
-  },[editor.getText()])
 
   return (
     <div className="tiptap-container">

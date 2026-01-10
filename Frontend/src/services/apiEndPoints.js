@@ -10,7 +10,7 @@ export const userRegistration = API_BASE_URL + "users/register";
 export const updateUserProfile = API_BASE_URL + "users/update-profile"
 
 
-// Notes Api End Points
+// Public Notes Api End Points
 export const getStreams = API_BASE_URL + "notes/get-streams";
 export const getCourses = API_BASE_URL + "notes/get-courses";
 export const getStreamWiseNotes = API_BASE_URL + "notes/get-stream-wise-notes";
@@ -18,6 +18,11 @@ export const getFiltersData = API_BASE_URL + "notes/get_filters";
 export const getMyUploads = API_BASE_URL + "notes/get-my-uploads";
 export const getNotes = API_BASE_URL + "notes/get-notes";
 export const getFeaturesNotes = API_BASE_URL + "notes/get-featured-notes";
-
-
 export const uploadNotes = API_BASE_URL + "notes/upload-notes";
+
+
+// Private Notes API End Points
+export const getPrivateNotes = API_BASE_URL + "private-notes/get";
+export const createPrivateNotes = API_BASE_URL + "private-notes/create";
+export const updatePrivateNotes = API_BASE_URL + "private-notes/update";
+export const deletePrivatNotes = API_BASE_URL + "private-notes/delete";

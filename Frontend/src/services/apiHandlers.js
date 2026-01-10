@@ -10,8 +10,13 @@ import {
   updateUserProfile,
   getFeaturesNotes,
   getStreamWiseNotes,
+  getPrivateNotes,
+  createPrivateNotes,
+  deletePrivatNotes,
+  updatePrivateNotes,
 } from "./apiEndPoints";
 
+// User Handlers
 export async function getCurrentUserHandler() {
   const response = await fetch(getCurrentUser, {
     method: "GET",
@@ -85,6 +90,7 @@ export async function userProfileUpdateHandler(formData) {
   return result;
 }
 
+// Public Notes Handlers
 export async function getStreamsHandler() {
   const response = await fetch(getStreams, {
     method: "GET",
@@ -138,6 +144,61 @@ export async function getStreamWiseNotesHandler() {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+// Private Notes Handlers
+export async function getPrivateNotesHandler() {
+  const response = await fetch(getPrivateNotes, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function createPrivateNotesHandler(formData) {
+  const response = await fetch(createPrivateNotes, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(formData),
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function updatePrivateNotesHandler(formData) {
+  const response = await fetch(updatePrivateNotes, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function deletePrivateNotesHandler(id) {
+  const response = await fetch(`${deletePrivatNotes}/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
   });
 
   const result = await response.json();
