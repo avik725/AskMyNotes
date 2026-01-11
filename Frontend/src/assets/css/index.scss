@@ -180,14 +180,20 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
 
 // Boostrap Modal Css
 
-@media (min-width: 576px) {
-  .modal-dialog {
-    max-width: 700px !important;
-  }
-}
-
 .modal-dialog-scrollable .modal-content {
   height: 75%;
+}
+
+.tiptap-container .form-control div {
+  
+  .tiptap[contenteditable=false] {
+    max-height: 400px;
+    overflow: scroll;
+  }
+  .tiptap[contenteditable=true] {
+    max-height: 300px;
+    overflow: scroll;
+  }
 }
 
 // Verified bagde

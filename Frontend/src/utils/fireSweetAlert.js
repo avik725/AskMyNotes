@@ -1,4 +1,4 @@
-function fireSweetAlert({ success, message, timer = 3000 }) {
+function fireSweetAlert({ success, message, timer = 2000 }) {
   return Swal.fire({
     toast: true,
     position: "top-end",

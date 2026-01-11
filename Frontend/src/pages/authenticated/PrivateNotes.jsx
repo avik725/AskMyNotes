@@ -2,16 +2,18 @@ import { Modal, ReactSelect } from "@/components";
 import { Tiptap } from "@/components";
 import {
   createPrivateNotesHandler,
+  deletePrivateNotesHandler,
   getPrivateNotesHandler,
   updatePrivateNotesHandler,
 } from "@/services/apiHandlers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
-import { NOTE_TYPE_LABELS } from "@/utils/helpers";
-import { Funnel, Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { NOTE_TYPE_LABELS, truncateText } from "@/utils/helpers";
+import { Funnel, Plus, Search, SquarePen, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export default function PrivateNotes() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     _id: "",
@@ -20,12 +22,26 @@ export default function PrivateNotes() {
     contentText: "",
     contentJson: null,
   });
+  const [viewModalData, setViewModalData] = useState({
+    _id: "",
+    title: "",
+    type: "",
+    contentText: "",
+  });
 
+  const viewModalStruct = {
+    _id: "",
+    title: "",
+    type: "",
+    contentText: "",
+  };
+
+  const editorRef = useRef();
   const [notes, setNotes] = useState([]);
 
   async function fetchPrivateNotes() {
     const response = await getPrivateNotesHandler();
-    setNotes(response.data);
+    if (response.success) setNotes(response.data);
   }
   useEffect(() => {
     fetchPrivateNotes();
@@ -52,7 +68,6 @@ export default function PrivateNotes() {
       });
       return;
     }
-
     if (formData._id === "") {
       setLoading(true);
       try {
@@ -62,7 +77,6 @@ export default function PrivateNotes() {
           contentText: formData.contentText,
           contentJson: formData.contentJson,
         });
-
         setLoading(false);
         fireSweetAlert({
           success: response.success,
@@ -72,9 +86,10 @@ export default function PrivateNotes() {
               ? "Note Created Successfully"
               : "Failed to Create Note"),
         });
-
         if (response.success) {
           setFormData(formDataStruct);
+          fetchPrivateNotes();
+          setModalOpen(false);
         }
       } catch (error) {
         fireSweetAlert({
@@ -100,9 +115,10 @@ export default function PrivateNotes() {
               ? "Note Updated Successfully"
               : "Failed to update Note"),
         });
-
         if (response.success) {
           setFormData(formDataStruct);
+          fetchPrivateNotes();
+          setModalOpen(false);
         }
       } catch (error) {
         fireSweetAlert({
@@ -111,6 +127,28 @@ export default function PrivateNotes() {
         });
         console.error("update error:", error);
       }
+    }
+  }
+
+  async function deleteNote(id) {
+    try {
+      const response = await deletePrivateNotesHandler(id);
+
+      fireSweetAlert({
+        success: response.success,
+        message:
+          response.message ||
+          (response.success
+            ? "Note Deleted Successfully !!"
+            : "Failed while deleting notes !!"),
+      });
+
+      fetchPrivateNotes();
+    } catch (error) {
+      fireSweetAlert({
+        success: false,
+        message: error.message || "Something Went Wrong While Deleting Note !!",
+      });
     }
   }
 
@@ -163,40 +201,79 @@ export default function PrivateNotes() {
             className="overflow-y-scroll border rounded-3 p-3 overflow-x-hidden mt-4"
             style={{ height: "60vh" }}
           >
-            <div className="row">
-              {notes?.map((note) => {
-                return (
-                  <div className="col-lg-4 col-md-6 mb-3">
-                    <div
-                      className="card cursor-pointer rounded-3 py-5 px-3"
-                      style={{ backgroundColor: "#f4f4f4" }}
-                      onClick={() => {
-                        setModalOpen(true);
-                        setFormData({
-                          _id: note._id,
-                          title: note.title,
-                          contentJson: note.contentJson,
-                          contentText: note.contentText,
-                          type: note.type,
-                        });
-                      }}
-                    >
-                      <h3 className="fw-bold">{note.title}</h3>
-                      <p className="form-control-text-color fs-14 m-0">
-                        Manage your private notes and resources
-                      </p>
-                      <p className="form-control-text-color fs-14 m-0">
-                        {note.createdAt
-                          ? new Date(note.createdAt)
-                              .toLocaleString()
-                              .split(",")[0]
-                          : ""}
-                      </p>
+            {notes.length > 0 ? (
+              <div className="row">
+                {notes?.map((note) => {
+                  return (
+                    <div key={note?._id} className="col-lg-4 col-md-6 mb-3">
+                      <div
+                        className="card position-relative cursor-pointer rounded-3 py-5 px-3"
+                        style={{ backgroundColor: "#f4f4f4" }}
+                        onClick={() => {
+                          setViewModalData(note);
+                          setViewModalOpen(true);
+                        }}
+                      >
+                        <div className="d-inline-block position-absolute top-0 end-0 p-2">
+                          <span
+                            className="me-3"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setModalOpen(true);
+                              setFormData({
+                                _id: note?._id,
+                                title: note?.title,
+                                contentJson: note?.contentJson,
+                                contentText: note?.contentText,
+                                type: note?.type,
+                              });
+                            }}
+                          >
+                            <SquarePen size={18} className="text-primary" />
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              deleteNote(note?._id);
+                            }}
+                          >
+                            <Trash2 size={18} className="text-danger" />
+                          </span>
+                        </div>
+
+                        <h3 className="fw-bold">
+                          {note?.title ? truncateText(note?.title, 20) : ""}
+                        </h3>
+                        <p className="form-control-text-color fs-14 m-0">
+                          Manage your private notes and resources
+                        </p>
+                        <p className="form-control-text-color fs-14 m-0">
+                          {note?.createdAt
+                            ? new Date(note?.createdAt)
+                                .toLocaleString()
+                                .split(",")[0]
+                            : ""}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                className="align-content-center text-center h-100 rounded-3"
+                style={{ backgroundColor: "#f4f4f4" }}
+              >
+                <div className="d-inline-block p-4">
+                  <h3 className="fw-bold">No Notes Found</h3>
+                  <p className="form-control-text-color fs-14 mt-2">
+                    Create your first private note to get started
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -207,19 +284,22 @@ export default function PrivateNotes() {
         title="Create New Private Note"
         size="modal-lg"
         onClose={() => {
+          editorRef.current.clear();
           setFormData(formDataStruct);
         }}
         footerContent={
           <>
             <button
-              onClick={() => {}}
+              onClick={() => {
+                setFormData(formDataStruct);
+                // editorRef.current.clear();
+              }}
               className="btn theme-btn rounded-pill py-2 px-3"
             >
-              Save Draft
+              Clear
             </button>
             <button
               onClick={() => {
-                console.log(formData);
                 submitForm();
               }}
               className="btn theme-btn rounded-pill py-2 px-3 align-content-center"
@@ -245,8 +325,9 @@ export default function PrivateNotes() {
           </>
         }
         closeBtn={false}
+        isScrollable={true}
       >
-        <form action="#">
+        <div>
           <div className="mb-3">
             <label htmlFor="title" className="form-label">
               Note Title
@@ -285,19 +366,67 @@ export default function PrivateNotes() {
           <div className="mb-3">
             <Tiptap
               label={"Content"}
-              getTextData={(content) => {
+              content={formData.contentJson}
+              getTextData={(text) => {
                 setFormData((prev) => {
-                  return { ...prev, contentText: content };
+                  return { ...prev, contentText: text };
                 });
               }}
-              getJsonData={(content) => {
+              getJsonData={(json) => {
                 setFormData((prev) => {
-                  return { ...prev, contentJson: content };
+                  return { ...prev, contentJson: json };
                 });
               }}
+              ref={editorRef}
             />
           </div>
-        </form>
+        </div>
+      </Modal>
+      <Modal
+        open={viewModalOpen}
+        setOpen={setViewModalOpen}
+        title={
+          viewModalData.title ? truncateText(viewModalData.title, 20) : "..."
+        }
+        isScrollable={true}
+        size="modal-md"
+        onClose={() => {
+          setViewModalData(formDataStruct);
+        }}
+        closeBtn={false}
+        showFooter={false}
+      >
+        <div>
+          <div className="mb-3">
+            <label htmlFor="title" className="form-label">
+              Note Title
+            </label>
+            <input
+              type="text"
+              className="form-control py-md-3 py-2 rounded-4 bg-light fs-sm-14"
+              value={viewModalData.title}
+              disabled
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="type" className="form-label">
+              Note Type
+            </label>
+            <input
+              type="text"
+              className="form-control py-md-3 py-2 rounded-4 bg-light fs-sm-14"
+              value={viewModalData.type}
+              disabled
+            />
+          </div>
+          <div className="mb-3">
+            <Tiptap
+              label={"Content"}
+              content={viewModalData.contentJson}
+              isDisabled={true}
+            />
+          </div>
+        </div>
       </Modal>
     </main>
   );

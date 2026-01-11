@@ -1,8 +1,8 @@
 import multer from "multer";
 
 export default function globalErrorHandler(err, req, res, next) {
-  let statusCode = err.statusCode || 500; // Default to 500 if no statusCode
-  let message = err.message || "Internal Server Error"; // Default message if none
+  let statusCode = err.statusCode || 500; 
+  let message = err.message || "Internal Server Error"; 
 
   // Handle Multer-specific errors
   if (err instanceof multer.MulterError) {
@@ -22,7 +22,7 @@ export default function globalErrorHandler(err, req, res, next) {
     statusCode,
     success: false,
     data: null,
-    message: message, // Error message
+    message: message,
     ...(err.errors &&
       process.env.NODE_ENV === "development" && { errors: err.errors }), // Any additional errors
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }), // Show stack trace in development only

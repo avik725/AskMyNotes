@@ -10,8 +10,8 @@ export default function Modal({
   footerContent,
   size = "", // "modal-sm", "modal-lg", "modal-xl"
   backdrop = true,
-  keyboard = true,
-  closeBtn
+  isScrollable = false,
+  closeBtn,
 }) {
   const handleClose = useCallback(() => {
     if (onClose) {
@@ -48,12 +48,17 @@ export default function Modal({
         aria-hidden="false"
       >
         <div
-          className={`modal-dialog ${size}`}
+          className={`modal-dialog ${
+            isScrollable && "modal-dialog-scrollable"
+          } modal-dialog-centered modal-fullscreen-md-down ${size}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="modal-content">
+          <div className="modal-content" style={{ height: "100%" }}>
             <div className="modal-header">
-              <h1 className="modal-title fs-5 text-capitalize" id="exampleModalLabel">
+              <h1
+                className="modal-title fs-5 text-capitalize"
+                id="exampleModalLabel"
+              >
                 {title}
               </h1>
               <button

@@ -366,13 +366,17 @@
     width: 100% !important;
   }
 }
-@media (min-width: 576px) {
-  .modal-dialog {
-    max-width: 700px !important;
-  }
-}
 .modal-dialog-scrollable .modal-content {
   height: 75%;
+}
+
+.tiptap-container .form-control div .tiptap[contenteditable=false] {
+  max-height: 400px;
+  overflow: scroll;
+}
+.tiptap-container .form-control div .tiptap[contenteditable=true] {
+  max-height: 300px;
+  overflow: scroll;
 }
 
 .verified-badge {

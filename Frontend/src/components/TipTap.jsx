@@ -3,9 +3,21 @@ import {
   FontSize,
   TextStyle,
 } from "@tiptap/extension-text-style";
-import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
+import {
+  EditorContent,
+  EditorContext,
+  useCurrentEditor,
+  useEditor,
+  useEditorState,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useEffect, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import {
   Bold,
   Code,
@@ -250,35 +262,66 @@ function MenuBar({ editor }) {
     </div>
   );
 }
-function Tiptap({ label, getTextData = () => {}, getJsonData = () => {} }) {
-  const editor = useEditor({
-    shouldRerenderOnTransaction: true,
-    extensions: [
-      StarterKit,
-      TextStyle,
-      FontSize,
-      Placeholder.configure({
-        placeholder: "Enter something …",
-      }),
-    ], // define your extension array
-    content: "", // initial content
-    onUpdate: ({ editor }) => {
-      getJsonData(editor.getJSON());
-      getTextData(editor.getText());
-    },
-  });
+const Tiptap = forwardRef(
+  ({ label, content, getTextData = () => { }, getJsonData = () => { }, isDisabled = false }, ref) => {
+    const editor = useEditor({
+      shouldRerenderOnTransaction: true,
+      extensions: [
+        StarterKit,
+        TextStyle,
+        FontSize,
+        Placeholder.configure({
+          placeholder: "Enter something …",
+        }),
+      ], // define your extension array
+      content: content || "", // initial content
+      onUpdate: ({ editor }) => {
+        getJsonData(editor.getJSON());
+        getTextData(editor.getText());
+      },
+      editable: !isDisabled
+    });
 
-  return (
-    <div className="tiptap-container">
-      <label htmlFor="editor" className="form-label">
-        {label}
-      </label>
-      <div className="form-control">
-        <MenuBar editor={editor} />
-        <EditorContent editor={editor} />
-      </div>
-    </div>
-  );
-}
+    useEffect(() => {
+      if (editor && content) {
+        editor.commands.setContent(content);
+      } else if (editor && !content) {
+        editor.commands.clearContent();
+      }
+    }, [content, editor]);
+
+    const providerValue = useMemo(() => ({ editor }), [editor]);
+
+    return (
+      <EditorContext.Provider value={providerValue}>
+        <div className="tiptap-container">
+          <label htmlFor="editor" className="form-label">
+            {label}
+          </label>
+          <div className="form-control" >
+            {!isDisabled && <MenuBar editor={editor} />}
+            <EditorBridge ref={ref} />
+            <EditorContent editor={editor}  />
+          </div>
+        </div>
+      </EditorContext.Provider>
+    );
+  }
+);
+
+const EditorBridge = forwardRef((_, ref) => {
+  const editor = useCurrentEditor();
+
+  useImperativeHandle(ref, () => ({
+    getText: () => editor?.editor.getText(),
+    getJSON: () => editor?.editor.getJSON(),
+
+    clear: () => editor?.editor.commands.clearContent(),
+
+    set: (json) => editor?.editor.commands.setContent(json),
+  }));
+
+  return null;
+});
 
 export default Tiptap;
