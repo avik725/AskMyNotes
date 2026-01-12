@@ -1,5 +1,6 @@
 import { Modal, ReactSelect } from "@/components";
 import { Tiptap } from "@/components";
+import useDebounce from "@/hooks/useDebounce";
 import {
   createPrivateNotesHandler,
   deletePrivateNotesHandler,
@@ -8,12 +9,14 @@ import {
 } from "@/services/apiHandlers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { NOTE_TYPE_LABELS, truncateText } from "@/utils/helpers";
-import { Funnel, Plus, Search, SquarePen, Trash2 } from "lucide-react";
+import { Funnel, Plus, Search, SquarePen, Trash2, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function PrivateNotes() {
   const [modalOpen, setModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     _id: "",
@@ -39,13 +42,13 @@ export default function PrivateNotes() {
   const editorRef = useRef();
   const [notes, setNotes] = useState([]);
 
-  async function fetchPrivateNotes() {
-    const response = await getPrivateNotesHandler();
+  async function fetchPrivateNotes(search) {
+    const response = await getPrivateNotesHandler(search);
     if (response.success) setNotes(response.data);
   }
   useEffect(() => {
-    fetchPrivateNotes();
-  }, []);
+    fetchPrivateNotes(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
 
   const formDataStruct = {
     _id: "",
@@ -170,22 +173,64 @@ export default function PrivateNotes() {
           <div className="row">
             <div className="col-lg-9 col-md-8 col-12 px-2">
               <div className="position-relative w-100 h-100">
-                <span className="d-inline-block position-absolute top-0 left-0 bottom-0 align-content-center px-3">
+                <span className="d-inline-block position-absolute top-0 start-0 bottom-0 align-content-center px-3">
                   <Search className="form-control-text-color" />
                 </span>
                 <input
                   type="text"
                   id="search_notes_input"
                   name="search_notes_input"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search private notes..."
                   className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
                 />
+                <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
+                  <XIcon
+                    className="form-control-text-color"
+                    onClick={() => {
+                      setSearchQuery("");
+                    }}
+                  />
+                </span>
               </div>
             </div>
             <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">
-              <button className="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100">
-                <Funnel />
-              </button>
+              <div class="btn-group">
+                <button
+                  type="button"
+                  class="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100 dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <Funnel />
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Action
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Another action
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Something else here
+                    </a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Separated link
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
             <div className="col-lg-2 col-md-3 col-9 px-2 pt-3 pt-md-0">
               <button

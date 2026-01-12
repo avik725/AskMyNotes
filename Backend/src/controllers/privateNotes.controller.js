@@ -85,8 +85,10 @@ const createPrivateNotes = asyncHandler(async (req, res, next) => {
 });
 
 const getPrivateNotes = asyncHandler(async (req, res, next) => {
+  const { search = "" } = req?.query;
   const notes = await PrivateNotes.find({
     owner: req?.user?._id,
+    ...(search.trim() !== "" && { title: {$regex : search, $options: 'i'} }),
   }).select("-owner -is_deleted -deleted_at");
 
   return res

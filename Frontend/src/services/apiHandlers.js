@@ -151,8 +151,8 @@ export async function getStreamWiseNotesHandler() {
 }
 
 // Private Notes Handlers
-export async function getPrivateNotesHandler() {
-  const response = await fetch(getPrivateNotes, {
+export async function getPrivateNotesHandler(search = "") {
+  const response = await fetch(`${getPrivateNotes}?search=${search}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
