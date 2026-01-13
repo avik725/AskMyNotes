@@ -19,6 +19,7 @@ export const getMyUploads = API_BASE_URL + "notes/get-my-uploads";
 export const getNotes = API_BASE_URL + "notes/get-notes";
 export const getFeaturesNotes = API_BASE_URL + "notes/get-featured-notes";
 export const uploadNotes = API_BASE_URL + "notes/upload-notes";
+export const incrementNoteDownloadCount = API_BASE_URL + "notes/increment-note-download";
 
 
 // Private Notes API End Points

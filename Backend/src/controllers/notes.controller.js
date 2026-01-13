@@ -103,22 +103,14 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
 });
 
 const getMyUploads = asyncHandler(async (req, res, next) => {
-  //get userid from request
-  //fetch notes from db by user_id
-  //return response
   try {
     const {
       page = 1,
       limit = 10,
       search = "",
-      column = "createdAt", 
+      column = "createdAt",
       dir = "desc",
     } = req.query;
-
-    const filters = {
-      owner: req.user._id,
-      ...(search && { title: { $regex: search, $options: "i" } }),
-    };
 
     let sortingOrder;
     if (column && dir) {
@@ -133,26 +125,96 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
       page: parseInt(page),
       limit: parseInt(limit),
       sort: sortingOrder || { createdAt: -1 },
-      populate: [
-        { path: "stream", select: "name" },
-        { path: "course", select: "name" },
-      ],
     };
-    const notes = await Notes.paginate(filters, options);
+
+    const myAggregate = Notes.aggregate([
+      {
+        $match: {
+          owner: new mongoose.Types.ObjectId(req.user._id),
+          ...(search && { title: { $regex: search, $options: "i" } }),
+        },
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "course",
+          foreignField: "_id",
+          as: "course",
+        },
+      },
+      {
+        $unwind: {
+          path: "$course",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "streams",
+          localField: "stream",
+          foreignField: "_id",
+          as: "stream",
+        },
+      },
+      {
+        $unwind: {
+          path: "$stream",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          course: { _id: "$course._id", name: "$course.name" },
+          stream: { _id: "$stream._id", name: "$stream.name" },
+          file_url: 1,
+          thumbnail: 1,
+          title: 1,
+          semester: 1,
+          description: 1,
+          is_verified: 1,
+          // owner: 1,
+          // downloads: 1,
+        },
+      },
+    ]);
+
+    //pipeline to calculate downloads
+    const downloadsPipeline = [
+      {
+        $match: {
+          owner: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalDownloads: { $sum: "$downloads" },
+        },
+      },
+    ];
+
+    const [notes, totalDownloadsResult] = await Promise.all([
+      Notes.aggregatePaginate(myAggregate, options),
+      Notes.aggregate(downloadsPipeline),
+    ]);
 
     if (!notes) {
       throw new apiError(500, "Something went wrong");
     }
 
-    let downloads = 0;
-    notes.docs.map((upload) => (downloads += upload.downloads));
+    // Return 0 Downloads if user has No uploads
+    const total_downloads =
+      totalDownloadsResult.length > 0
+        ? totalDownloadsResult[0].totalDownloads
+        : 0;
 
     return res.status(200).json(
       new apiResponse(
         200,
         {
           total_uploads: notes.totalDocs,
-          total_downloads: downloads,
+          total_downloads: total_downloads,
           uploads: notes,
         },
         "Data Fetched Successfully !!"
@@ -369,6 +431,16 @@ const getCourses = asyncHandler(async (req, res, next) => {
   }
 });
 
+const incrementNoteDownload = asyncHandler(async (req, res, next) => {
+  const { noteId } = req?.query;
+
+  await Notes.findByIdAndUpdate(noteId, {
+    $inc: { ["downloads"]: 1 },
+  });
+
+  return res.status(200).json(new apiResponse(200, null, "Request Success !!"));
+});
+
 export {
   uploadNotes,
   getMyUploads,
@@ -378,4 +450,5 @@ export {
   getStreams,
   getCourses,
   getStreamWiseNotes,
+  incrementNoteDownload,
 };

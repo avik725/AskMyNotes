@@ -8,7 +8,7 @@ import {
 } from "@/services/apiHandlers";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 import { html } from "gridjs";
-import { CircleCheck, Search } from "lucide-react";
+import { CircleCheck, Search, XIcon } from "lucide-react";
 import { downloadNote } from "@/utils/helpers";
 import ReactSelect from "@/components/ReactSelect";
 
@@ -107,8 +107,8 @@ export default function NotesLibrary() {
     window.buildModal = (title, file_url) => {
       openNoteModal(title, file_url);
     };
-    window.downloadNote = (title, file_url) => {
-      downloadNote(title, file_url);
+    window.downloadNote = (title, file_url, id) => {
+      downloadNote(title, file_url, id);
     };
     return () => {
       delete window.buildModal;
@@ -242,9 +242,28 @@ export default function NotesLibrary() {
                 type="text"
                 id="search_notes_input"
                 name="search_notes_input"
+                onInput={(e) => {
+                  const searchBox = document.querySelector(".gridjs-input");
+                  searchBox.value = e.target.value;
+
+                  const event = new Event("input", { bubbles: true });
+                  searchBox.dispatchEvent(event);
+                }}
                 placeholder="Search  for notes by title, course, or subject"
                 className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14"
               />
+              <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
+                  <XIcon
+                    className="form-control-text-color"
+                    onClick={() => {
+                      const searchBox = document.querySelector("#search_notes_input");
+                      searchBox.value = "";
+
+                      const event = new Event("input", { bubbles: true });
+                      searchBox.dispatchEvent(event);
+                    }}
+                  />
+                </span>
             </div>
             <div className="featured-notes">
               <h5 className="fw-bold fs-18 my-4 ps-2">Featured Notes</h5>
@@ -345,7 +364,7 @@ export default function NotesLibrary() {
                                       <span class="d-none d-lg-inline-block">|</span>
                                   </div>
                                   <div class="col-lg-auto p-0 col-12">
-                                      <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                                      <a href="#" onclick="downloadNote('${note.title}','${note.file_url}','${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
                                       Download
                                       </a>
                                   </div>

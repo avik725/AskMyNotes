@@ -1,3 +1,5 @@
+import { incrementNotesDownloadCountHandler } from "@/services/apiHandlers";
+
 const truncateFileName = (fileName, maxLength = 25) => {
   if (!fileName) return "";
   if (fileName.length <= maxLength) return fileName;
@@ -18,7 +20,8 @@ const truncateText = (text, maxLength = 30) => {
   return `${truncatedText}...`;
 };
 
-function downloadNote(title, fileUrl) {
+async function downloadNote(title, fileUrl, id = "") {
+  if (id !== "") await incrementNotesDownloadCountHandler(id);
   const downloadUrl = fileUrl.includes("upload/")
     ? fileUrl.replace("upload/", "upload/fl_attachment/")
     : fileUrl;

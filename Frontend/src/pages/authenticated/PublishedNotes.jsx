@@ -3,7 +3,7 @@ import { html } from "gridjs";
 import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
 import { downloadNote } from "@/utils/helpers";
-import { Funnel, Plus, Search } from "lucide-react";
+import { Funnel, Plus, Search, XIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
 
@@ -73,6 +73,18 @@ export default function PublishedNotes() {
                   }}
                   className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
                 />
+                <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
+                  <XIcon
+                    className="form-control-text-color"
+                    onClick={() => {
+                      const searchBox = document.querySelector("#search_notes_input");
+                      searchBox.value = "";
+
+                      const event = new Event("input", { bubbles: true });
+                      searchBox.dispatchEvent(event);
+                    }}
+                  />
+                </span>
               </div>
             </div>
             <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">

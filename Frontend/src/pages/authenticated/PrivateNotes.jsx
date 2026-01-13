@@ -156,9 +156,9 @@ export default function PrivateNotes() {
   }
 
   return (
-    <main id="myuploads-page">
+    <main id="private-notes-page">
       {/* My Uploads Section Starts */}
-      <section id="myuploads-section" className="py-5">
+      <section id="private-notes-section" className="py-5">
         <div className="container px-5">
           <div className="row">
             <div className="col-12">
@@ -196,7 +196,7 @@ export default function PrivateNotes() {
               </div>
             </div>
             <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">
-              <div class="btn-group">
+              <div class="btn-group w-100">
                 <button
                   type="button"
                   class="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100 dropdown-toggle"

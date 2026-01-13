@@ -14,6 +14,7 @@ import {
   createPrivateNotes,
   deletePrivatNotes,
   updatePrivateNotes,
+  incrementNoteDownloadCount,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -148,6 +149,17 @@ export async function getStreamWiseNotesHandler() {
 
   const result = await response.json();
   return result;
+}
+
+export async function incrementNotesDownloadCountHandler(id) {
+  await fetch(`${incrementNoteDownloadCount}?noteId=${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return;
 }
 
 // Private Notes Handlers

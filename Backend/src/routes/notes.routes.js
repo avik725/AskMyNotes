@@ -10,6 +10,7 @@ import {
   getStreams,
   getCourses,
   getStreamWiseNotes,
+  incrementNoteDownload,
 } from "../controllers/notes.controller.js";
 
 const router = Router();
@@ -35,5 +36,7 @@ router.route("/get-featured-notes").get(getFeaturesNotes);
 router.route("/get_filters").get(getFiltersData);
 
 router.route("/get-stream-wise-notes").get(getStreamWiseNotes);
+
+router.route("/increment-note-download").post(incrementNoteDownload);
 
 export default router;
