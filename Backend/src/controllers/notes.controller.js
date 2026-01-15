@@ -8,6 +8,7 @@ import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { Stream } from "../models/streams.model.js";
 import { Course } from "../models/courses.model.js";
+import path from 'path';
 import {
   getOpenAIEmbeddingModel,
   getTextSplitter,
@@ -99,7 +100,7 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
       throw new apiError(500, "Something went wrong while uploading notes");
     }
 
-    const fileExt = file_url.format; 
+    const fileExt = path.extname(notesFileLocalPath).slice(1).toLowerCase();
     const supportedTypes = ["pdf", "docx", "txt"];
     if (!supportedTypes.includes(fileExt)) {
       throw new apiError(400, "Unsupported file type")
@@ -126,6 +127,8 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
     }
     
     await NotesChunks.insertMany(documents);
+    
+    fs.unlinkSync(notesFileLocalPath);
 
     return res
       .status(200)
