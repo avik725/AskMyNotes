@@ -36,9 +36,10 @@ const notesChunksSchema = new Schema(
         timestamps: true,
     }
 )
-
-privateNotesChunksSchema.index({ owner: 1, is_deleted: 1 });
-privateNotesChunksSchema.index({ note_id: 1, chunk_index: 1 });
+notesChunksSchema.index({ owner: 1, note_id: 1 });
+notesChunksSchema.index({ note_id: 1, chunk_index: 1 },
+  { unique: true }
+);
 
 
 export const NotesChunks = mongoose.model("NotesChunk", notesChunksSchema, "notes_chunks")
