@@ -17,7 +17,7 @@ const notesChunksSchema = new Schema(
             index: true
         },
 
-        text: {
+        chunk_text: {
             type: String,
             required: true
         },
@@ -27,7 +27,7 @@ const notesChunksSchema = new Schema(
             required: true,
         },
 
-        vectorEmbeddings: {
+        embedding: {
             type: [Number],
             required: true
         }
@@ -37,6 +37,8 @@ const notesChunksSchema = new Schema(
     }
 )
 
+privateNotesChunksSchema.index({ owner: 1, is_deleted: 1 });
+privateNotesChunksSchema.index({ note_id: 1, chunk_index: 1 });
 
 
 export const NotesChunks = mongoose.model("NotesChunk", notesChunksSchema, "notes_chunks")
