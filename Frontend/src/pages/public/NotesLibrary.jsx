@@ -422,7 +422,7 @@ export default function NotesLibrary() {
         open={modalOpen}
         setOpen={setModalOpen}
         title={currentNote.title || "View Note"}
-        size="modal-lg"
+        size="modal-xl"
         footerContent={
           currentNote.downloadEnable ? (
             <button

@@ -68,56 +68,6 @@ export default function MyProfile() {
     getStreams();
   }, []);
 
-  function initializeSelectpickers(identifier) {
-    if (
-      $(identifier).length &&
-      typeof $(identifier).selectpicker === "function"
-    ) {
-      if ($(identifier).data("selectpicker")) {
-        $(identifier).selectpicker("destroy");
-      }
-      $(identifier).selectpicker();
-    }
-  }
-
-  function refreshSelectpickers(identifier) {
-    if (
-      $(identifier).length &&
-      typeof $(identifier).selectpicker === "function"
-    ) {
-      $(identifier).selectpicker("refresh");
-    }
-  }
-
-  // Initialize selectpickers on Load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      initializeSelectpickers("#gender");
-      initializeSelectpickers("#prefered_stream");
-      initializeSelectpickers("#prefered_language");
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Refresh selectpickers when streams data changes
-  // useEffect(() => {
-  //   if (streams.length > 0) {
-  //     const timer = setTimeout(() => {
-  //       refreshSelectpickers("#prefered_stream");
-  //     }, 100);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [streams]);
-
-  // Refresh selectpickers when formData values change
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     refreshSelectpickers("#gender");
-  //     refreshSelectpickers("#prefered_language");
-  //   }, 100);
-  //   return () => clearTimeout(timer);
-  // }, [formData.gender, formData.prefered_language]);
-
   async function handleSubmit(e) {
     e.preventDefault();
 

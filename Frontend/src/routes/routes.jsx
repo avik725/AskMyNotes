@@ -14,9 +14,13 @@ import {
   PrivacyPolicy,
   NotesLibrary,
 } from "@/pages/public";
-import LoginPage from "@/pages/auth/Login";
-import RegisterPage from "@/pages/auth/Register";
-import { MyProfile, PublishedNotes, PrivateNotes, UploadNotes } from "@/pages/authenticated";
+import { LoginPage, RegisterPage, ForgotPassword } from "@/pages/auth";
+import {
+  MyProfile,
+  PublishedNotes,
+  PrivateNotes,
+  UploadNotes,
+} from "@/pages/authenticated";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,8 +47,12 @@ export const router = createBrowserRouter(
           element={<PublishedNotes />}
         />
         <Route
-        path={routeSet.authenticated.privateNotes}
-        element={<PrivateNotes/>}
+          path={routeSet.authenticated.privateNotes}
+          element={<PrivateNotes />}
+        />
+        <Route
+          path={routeSet.auth.forgotPassword}
+          element={<ForgotPassword />}
         />
         <Route path={routeSet.auth.login} element={<LoginPage />} />
         <Route path={routeSet.auth.register} element={<RegisterPage />} />

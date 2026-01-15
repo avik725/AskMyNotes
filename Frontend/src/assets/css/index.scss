@@ -303,9 +303,11 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
 // Registration Page and Login Page Starts
 
 #register-page,
-#login-page {
+#login-page,
+#forgot-password-page {
   #register-section,
-  #login-section {
+  #login-section,
+  #forgot-password-section {
     .card {
       box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.14);
     }
@@ -314,9 +316,11 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
 
 @media screen and (max-width: 768px) {
   #register-page,
-  #login-page {
+  #login-page,
+  #forgot-password-page {
     #register-section,
-    #login-section {
+    #login-section,
+    #forgot-password-section {
       .card {
         box-shadow: none;
       }

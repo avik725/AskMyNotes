@@ -452,16 +452,26 @@
 
 #register-page #register-section .card,
 #register-page #login-section .card,
+#register-page #forgot-password-section .card,
 #login-page #register-section .card,
-#login-page #login-section .card {
+#login-page #login-section .card,
+#login-page #forgot-password-section .card,
+#forgot-password-page #register-section .card,
+#forgot-password-page #login-section .card,
+#forgot-password-page #forgot-password-section .card {
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.14);
 }
 
 @media screen and (max-width: 768px) {
   #register-page #register-section .card,
   #register-page #login-section .card,
+  #register-page #forgot-password-section .card,
   #login-page #register-section .card,
-  #login-page #login-section .card {
+  #login-page #login-section .card,
+  #login-page #forgot-password-section .card,
+  #forgot-password-page #register-section .card,
+  #forgot-password-page #login-section .card,
+  #forgot-password-page #forgot-password-section .card {
     box-shadow: none;
   }
 }

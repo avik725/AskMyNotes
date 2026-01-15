@@ -10,6 +10,7 @@
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "dependencies": {
+    "@langchain/community": "^1.1.4",
     "@langchain/core": "^1.1.8",
     "@langchain/openai": "^1.2.0",
     "@langchain/textsplitters": "^1.0.1",
@@ -21,11 +22,13 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^1.2.10",
+    "mammoth": "^1.11.0",
     "mongoose": "^8.16.2",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "mongoose-paginate-v2": "^1.9.1",
     "multer": "^2.0.1",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "word-extractor": "^1.0.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",

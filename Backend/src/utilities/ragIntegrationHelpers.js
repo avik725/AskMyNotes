@@ -2,10 +2,10 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 import fs from "fs";
-import pdf from "pdf-parse";
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { DocxLoader } from "langchain/document_loaders/fs/docx";
-import { TextLoader } from "langchain/document_loaders/fs/text";
+import {PDFParse} from "pdf-parse";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
+import { TextLoader } from "@langchain/classic/document_loaders/fs/text"
 
 
 function getTextSplitter(chunkSize) {
@@ -33,7 +33,7 @@ const extractText = async (fileUrl, fileType) => {
     switch (fileType) {
       case "pdf": {
         const buffer = fs.readFileSync(fileUrl);
-        const data = await pdf(buffer);
+        const data = await PDFParse(buffer);
 
         if (!data.text || data.text.trim().length < 100) {
           throw new Error(

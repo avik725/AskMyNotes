@@ -196,36 +196,36 @@ export default function PrivateNotes() {
               </div>
             </div>
             <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">
-              <div class="btn-group w-100">
+              <div className="btn-group w-100">
                 <button
                   type="button"
-                  class="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100 dropdown-toggle"
+                  className="btn bg-body-secondary w-100 py-2 py-md-3 px-3 h-100 dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   <Funnel />
                 </button>
-                <ul class="dropdown-menu">
+                <ul className="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a className="dropdown-item" href="#">
                       Action
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a className="dropdown-item" href="#">
                       Another action
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a className="dropdown-item" href="#">
                       Something else here
                     </a>
                   </li>
                   <li>
-                    <hr class="dropdown-divider" />
+                    <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a className="dropdown-item" href="#">
                       Separated link
                     </a>
                   </li>
