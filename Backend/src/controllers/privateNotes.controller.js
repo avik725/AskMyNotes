@@ -6,7 +6,7 @@ import { apiResponse } from "../utilities/apiResponse.js";
 import {
   getOpenAIEmbeddingModel,
   getTextSplitter,
-} from "../utilities/RagIntegrationHelpers.js";
+} from "../utilities/ragIntegrationHelpers.js";
 
 const OpenAIembeddings = getOpenAIEmbeddingModel();
 

@@ -8,6 +8,11 @@ import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { Stream } from "../models/streams.model.js";
 import { Course } from "../models/courses.model.js";
+import {
+  getOpenAIEmbeddingModel,
+  getTextSplitter,
+  extractText
+} from "../utilities/ragIntegrationHelpers.js";
 
 const uploadNotes = asyncHandler(async (req, res, next) => {
   //get data from frontend
@@ -93,6 +98,34 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
     if (!notes) {
       throw new apiError(500, "Something went wrong while uploading notes");
     }
+
+    const fileExt = file_url.format; 
+    const supportedTypes = ["pdf", "docx", "txt"];
+    if (!supportedTypes.includes(fileExt)) {
+      throw new apiError(400, "Unsupported file type")
+    }
+    
+    const docs = await extractText(file_url, fileExt);
+    const textSplitter = getTextSplitter(500);
+    const splitDocs = await textSplitter.splitDocuments(docs)
+
+    const chunkTexts = splitDocs.map(doc => doc.pageContent)
+
+    const vectors = await OpenAIembeddings.embedDocuments(chunkTexts)
+
+    const documents = splitDocs.map((doc, i) => ({
+      note_id: notes._id,
+      owner: req.user._id,
+      chunk_index: i + 1,
+      chunk_text: doc.pageContent,
+      embedding: vectors[i],
+    }));
+
+    if (!documents.length) {
+      throw new apiError(500, "Something Went Wrong whle Chunking")
+    }
+    
+    await NotesChunks.insertMany(documents);
 
     return res
       .status(200)
