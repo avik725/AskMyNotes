@@ -4,6 +4,7 @@ import { apiError } from "../utilities/apiError.js";
 import { apiResponse } from "../utilities/apiResponse.js";
 import clearFiles from "../utilities/clearFiles.js";
 import { Notes } from "../models/notes.model.js";
+import { NotesChunks } from "../models/notesChunks.model.js";
 import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { Stream } from "../models/streams.model.js";
@@ -14,6 +15,8 @@ import {
   getTextSplitter,
   extractText
 } from "../utilities/ragIntegrationHelpers.js";
+
+const OpenAIembeddings = getOpenAIEmbeddingModel();
 
 const uploadNotes = asyncHandler(async (req, res, next) => {
   //get data from frontend
@@ -100,35 +103,51 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
       throw new apiError(500, "Something went wrong while uploading notes");
     }
 
-    const fileExt = path.extname(notesFileLocalPath).slice(1).toLowerCase();
-    const supportedTypes = ["pdf", "docx", "txt"];
-    if (!supportedTypes.includes(fileExt)) {
-      throw new apiError(400, "Unsupported file type")
-    }
-    
-    const docs = await extractText(file_url, fileExt);
+
+    const cleanUrl = notes_file.url.split("?")[0];
+    const ext = path.extname(cleanUrl).slice(1).toLowerCase();
+    console.log({ ext })
+
+
+    const text = await extractText(notes_file.url, ext);
+    //console.log( text.length)
     const textSplitter = getTextSplitter(500);
-    const splitDocs = await textSplitter.splitDocuments(docs)
+    //console.log({ textSplitter })
 
-    const chunkTexts = splitDocs.map(doc => doc.pageContent)
+    const chunks = await textSplitter.splitText(text)
+    console.log(chunks.length)
+    console.log("Chunks type:", Array.isArray(chunks));
+    console.log("Chunks length:", chunks.length);
+    console.log("First chunk:", chunks[0]);
+    console.log("First chunk type:", typeof chunks[0]);
 
-    const vectors = await OpenAIembeddings.embedDocuments(chunkTexts)
 
-    const documents = splitDocs.map((doc, i) => ({
+    try {
+      const vectors = await Promise.all(
+        chunks.map((chunk) => OpenAIembeddings.embedQuery(chunk))
+      );
+      console.log("Vectors created:", vectors.length);
+
+    } catch (error) {
+      console.error("Embedding failed:", err.message);
+      throw err;
+    }
+
+    const documents = chunks.map((chunk, i) => ({
       note_id: notes._id,
       owner: req.user._id,
       chunk_index: i + 1,
-      chunk_text: doc.pageContent,
-      embedding: vectors[i],
+      chunk_text: chunk,
+      embedding: Array.from(vectors[i]), // 🔥 THIS FIXES EVERYTHING
     }));
 
+    //console.log({ documents })
+
     if (!documents.length) {
-      throw new apiError(500, "Something Went Wrong whle Chunking")
+      throw new apiError(500, "Something Went Wrong while Chunking")
     }
-    
+
     await NotesChunks.insertMany(documents);
-    
-    fs.unlinkSync(notesFileLocalPath);
 
     return res
       .status(200)

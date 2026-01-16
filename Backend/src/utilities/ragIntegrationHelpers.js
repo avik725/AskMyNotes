@@ -2,10 +2,10 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 import fs from "fs";
-import {PDFParse} from "pdf-parse";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
-import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { TextLoader } from "@langchain/classic/document_loaders/fs/text"
+import { PDFParse } from "pdf-parse";
+import axios from 'axios';
+import mammoth from 'mammoth';
+import { Document } from "@langchain/core/documents";
 
 
 function getTextSplitter(chunkSize) {
@@ -26,62 +26,55 @@ function getOpenAIEmbeddingModel() {
   return embeddings;
 }
 
-const extractText = async (fileUrl, fileType) => {
+const extractText = async (fileUrl, ext) => {
   try {
-    let docs = []
+    console.log({ ext })
+    const response = await axios.get(fileUrl, {
+      responseType: "arraybuffer",
+    });
 
-    switch (fileType) {
-      case "pdf": {
-        const buffer = fs.readFileSync(fileUrl);
-        const data = await PDFParse(buffer);
+    const buffer = Buffer.from(response.data);
 
-        if (!data.text || data.text.trim().length < 100) {
-          throw new Error(
-            "PDF does not contain readable text "
-          );
-        }
+    let rawText = []
 
-        const loader = new PDFLoader(fileUrl, {
-          splitPages: true
-        });
-
-        docs = await loader.load();
-        break;
-      }
-      
-      case "docx": {
-        docs = await new DocxLoader(fileUrl).load();
-        break;
-      }
-
-      case "txt": {
-        docs = await new TextLoader(fileUrl).load();
-        break;
-      }
-      default:
-        throw new Error("Unsupported file type");
+    if (ext === 'pdf') {
+      const uint8Array = new Uint8Array(buffer);
+      const parser = new PDFParse(uint8Array);
+      const data = await parser.getText();
+      rawText = data.text;
     }
 
-    return cleanDocuments(docs);
+    if (ext === 'docx') {
+      const result = await mammoth.extractRawText({ buffer });
+      rawText = result.value;
+    }
 
+    if (ext === 'txt') {
+      rawText = buffer.toString("utf-8");
+    }
+
+    // console.log({ rawText })
+
+    const extractedText = cleanText(rawText)
+    //console.log({ extractedText })
+    return (extractedText)
+    
   } catch (error) {
     console.log("Text extraction error: ", error)
     throw error
   }
 }
 
-const cleanDocuments = (docs) =>
-  docs.map((doc) => ({
-    ...doc,
-    pageContent: doc.pageContent
-      .replace(/\n{3,}/g, "\n\n")
-      .replace(/[ \t]+/g, " ")
-      .trim()
-  }));
+const cleanText = (text) => {
+    return text
+        .replace(/\r\n/g, "\n")
+        .replace(/\n{2,}/g, "\n\n")
+        .trim();
+};
 
 
-export { 
-  getTextSplitter, 
-  getOpenAIEmbeddingModel, 
-  extractText 
+export {
+  getTextSplitter,
+  getOpenAIEmbeddingModel,
+  extractText
 };

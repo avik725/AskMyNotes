@@ -29,7 +29,8 @@ const notesChunksSchema = new Schema(
 
         embedding: {
             type: [Number],
-            required: true
+            required: true,
+            index: false
         }
     },
     {
@@ -37,9 +38,7 @@ const notesChunksSchema = new Schema(
     }
 )
 notesChunksSchema.index({ owner: 1, note_id: 1 });
-notesChunksSchema.index({ note_id: 1, chunk_index: 1 },
-  { unique: true }
-);
+notesChunksSchema.index({ note_id: 1, chunk_index: 1 });
 
 
 export const NotesChunks = mongoose.model("NotesChunk", notesChunksSchema, "notes_chunks")
