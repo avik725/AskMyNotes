@@ -140,6 +140,7 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
       chunk_text: chunk,
       embedding: Array.from(vectors[i]), // 🔥 THIS FIXES EVERYTHING
     }));
+    console.log({ documents })
 
     //console.log({ documents })
 
