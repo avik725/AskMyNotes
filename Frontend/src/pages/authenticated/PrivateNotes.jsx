@@ -434,7 +434,7 @@ export default function PrivateNotes() {
           viewModalData.title ? truncateText(viewModalData.title, 20) : "..."
         }
         isScrollable={true}
-        size="modal-md"
+        size="modal-lg"
         onClose={() => {
           setViewModalData(formDataStruct);
         }}

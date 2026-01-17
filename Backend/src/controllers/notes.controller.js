@@ -9,11 +9,11 @@ import { uploadOnCloudinary } from "../utilities/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { Stream } from "../models/streams.model.js";
 import { Course } from "../models/courses.model.js";
-import path from 'path';
+import path from "path";
 import {
   getOpenAIEmbeddingModel,
   getTextSplitter,
-  extractText
+  extractText,
 } from "../utilities/ragIntegrationHelpers.js";
 
 const OpenAIembeddings = getOpenAIEmbeddingModel();
@@ -103,49 +103,38 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
       throw new apiError(500, "Something went wrong while uploading notes");
     }
 
-
     const cleanUrl = notes_file.url.split("?")[0];
     const ext = path.extname(cleanUrl).slice(1).toLowerCase();
-    console.log({ ext })
-
+    console.log({ ext });
 
     const text = await extractText(notes_file.url, ext);
     //console.log( text.length)
     const textSplitter = getTextSplitter(500);
     //console.log({ textSplitter })
 
-    const chunks = await textSplitter.splitText(text)
-    console.log(chunks.length)
+    const chunks = await textSplitter.splitText(text);
+    console.log(chunks.length);
     console.log("Chunks type:", Array.isArray(chunks));
     console.log("Chunks length:", chunks.length);
     console.log("First chunk:", chunks[0]);
     console.log("First chunk type:", typeof chunks[0]);
 
-
-    try {
-      const vectors = await Promise.all(
-        chunks.map((chunk) => OpenAIembeddings.embedQuery(chunk))
-      );
-      console.log("Vectors created:", vectors.length);
-
-    } catch (error) {
-      console.error("Embedding failed:", err.message);
-      throw err;
-    }
+    const vectors = await Promise.all(
+      chunks.map((chunk) => OpenAIembeddings.embedQuery(chunk))
+    );
+    console.log("Vectors created:", vectors.length);
 
     const documents = chunks.map((chunk, i) => ({
       note_id: notes._id,
       owner: req.user._id,
       chunk_index: i + 1,
       chunk_text: chunk,
-      embedding: Array.from(vectors[i]), // 🔥 THIS FIXES EVERYTHING
+      embedding: Array.from(vectors[i]),
     }));
-    console.log({ documents })
-
-    //console.log({ documents })
+    console.log({ documents });
 
     if (!documents.length) {
-      throw new apiError(500, "Something Went Wrong while Chunking")
+      throw new apiError(500, "Something Went Wrong while Chunking");
     }
 
     await NotesChunks.insertMany(documents);

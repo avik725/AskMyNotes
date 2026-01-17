@@ -204,8 +204,8 @@ export default function MyProfile() {
                                 profilePicPreview
                                   ? profilePicPreview
                                   : userInfo?.profile_pic
-                                  ? userInfo?.profile_pic
-                                  : user_default_logo
+                                    ? userInfo?.profile_pic
+                                    : user_default_logo
                               }
                               alt="Profile Photo"
                               className="rounded-circle mb-2 cursor-pointer"
@@ -280,7 +280,7 @@ export default function MyProfile() {
                       onInput={(e) =>
                         (e.target.value = e.target.value.replace(
                           /[^a-zA-Z\s]/g,
-                          ""
+                          "",
                         ))
                       }
                       required
@@ -325,6 +325,23 @@ export default function MyProfile() {
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </select>
+                    <ReactSelect
+                      id={"prefered_stream"}
+                      name={"prefered_stream"}
+                      label={"Stream"}
+                      value={formData?.prefered_stream || ""}
+                      onChangeFn={(e) => {
+                        setFormData((prev) => {
+                          return { ...prev, prefered_stream: e.value };
+                        });
+                      }}
+                      options={[
+                        { value: "male", label: "Male" },
+                        { value: "female", label: "Female" },
+                        { value: "other", label: "Other" },
+                      ]}
+                      required
+                    />
                   </div>
 
                   <div className="col-md-6 mb-3">
