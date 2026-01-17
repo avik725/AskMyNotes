@@ -121,19 +121,28 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
     console.log("First chunk:", chunks[0]);
     console.log("First chunk type:", typeof chunks[0]);
 
-    const vectors = await Promise.all(
-      chunks.map((chunk) => OpenAIembeddings.embedQuery(chunk))
-    );
-    console.log("Vectors created:", vectors.length, vectors);
+
+    try {
+      const vectors = await Promise.all(
+        chunks.map((chunk) => OpenAIembeddings.embedQuery(chunk))
+      );
+      console.log("Vectors created:", vectors.length);
+
+    } catch (error) {
+      console.error("Embedding failed:", err.message);
+      throw err;
+    }
 
     const documents = chunks.map((chunk, i) => ({
       note_id: notes._id,
       owner: req.user._id,
       chunk_index: i + 1,
       chunk_text: chunk,
-      embedding: Array.from(vectors[i]),
+      embedding: Array.from(vectors[i]), // 🔥 THIS FIXES EVERYTHING
     }));
     console.log({ documents })
+
+    //console.log({ documents })
 
     if (!documents.length) {
       throw new apiError(500, "Something Went Wrong while Chunking")
