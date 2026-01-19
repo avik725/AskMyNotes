@@ -61,4 +61,17 @@ const notesSchema = new mongoose.Schema(
 notesSchema.plugin(mongooseAggregatePaginate);
 notesSchema.plugin(mongoosePaginate);
 
+// SoftDelete Method (Static)
+notesSchema.statics.softDeleteById = function (id) {
+  return this.updateOne(
+    { _id: id, is_deleted: false },
+    {
+      $set: {
+        is_deleted: true,
+        deleted_at: new Date(),
+      },
+    }
+  );
+};
+
 export const Notes = mongoose.model("Notes", notesSchema, "notes");

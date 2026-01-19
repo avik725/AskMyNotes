@@ -486,6 +486,26 @@ const incrementNoteDownload = asyncHandler(async (req, res, next) => {
   return res.status(200).json(new apiResponse(200, null, "Request Success !!"));
 });
 
+const deleteNotes = asyncHandler(async (req, res, next) => {
+  const { id } = req?.params;
+
+  if (!id) {
+    throw new apiError(400, "Note Id is Required !!");
+  }
+
+  const result = await Notes.softDeleteById(id);
+
+  await NotesChunks.deleteMany({ note_id: id });
+
+  if (result.matchedCount === 0) {
+    throw new apiError(404, "Note not found or already deleted");
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, null, "Note deleted Successfully !!"));
+});
+
 export {
   uploadNotes,
   getMyUploads,
@@ -496,4 +516,5 @@ export {
   getCourses,
   getStreamWiseNotes,
   incrementNoteDownload,
+  deleteNotes
 };
