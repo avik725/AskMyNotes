@@ -11,6 +11,7 @@ import {
   getCourses,
   getStreamWiseNotes,
   incrementNoteDownload,
+  deleteNotes
 } from "../controllers/notes.controller.js";
 
 const router = Router();
@@ -38,5 +39,8 @@ router.route("/get_filters").get(getFiltersData);
 router.route("/get-stream-wise-notes").get(getStreamWiseNotes);
 
 router.route("/increment-note-download").post(incrementNoteDownload);
+
+router.route("/delete/:id").delete(verifyJWT, deleteNotes);
+
 
 export default router;
