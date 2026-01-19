@@ -3,9 +3,11 @@ import { html } from "gridjs";
 import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
 import { downloadNote } from "@/utils/helpers";
-import { Funnel, Plus, Search, XIcon } from "lucide-react";
+import { FileText, Funnel, Plus, Search, XIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
+import { deleteNotesHandler } from "@/services/apiHandlers";
+import fireSweetAlert from "@/utils/fireSweetAlert";
 
 export default function PublishedNotes() {
   const navigate = useNavigate();
@@ -23,6 +25,27 @@ export default function PublishedNotes() {
     setModalOpen(true);
   }, []);
 
+  async function deletePublicNote(id) {
+    try {
+      const response = await deleteNotesHandler(id);
+
+      fireSweetAlert({
+        success: response.success,
+        message:
+          response.message ||
+          (response.success
+            ? "Note Deleted Successfully !!"
+            : "Failed while deleting notes !!"),
+      });
+
+    } catch (error) {
+      fireSweetAlert({
+        success: false,
+        message: error.message || "Something Went Wrong While Deleting Note !!",
+      });
+    }
+  }
+
   // Expose function to window for use in DataTable HTML strings
   useEffect(() => {
     window.buildModal = (title, file_url) => {
@@ -32,11 +55,16 @@ export default function PublishedNotes() {
     window.downloadNote = (title, file_url) => {
       downloadNote(title, file_url);
     };
+
+    window.deletePublicNote = (id) => {
+      deletePublicNote(id);
+    };
     return () => {
       delete window.buildModal;
       delete window.downloadNote;
+      delete window.deletePublicNote;
     };
-  }, [openNoteModal]);
+  }, [openNoteModal, downloadNote, deletePublicNote]);
 
   return (
     <main id="myuploads-page">
@@ -65,11 +93,11 @@ export default function PublishedNotes() {
                   name="search_notes_input"
                   placeholder="Search public notes..."
                   onInput={(e) => {
-                      const searchBox = document.querySelector(".gridjs-input");
-                      searchBox.value = e.target.value;
+                    const searchBox = document.querySelector(".gridjs-input");
+                    searchBox.value = e.target.value;
 
-                      const event = new Event("input", { bubbles: true });
-                      searchBox.dispatchEvent(event);
+                    const event = new Event("input", { bubbles: true });
+                    searchBox.dispatchEvent(event);
                   }}
                   className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
                 />
@@ -77,7 +105,9 @@ export default function PublishedNotes() {
                   <XIcon
                     className="form-control-text-color"
                     onClick={() => {
-                      const searchBox = document.querySelector("#search_notes_input");
+                      const searchBox = document.querySelector(
+                        "#search_notes_input",
+                      );
                       searchBox.value = "";
 
                       const event = new Event("input", { bubbles: true });
@@ -94,8 +124,9 @@ export default function PublishedNotes() {
             </div>
             <div className="col-lg-2 col-md-3 col-9 px-2 pt-3 pt-md-0">
               <button
-              onClick={()=>navigate(routeSet.authenticated.uploadNotes)}
-              className="btn bg-body-secondary w-100 py-2 py-md-3">
+                onClick={() => navigate(routeSet.authenticated.uploadNotes)}
+                className="btn bg-body-secondary w-100 py-2 py-md-3"
+              >
                 Upload New
                 <Plus />
               </button>
@@ -143,45 +174,41 @@ export default function PublishedNotes() {
                     { name: "Semester / Year", sort: false },
                     { name: "Action", sort: false },
                   ],
-                  []
+                  [],
                 )}
                 url={getMyUploads}
                 thenFn={useCallback(
                   (data) =>
                     data.data.uploads.docs.map((note) => [
                       html(
-                        `<span class="text-capitalize">${note.title}</span>`
+                        `<span class="text-capitalize">${note.title}</span>`,
                       ),
                       note.course.name,
                       `${note.semester ? note.semester : note.year}${
                         (note.semester || note.year) === 1
                           ? "st"
                           : (note.semester || note.year) === 2
-                          ? "nd"
-                          : (note.semester || note.year) === 3
-                          ? "rd"
-                          : "th"
+                            ? "nd"
+                            : (note.semester || note.year) === 3
+                              ? "rd"
+                              : "th"
                       } ${note.semester ? "semester" : "year"}`,
                       html(
-                        `<div>
-                            <div class="row">
-                                <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                                  <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
-                                  class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
-                                  View
-                                  </a>
-                                  <span class="d-none d-lg-inline-block">|</span>
-                                </div>
-                                <div class="col-lg-auto p-0 col-12">
-                                  <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
-                                    Download
-                                  </a>
-                                </div>
-                              </div>
-                            </div>`
+                        `<div style="display: flex;">
+                            <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
+                            class="view-btn text-decoration-none form-control-text-color fw-semibold m-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text-icon lucide-file-text"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                            </a>
+                            <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                            </a>
+                            <a href="#" onclick="deletePublicNote('${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </a>
+                          </div>`,
                       ),
                     ]),
-                  []
+                  [],
                 )}
                 handleFn={useCallback(async (res) => {
                   let resJson = await res.json();
@@ -210,7 +237,7 @@ export default function PublishedNotes() {
                       },
                     },
                   }),
-                  []
+                  [],
                 )}
                 isSortEnabled={true}
                 sortConfig={useMemo(
@@ -228,7 +255,7 @@ export default function PublishedNotes() {
                       },
                     },
                   }),
-                  []
+                  [],
                 )}
               />
             </div>

@@ -61,6 +61,19 @@ const notesSchema = new mongoose.Schema(
 notesSchema.plugin(mongooseAggregatePaginate);
 notesSchema.plugin(mongoosePaginate);
 
+// Find Middleware (is_deleted = false)
+notesSchema.pre(/^find/, function (next) {
+  if (!this.getOptions().withDeleted) {
+    this.where({ is_deleted: false });
+  }
+  next();
+});
+
+// Custom Query To get Deleted Records
+notesSchema.query.withDeleted = function () {
+  return this.setOptions({ withDeleted: true });
+};
+
 // SoftDelete Method (Static)
 notesSchema.statics.softDeleteById = function (id) {
   return this.updateOne(

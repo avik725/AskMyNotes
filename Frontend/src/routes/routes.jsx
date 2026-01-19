@@ -63,7 +63,7 @@ export const router = createBrowserRouter(
       </Route>
 
       <Route
-        path={`${routeSet.authenticated.askAI}/:id`}
+        path={`${routeSet.authenticated.aiNotebook}/:id`}
         element={<AINotebook />}
       />
     </>,

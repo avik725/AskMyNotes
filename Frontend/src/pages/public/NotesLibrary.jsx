@@ -119,7 +119,7 @@ export default function NotesLibrary() {
   useEffect(() => {
     getFeaturedNotes();
     const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
+      '[data-bs-toggle="tooltip"]',
     );
     [...tooltipTriggerList].forEach((el) => new bootstrap.Tooltip(el));
   }, []);
@@ -253,17 +253,19 @@ export default function NotesLibrary() {
                 className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14"
               />
               <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
-                  <XIcon
-                    className="form-control-text-color"
-                    onClick={() => {
-                      const searchBox = document.querySelector("#search_notes_input");
-                      searchBox.value = "";
+                <XIcon
+                  className="form-control-text-color"
+                  onClick={() => {
+                    const searchBox = document.querySelector(
+                      "#search_notes_input",
+                    );
+                    searchBox.value = "";
 
-                      const event = new Event("input", { bubbles: true });
-                      searchBox.dispatchEvent(event);
-                    }}
-                  />
-                </span>
+                    const event = new Event("input", { bubbles: true });
+                    searchBox.dispatchEvent(event);
+                  }}
+                />
+              </span>
             </div>
             <div className="featured-notes">
               <h5 className="fw-bold fs-18 my-4 ps-2">Featured Notes</h5>
@@ -310,10 +312,10 @@ export default function NotesLibrary() {
                           {(note.semester || note.year) === 1
                             ? "st"
                             : (note.semester || note.year) === 2
-                            ? "nd"
-                            : (note.semester || note.year) === 3
-                            ? "rd"
-                            : "th"}{" "}
+                              ? "nd"
+                              : (note.semester || note.year) === 3
+                                ? "rd"
+                                : "th"}{" "}
                           {note.semester ? "semester" : "year"}
                         </>
                       }
@@ -334,45 +336,41 @@ export default function NotesLibrary() {
                       { name: "Semester / Year", sort: false },
                       { name: "Action", sort: false },
                     ],
-                    []
+                    [],
                   )}
                   url={getNotes}
                   thenFn={useCallback(
                     (data) =>
                       data.data.docs.map((note) => [
                         html(
-                          `<span class="text-capitalize">${note.title}</span>`
+                          `<span class="text-capitalize">${note.title}</span>`,
                         ),
                         note.course.name,
                         `${note.semester ? note.semester : note.year}${
                           (note.semester || note.year) === 1
                             ? "st"
                             : (note.semester || note.year) === 2
-                            ? "nd"
-                            : (note.semester || note.year) === 3
-                            ? "rd"
-                            : "th"
+                              ? "nd"
+                              : (note.semester || note.year) === 3
+                                ? "rd"
+                                : "th"
                         } ${note.semester ? "semester" : "year"}`,
                         html(
-                          `<div>
-                              <div class="row">
-                                  <div class="col-lg-auto p-0 ps-3 ps-lg-0 col-12 ">
-                                      <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
-                                      class="view-btn text-decoration-none form-control-text-color fw-semibold pe-lg-2 m-0">
-                                      View
-                                      </a>
-                                      <span class="d-none d-lg-inline-block">|</span>
-                                  </div>
-                                  <div class="col-lg-auto p-0 col-12">
-                                      <a href="#" onclick="downloadNote('${note.title}','${note.file_url}','${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
-                                      Download
-                                      </a>
-                                  </div>
-                              </div>
-                          </div>`
+                          `<div style="display: flex;">
+                            <a href="#" onclick="buildModal('${note.title}','${note.file_url}'); return false;"
+                            class="view-btn text-decoration-none form-control-text-color fw-semibold m-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text-icon lucide-file-text"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                            </a>
+                            <a href="#" onclick="downloadNote('${note.title}','${note.file_url}','${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                            </a>
+                            <a href="#" onclick="downloadNote('${note.title}','${note.file_url}','${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </a>
+                          </div>`,
                         ),
                       ]),
-                    []
+                    [],
                   )}
                   totalFn={useCallback((data) => data.data.totalDocs, [])}
                   paginationLimit={5}
@@ -391,7 +389,7 @@ export default function NotesLibrary() {
                         },
                       },
                     }),
-                    []
+                    [],
                   )}
                   isSortEnabled={true}
                   sortConfig={useMemo(
@@ -409,7 +407,7 @@ export default function NotesLibrary() {
                         },
                       },
                     }),
-                    []
+                    [],
                   )}
                 />
               </div>

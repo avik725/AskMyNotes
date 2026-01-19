@@ -15,6 +15,7 @@ import {
   deletePrivatNotes,
   updatePrivateNotes,
   incrementNoteDownloadCount,
+  deleteNotes,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -121,6 +122,19 @@ export async function uploadNotesHandler(formData) {
     method: "POST",
     credentials: "include",
     body: formData,
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function deleteNotesHandler(id) {
+  const response = await fetch(`${deleteNotes}/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
   });
 
   const result = await response.json();

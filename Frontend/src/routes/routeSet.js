@@ -17,5 +17,6 @@ export const routeSet = {
     myProfile: "/profile",
     privateNotes: "/private-notes",
     askAI: "/ask-ai",
+    aiNotebook: "/ask-ai/conversation",
   },
 };

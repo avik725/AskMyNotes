@@ -86,7 +86,7 @@ export default function AskAI() {
             </div>
             <div className="col-lg-2 col-md-3 col-9 px-2 pt-3 pt-md-0">
               <button
-                onClick={() => navigate(`${routeSet.authenticated.askAI}/123`)}
+                onClick={() => navigate(`${routeSet.authenticated.aiNotebook}/123`)}
                 className="btn bg-body-secondary w-100 py-2 py-md-3"
               >
                 Create New

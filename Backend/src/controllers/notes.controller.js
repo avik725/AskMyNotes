@@ -177,6 +177,7 @@ const getMyUploads = asyncHandler(async (req, res, next) => {
         $match: {
           owner: new mongoose.Types.ObjectId(req.user._id),
           ...(search && { title: { $regex: search, $options: "i" } }),
+          is_deleted: false,
         },
       },
       {
@@ -516,5 +517,5 @@ export {
   getCourses,
   getStreamWiseNotes,
   incrementNoteDownload,
-  deleteNotes
+  deleteNotes,
 };
