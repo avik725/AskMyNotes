@@ -122,7 +122,7 @@ export default function Header() {
                   <li className="nav-item">
                     <button
                       className="nav-link me-3 text-black"
-                      onClick={() => {}}
+                      onClick={() => navigate(routeSet.authenticated.askAI)}
                     >
                       Ask AI
                     </button>

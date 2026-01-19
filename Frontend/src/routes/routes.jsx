@@ -2,7 +2,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  Navigate,
 } from "react-router";
 import MainLayout from "@/layouts/MainLayout";
 
@@ -20,7 +19,10 @@ import {
   PublishedNotes,
   PrivateNotes,
   UploadNotes,
+  AskAI,
+  AINotebook,
 } from "@/pages/authenticated";
+import RAGLayout from "@/layouts/RAGLayout";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,6 +52,8 @@ export const router = createBrowserRouter(
           path={routeSet.authenticated.privateNotes}
           element={<PrivateNotes />}
         />
+
+        <Route path={routeSet.authenticated.askAI} element={<AskAI />} />
         <Route
           path={routeSet.auth.forgotPassword}
           element={<ForgotPassword />}
@@ -57,6 +61,11 @@ export const router = createBrowserRouter(
         <Route path={routeSet.auth.login} element={<LoginPage />} />
         <Route path={routeSet.auth.register} element={<RegisterPage />} />
       </Route>
-    </>
-  )
+
+      <Route
+        path={`${routeSet.authenticated.askAI}/:id`}
+        element={<AINotebook />}
+      />
+    </>,
+  ),
 );

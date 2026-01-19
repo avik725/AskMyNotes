@@ -7,13 +7,13 @@ import "@/assets/css/mermaid.min.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import { RouterProvider } from "react-router";
-import { router } from "@/routes/routes";
-import { Provider } from "react-redux";
 import store from "@/store/store";
+import App from "./App";
+import { Provider } from "react-redux";
+
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <RouterProvider router={router} />
-  </Provider>
+    <App />
+  </Provider>,
 );

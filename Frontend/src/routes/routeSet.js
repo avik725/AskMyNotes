@@ -4,17 +4,18 @@ export const routeSet = {
     about: "/about",
     contact: "/contact",
     privacyPolicy: "/privacy-policy",
-    notesGallery: "/notes-library"
+    notesGallery: "/notes-library",
   },
   auth: {
     login: "/login",
-    register : "/register",
-    forgotPassword : "/forgot-password"
+    register: "/register",
+    forgotPassword: "/forgot-password",
   },
   authenticated: {
     uploadNotes: "/upload-notes",
     publishedNotes: "/my-publications",
     myProfile: "/profile",
-    privateNotes: "/private-notes"
-  }
+    privateNotes: "/private-notes",
+    askAI: "/ask-ai",
+  },
 };
