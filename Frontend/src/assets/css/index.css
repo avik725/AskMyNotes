@@ -154,12 +154,32 @@
   font-size: 28px !important;
 }
 
+.fs-27 {
+  font-size: 27px !important;
+}
+
 .fs-30 {
   font-size: 30px !important;
 }
 
 .fs-32 {
   font-size: 32px !important;
+}
+
+.fs-34 {
+  font-size: 34px !important;
+}
+
+.fs-36 {
+  font-size: 36px !important;
+}
+
+.fs-40 {
+  font-size: 40px !important;
+}
+
+.fs-44 {
+  font-size: 44px !important;
 }
 
 .fs-48 {
@@ -194,11 +214,26 @@
   .fs-md-28 {
     font-size: 28px !important;
   }
+  .fs-md-27 {
+    font-size: 27px !important;
+  }
   .fs-md-30 {
     font-size: 30px !important;
   }
   .fs-md-32 {
     font-size: 32px !important;
+  }
+  .fs-md-34 {
+    font-size: 34px !important;
+  }
+  .fs-md-36 {
+    font-size: 36px !important;
+  }
+  .fs-md-40 {
+    font-size: 40px !important;
+  }
+  .fs-md-44 {
+    font-size: 44px !important;
   }
   .fs-md-48 {
     font-size: 48px !important;
@@ -232,11 +267,26 @@
   .fs-sm-28 {
     font-size: 28px !important;
   }
+  .fs-sm-27 {
+    font-size: 27px !important;
+  }
   .fs-sm-30 {
     font-size: 30px !important;
   }
   .fs-sm-32 {
     font-size: 32px !important;
+  }
+  .fs-sm-34 {
+    font-size: 34px !important;
+  }
+  .fs-sm-36 {
+    font-size: 36px !important;
+  }
+  .fs-sm-40 {
+    font-size: 40px !important;
+  }
+  .fs-sm-44 {
+    font-size: 44px !important;
   }
   .fs-sm-48 {
     font-size: 48px !important;

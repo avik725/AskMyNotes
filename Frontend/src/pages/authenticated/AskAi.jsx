@@ -34,7 +34,7 @@ export default function AskAI() {
                   name="search_notes_input"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search private notes..."
+                  placeholder="Search conversations..."
                   className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
                 />
                 <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">

@@ -36,8 +36,11 @@ export default function PublishedNotes() {
           (response.success
             ? "Note Deleted Successfully !!"
             : "Failed while deleting notes !!"),
+      }).then(() => {
+        if (response.success) {
+          window.location.reload();
+        }
       });
-
     } catch (error) {
       fireSweetAlert({
         success: false,

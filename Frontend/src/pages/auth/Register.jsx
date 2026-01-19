@@ -52,17 +52,36 @@ export default function RegisterPage() {
       return;
     }
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(formData.password)) {
+      fireSweetAlert({
+        success: false,
+        message: "Try a Different Password",
+      });
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      fireSweetAlert({
+        success: false,
+        message: "Password and Confirm Password do not match",
+      });
+      return;
+    }
+
     const response = await userRegistrationHandler(formData);
 
     if (response.success) {
       fireSweetAlert({
-        success: response.success,
+        success: true,
         message: response.message,
       });
       navigate(routeSet.auth.login);
     } else {
       fireSweetAlert({
-        success: response.success,
+        success: false,
         message: response.message,
       });
     }
@@ -81,7 +100,7 @@ export default function RegisterPage() {
                     Create new account
                   </h5>
                   <form id="registration-form" onSubmit={(e) => submitForm(e)}>
-                    <div className="row pb-4">
+                    <div className="row pb-2">
                       <div className="col-lg-12">
                         <label htmlFor="username" className="form-label">
                           Username
@@ -146,7 +165,7 @@ export default function RegisterPage() {
                           onInput={(e) => {
                             e.target.value = e.target.value.replace(
                               /[^a-zA-Z\s]/g,
-                              ""
+                              "",
                             );
                           }}
                           onChange={(e) => {
@@ -234,6 +253,7 @@ export default function RegisterPage() {
                         />
                       </div>
                     </div>
+                    <p className="form-control-text-color mt-3 fs-sm-14 ">Note: Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character</p>
                     <div className="mb-3">
                       <button
                         className={`btn submitBtn ${
