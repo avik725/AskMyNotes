@@ -23,11 +23,13 @@ import {
   AINotebook,
 } from "@/pages/authenticated";
 import RAGLayout from "@/layouts/RAGLayout";
+import ProtectedRoute from "./protectedRoute";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path={routeSet.public.home} element={<MainLayout />}>
+        {/* UnAuthenticated Routes */}
         <Route index element={<Home />} />
         <Route path={routeSet.public.about} element={<About />} />
         <Route path={routeSet.public.contact} element={<Contact />} />
@@ -36,34 +38,40 @@ export const router = createBrowserRouter(
           element={<PrivacyPolicy />}
         />
         <Route path={routeSet.public.notesGallery} element={<NotesLibrary />} />
-        <Route
-          path={routeSet.authenticated.uploadNotes}
-          element={<UploadNotes />}
-        />
-        <Route
-          path={routeSet.authenticated.myProfile}
-          element={<MyProfile />}
-        />
-        <Route
-          path={routeSet.authenticated.publishedNotes}
-          element={<PublishedNotes />}
-        />
-        <Route
-          path={routeSet.authenticated.privateNotes}
-          element={<PrivateNotes />}
-        />
 
-        <Route path={routeSet.authenticated.askAI} element={<AskAI />} />
+        {/* Auth Pages Routes */}
+        <Route path={routeSet.auth.login} element={<LoginPage />} />
+        <Route path={routeSet.auth.register} element={<RegisterPage />} />
         <Route
           path={routeSet.auth.forgotPassword}
           element={<ForgotPassword />}
         />
-        <Route path={routeSet.auth.login} element={<LoginPage />} />
-        <Route path={routeSet.auth.register} element={<RegisterPage />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path={routeSet.authenticated.uploadNotes}
+            element={<UploadNotes />}
+          />
+          <Route
+            path={routeSet.authenticated.myProfile}
+            element={<MyProfile />}
+          />
+          <Route
+            path={routeSet.authenticated.publishedNotes}
+            element={<PublishedNotes />}
+          />
+          <Route
+            path={routeSet.authenticated.privateNotes}
+            element={<PrivateNotes />}
+          />
+
+          <Route path={routeSet.authenticated.askAI} element={<AskAI />} />
+        </Route>
       </Route>
 
       <Route
-        path={`${routeSet.authenticated.aiNotebook}/:id`}
+        path={`/${routeSet.authenticated.aiNotebook}/:id`}
         element={<AINotebook />}
       />
     </>,

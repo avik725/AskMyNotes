@@ -16,6 +16,7 @@ import {
   updatePrivateNotes,
   incrementNoteDownloadCount,
   deleteNotes,
+  getNonPaginatedNotes,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -93,6 +94,18 @@ export async function userProfileUpdateHandler(formData) {
 }
 
 // Public Notes Handlers
+export async function getNonPaginatedNotesHandler(search = "") {
+  const response = await fetch(`${getNonPaginatedNotes}?search=${search}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const result = await response.json();
+  return result;
+}
+
 export async function getStreamsHandler() {
   const response = await fetch(getStreams, {
     method: "GET",

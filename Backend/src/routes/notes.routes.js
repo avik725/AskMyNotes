@@ -11,7 +11,8 @@ import {
   getCourses,
   getStreamWiseNotes,
   incrementNoteDownload,
-  deleteNotes
+  deleteNotes,
+  getNonPaginatedNotes,
 } from "../controllers/notes.controller.js";
 
 const router = Router();
@@ -27,6 +28,8 @@ router
 router.route("/get-my-uploads").get(verifyJWT, getMyUploads);
 
 router.route("/get-notes").get(getNotes);
+
+router.route("/get-non-paginated-notes").get(getNonPaginatedNotes);
 
 router.route("/get-streams").get(getStreams);
 

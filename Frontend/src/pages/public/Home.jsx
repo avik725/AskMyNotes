@@ -100,7 +100,7 @@ export default function Home() {
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <FileUp size={36} />
-                    <span class="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
+                    <span className="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
                       1
                     </span>
                   </div>
@@ -119,7 +119,7 @@ export default function Home() {
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <Search size={36} />
-                    <span class="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
+                    <span className="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
                       2
                     </span>
                   </div>
@@ -138,7 +138,7 @@ export default function Home() {
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <BrainCircuit size={36} />
-                    <span class="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
+                    <span className="position-absolute translate-middle badge rounded-circle bg-primary" style={{top: '10%', left: '90%'}}>
                       3
                     </span>
                   </div>

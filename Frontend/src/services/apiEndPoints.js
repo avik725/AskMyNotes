@@ -17,6 +17,7 @@ export const getStreamWiseNotes = API_BASE_URL + "notes/get-stream-wise-notes";
 export const getFiltersData = API_BASE_URL + "notes/get_filters";
 export const getMyUploads = API_BASE_URL + "notes/get-my-uploads";
 export const getNotes = API_BASE_URL + "notes/get-notes";
+export const getNonPaginatedNotes = API_BASE_URL + "notes/get-non-paginated-notes";
 export const getFeaturesNotes = API_BASE_URL + "notes/get-featured-notes";
 export const uploadNotes = API_BASE_URL + "notes/upload-notes";
 export const deleteNotes = API_BASE_URL + "notes/delete"

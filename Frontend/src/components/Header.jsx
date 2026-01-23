@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "@/assets/images/logo_icon.png";
+import logo from "@/assets/images/amn_logo.png";
 import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
 import ThemeButton from "./themeButton";
@@ -31,11 +31,11 @@ export default function Header() {
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           <a
-            className="navbar-brand d-flex align-items-center"
+            className="navbar-brand d-flex align-items-end"
             href={routeSet.public.home}
           >
-            <img src={logo} alt="icon" />
-            <h5 className="mb-0 ms-2">AskMyNotes</h5>
+            <img src={logo} alt="icon" style={{maxWidth: 40}} />
+            <h3 className="mb-0 ms-2 fs-26 d-none d-md-block fw-bold">AskMyNotes</h3>
           </a>
           <button
             className="navbar-toggler"

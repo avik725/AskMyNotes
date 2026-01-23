@@ -9,9 +9,6 @@ export default function RAGLayout() {
 
   return (
     <>
-      {/* Header Section Starts */}
-      <Header />
-      {/* Header Section Ends */}
 
       <Outlet />
 

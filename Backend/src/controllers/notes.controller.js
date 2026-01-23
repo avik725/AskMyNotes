@@ -507,6 +507,31 @@ const deleteNotes = asyncHandler(async (req, res, next) => {
     .json(new apiResponse(200, null, "Note deleted Successfully !!"));
 });
 
+const getNonPaginatedNotes = asyncHandler(async (req, res, next) => {
+  try {
+    const { search } = req.query;
+
+    const filters = {};
+    if (search) filters.title = { $regex: search, $options: "i" };
+
+    const notes = await Notes.find(filters)
+      .select("title thumbnail file_url stream course semester createdAt")
+      .populate("stream", "name")
+      .populate("course", "name")
+      .sort({ createdAt: -1 });
+
+    if (!notes) {
+      throw new apiError(500, "Something went wrong while fetching notes");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, notes, "Notes Fetched Successfully"));
+  } catch (error) {
+    throw new apiError(500, "Something went wrong", error);
+  }
+});
+
 export {
   uploadNotes,
   getMyUploads,
@@ -518,4 +543,5 @@ export {
   getStreamWiseNotes,
   incrementNoteDownload,
   deleteNotes,
+  getNonPaginatedNotes,
 };
