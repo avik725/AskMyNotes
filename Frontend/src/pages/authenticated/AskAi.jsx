@@ -20,7 +20,7 @@ import { useNavigate } from "react-router";
 
 export default function AskAI() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [conversationsLoading, setConversationLoading] = useState(false);
+  const [conversationsLoading, setConversationLoading] = useState(true);
   const navigate = useNavigate();
   const [userConversations, SetUserConversations] = useState([]);
 
@@ -43,17 +43,17 @@ export default function AskAI() {
 
   async function getConversations() {
     const response = await getUserConversationsHandler();
-
     if (response.success && response.data) {
       SetUserConversations([...response.data]);
     } else {
       fireSweetAlert({
         success: response.success || false,
         message:
-          response.message ||
-          "Something Went Wrong While Fetching Conversations !!",
+        response.message ||
+        "Something Went Wrong While Fetching Conversations !!",
       });
     }
+    setConversationLoading(false);
   }
 
   async function deleteConversation(id) {
@@ -168,76 +168,90 @@ export default function AskAI() {
             className="overflow-y-scroll border rounded-3 p-3 overflow-x-hidden mt-4"
             style={{ height: "60vh" }}
           >
-            {userConversations.length > 0 ? (
-              <div className="row">
-                {userConversations?.map((conversation) => {
-                  return (
-                    <div
-                      key={conversation?._id}
-                      className="col-lg-4 col-md-6 mb-3"
-                    >
+            {!conversationsLoading ? (
+              userConversations.length > 0 ? (
+                <div className="row">
+                  {userConversations?.map((conversation) => {
+                    return (
                       <div
-                        className="card position-relative cursor-pointer rounded-3 py-5 px-3"
-                        style={{ backgroundColor: "#f4f4f4" }}
-                        onClick={() => {
-                          navigate(
-                            `${routeSet.authenticated.aiNotebook}/${conversation?._id}`,
-                          );
-                        }}
+                        key={conversation?._id}
+                        className="col-lg-4 col-md-6 mb-3"
                       >
-                        <div className="d-inline-block position-absolute top-0 end-0 p-2">
-                          <span
-                            className="me-3"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                            }}
-                          >
-                            <SquarePen size={18} className="text-primary" />
-                          </span>
-                          <span
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              deleteConversation(conversation?._id);
-                            }}
-                          >
-                            <Trash2 size={18} className="text-danger" />
-                          </span>
-                        </div>
+                        <div
+                          className="card position-relative cursor-pointer rounded-3 py-5 px-3"
+                          style={{ backgroundColor: "#f4f4f4" }}
+                          onClick={() => {
+                            navigate(
+                              `${routeSet.authenticated.aiNotebook}/${conversation?._id}`,
+                            );
+                          }}
+                        >
+                          <div className="d-inline-block position-absolute top-0 end-0 p-2">
+                            <span
+                              className="me-3"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                            >
+                              <SquarePen size={18} className="text-primary" />
+                            </span>
+                            <span
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                deleteConversation(conversation?._id);
+                              }}
+                            >
+                              <Trash2 size={18} className="text-danger" />
+                            </span>
+                          </div>
 
-                        <h3 className="fw-bold">
-                          {conversation?.title
-                            ? truncateText(conversation?.title, 20)
-                            : ""}
-                        </h3>
-                        <p className="form-control-text-color fs-14 m-0">
-                          Manage your private notes and resources
-                        </p>
-                        <p className="form-control-text-color fs-14 m-0">
-                          {conversation?.createdAt
-                            ? new Date(conversation?.createdAt)
-                                .toLocaleString()
-                                .split(",")[0]
-                            : ""}{" "}
-                          <Dot /> {conversation?.allowed_sources?.length || 0}{" "}
-                          sources
-                        </p>
+                          <h3 className="fw-bold">
+                            {conversation?.title
+                              ? truncateText(conversation?.title, 20)
+                              : ""}
+                          </h3>
+                          <p className="form-control-text-color fs-14 m-0">
+                            Manage your private notes and resources
+                          </p>
+                          <p className="form-control-text-color fs-14 m-0">
+                            {conversation?.createdAt
+                              ? new Date(conversation?.createdAt)
+                                  .toLocaleString()
+                                  .split(",")[0]
+                              : ""}{" "}
+                            <Dot /> {conversation?.allowed_sources?.length || 0}{" "}
+                            sources
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div
+                  className="align-content-center text-center h-100 rounded-3"
+                  style={{ backgroundColor: "#f4f4f4" }}
+                >
+                  <div className="d-inline-block p-4">
+                    <h3 className="fw-bold">No Conversations Found</h3>
+                    <p className="form-control-text-color fs-14 mt-2">
+                      Create your first conversation notebook to get started
+                    </p>
+                  </div>
+                </div>
+              )
             ) : (
               <div
                 className="align-content-center text-center h-100 rounded-3"
                 style={{ backgroundColor: "#f4f4f4" }}
               >
                 <div className="d-inline-block p-4">
-                  <h3 className="fw-bold">No Conversations Found</h3>
-                  <p className="form-control-text-color fs-14 mt-2">
-                    Create your first conversation notebook to get started
-                  </p>
+                  <div className="spinner-border text-secondary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <h3 className="fw-bold">Loading Conversations...</h3>
                 </div>
               </div>
             )}

@@ -20,6 +20,8 @@ import {
   createConversation,
   getUserConversations,
   deleteConversation,
+  updateConversationSources,
+  updateConversationTitle,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -277,12 +279,53 @@ export async function getUserConversationsHandler() {
   return result;
 }
 
+export async function getConversationByIdHandler(id = "") {
+  const response = await fetch(`${getUserConversations}/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function updateConversationSourcesHandler(id, sources = []) {
+  const response = await fetch(updateConversationSources(id), {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ sources }),
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
 export async function deleteConversationHandler(id = "") {
   const response = await fetch(`${deleteConversation}/${id}`, {
     method: "Delete",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function updateConversationTitleHandler(id, title) {
+  const response = await fetch(updateConversationTitle(id), {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title }),
     credentials: "include",
   });
 

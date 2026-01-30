@@ -15,12 +15,19 @@ import {
   SlidersHorizontal,
   Bot,
   XIcon,
+  Pencil,
 } from "lucide-react";
-import { Modal, ReactSelect } from "@/components";
-import { getNonPaginatedNotesHandler } from "@/services/apiHandlers";
+import { Modal } from "@/components";
+import {
+  getConversationByIdHandler,
+  getNonPaginatedNotesHandler,
+  updateConversationSourcesHandler,
+  updateConversationTitleHandler,
+} from "@/services/apiHandlers";
 import useDebounce from "@/hooks/useDebounce";
 import { truncateText } from "@/utils/helpers";
 import { routeSet } from "@/routes/routeSet";
+import fireSweetAlert from "@/utils/fireSweetAlert";
 
 export default function AINotebook() {
   const params = useParams();
@@ -33,10 +40,12 @@ export default function AINotebook() {
   const debouncedPublicNoteSearchQuery = useDebounce(publicNoteSearchQuery);
   const [selectedPublicNotes, setSelectedPublicNotes] = useState([]);
   const [tempSelectedPublicNotes, setTempSelectedPublicNotes] = useState([]);
+  const [conversationInfo, setConversationInfo] = useState(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
 
-
-  function closeCurrentConversation(){
-    navigate(routeSet.authenticated.askAI)
+  function closeCurrentConversation() {
+    navigate(routeSet.authenticated.askAI);
   }
 
   async function fetchPublicNotes(search = "") {
@@ -44,6 +53,84 @@ export default function AINotebook() {
 
     if (response.success) {
       setPublicNotes([...response.data]);
+      return response.data;
+    }
+    return [];
+  }
+
+  async function fetchCoversationInfo(id) {
+    const response = await getConversationByIdHandler(id);
+
+    if (response.success) {
+      setConversationInfo(response?.data);
+      return response?.data;
+    } else {
+      fireSweetAlert({
+        success: response.success || false,
+        message:
+          response.message ||
+          "Something Went Wrong While Fetching Conversation Info !!",
+      });
+      return null;
+    }
+  }
+
+  async function updateSources(notes) {
+    let selectedSources = notes?.map((n) => {
+      return n._id;
+    });
+    const response = await updateConversationSourcesHandler(
+      params?.id,
+      selectedSources,
+    );
+
+    if (!response.success) {
+      fireSweetAlert({
+        success: response.success || false,
+        message:
+          response.message || "Something went wrong while updating sources !!",
+      });
+    }
+  }
+
+  async function updateTitle() {
+    if (!editedTitle.trim() || editedTitle.trim() === conversationInfo?.title) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    const response = await updateConversationTitleHandler(
+      params?.id,
+      editedTitle.trim(),
+    );
+
+    fireSweetAlert({
+      success: response.success || false,
+      message:
+        response.message ||
+        (response.success
+          ? "Conversation Title Updated Successfully !!"
+          : "Something went wrong while updating title !!"),
+    });
+    if (response.success) {
+      setConversationInfo((prev) => ({
+        ...prev,
+        title: editedTitle.trim(),
+      }));
+    }
+    setIsEditingTitle(false);
+  }
+
+  function handleTitleEditStart() {
+    setEditedTitle(conversationInfo?.title || "Untitled Notebook");
+    setIsEditingTitle(true);
+  }
+
+  function handleTitleKeyDown(e) {
+    if (e.key === "Enter") {
+      updateTitle();
+    } else if (e.key === "Escape") {
+      setIsEditingTitle(false);
     }
   }
 
@@ -65,11 +152,32 @@ export default function AINotebook() {
   }, [publicNoteModalOpen]);
 
   useEffect(() => {
-    fetchPublicNotes(debouncedPublicNoteSearchQuery);
+    if (debouncedPublicNoteSearchQuery) {
+      fetchPublicNotes(debouncedPublicNoteSearchQuery);
+    }
   }, [debouncedPublicNoteSearchQuery]);
 
-  // Placeholder data - replace with actual state/props later
-  const notebookTitle = "Untitled Notebook";
+  useEffect(() => {
+    async function initializeData() {
+      const [notes, conversation] = await Promise.all([
+        fetchPublicNotes(),
+        fetchCoversationInfo(params.id),
+      ]);
+
+      if (
+        conversation?.allowed_sources &&
+        Array.isArray(conversation.allowed_sources) &&
+        notes.length > 0
+      ) {
+        const preSelectedNotes = notes.filter((note) =>
+          conversation.allowed_sources.includes(note._id),
+        );
+        setSelectedPublicNotes(preSelectedNotes);
+      }
+    }
+
+    initializeData();
+  }, [params.id]);
 
   // Styles for transitions
   const sidebarTransition = "all 0.3s ease-in-out";
@@ -80,14 +188,40 @@ export default function AINotebook() {
       style={{ height: "100vh", overflow: "hidden" }}
     >
       {/* Notebook Header */}
-      <div className="bg-white py-3 px-3 d-flex align-items-center justify-content-between">
+      <div className="bg-white py-3 px-3 d-md-flex d-block align-items-center justify-content-between">
         <div className="d-flex align-items-center gap-2">
           <img src={logo} alt="AMN Logo" style={{ maxWidth: 40 }} />
-          <h3 className="mb-0 fw-bold text-black ps-2">{notebookTitle}</h3>
+          {isEditingTitle ? (
+            <input
+              type="text"
+              className="form-control fw-bold fs-5 ps-2"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              onBlur={updateTitle}
+              onKeyDown={handleTitleKeyDown}
+              autoFocus
+              style={{ maxWidth: "400px" }}
+            />
+          ) : (
+            <div
+              className="d-flex align-items-center gap-2 cursor-pointer"
+              onClick={handleTitleEditStart}
+              title="Click to edit title"
+            >
+              <h3 className="mb-0 fw-bold text-black ps-2">
+                {truncateText(conversationInfo?.title, 30) ||
+                  "Untitled Notebook"}
+              </h3>
+              <Pencil size={16} className="text-muted" />
+            </div>
+          )}
         </div>
-        <div className="d-flex justify-content-between gap-3">
+        <div className="d-block d-md-flex justify-content-between text-center text-md-start gap-3 mt-2 mt-md-0">
           <button className="btn bg-success-subtle rounded-4">Connect</button>
-          <button onClick={closeCurrentConversation} className="btn bg-danger-subtle rounded-4">
+          <button
+            onClick={closeCurrentConversation}
+            className="btn bg-danger-subtle rounded-4 ms-4 ms-md-0"
+          >
             Close Conversation
           </button>
         </div>
@@ -163,6 +297,7 @@ export default function AINotebook() {
                             let n = [...selectedPublicNotes];
                             n.splice(index, 1);
                             setSelectedPublicNotes([...n]);
+                            updateSources([...n]);
                           }}
                         >
                           <XIcon size={20} />
@@ -191,7 +326,7 @@ export default function AINotebook() {
 
         {/* Middle Section - Chat Interface */}
         <div
-          className="flex-grow-1 d-flex flex-column bg-white rounded-4 border"
+          className="flex-grow-1 d-flex flex-column bg-white rounded-4 border me-3"
           style={{ minWidth: "0" }}
         >
           <div className="flex-grow-1 overflow-auto">
@@ -237,7 +372,7 @@ export default function AINotebook() {
         </div>
 
         {/* Right Sidebar - Resources */}
-        <div
+        {/* <div
           className={`border rounded-4 bg-light d-flex flex-column ${!isRightSidebarOpen ? "collapsed" : ""} mx-3 mt-0`}
           style={{
             width: isRightSidebarOpen ? "300px" : "50px",
@@ -291,7 +426,7 @@ export default function AINotebook() {
               </>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
       <footer className="my-2">
         <p className="m-0 text-center form-control-text-color fs-14">
@@ -311,6 +446,7 @@ export default function AINotebook() {
               className="btn theme-btn rounded-pill px-3 py-2"
               onClick={() => {
                 setSelectedPublicNotes(tempSelectedPublicNotes);
+                updateSources(tempSelectedPublicNotes);
                 setPublicNoteModalOpen(false);
               }}
             >
