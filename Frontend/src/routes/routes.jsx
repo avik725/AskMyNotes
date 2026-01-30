@@ -72,8 +72,10 @@ export const router = createBrowserRouter(
 
       <Route
         path={`/${routeSet.authenticated.aiNotebook}/:id`}
-        element={<AINotebook />}
-      />
+        element={<ProtectedRoute />}
+      >
+        <Route index element={<AINotebook/>}/>
+      </Route>
     </>,
   ),
 );

@@ -1,11 +1,81 @@
 import { routeSet } from "@/routes/routeSet";
-import { Funnel, Plus, Search, XIcon } from "lucide-react";
-import React, { useState } from "react";
+import {
+  createConversationHandler,
+  deleteConversationHandler,
+  getUserConversationsHandler,
+} from "@/services/apiHandlers";
+import fireSweetAlert from "@/utils/fireSweetAlert";
+import { truncateText } from "@/utils/helpers";
+import {
+  Dot,
+  Funnel,
+  Plus,
+  Search,
+  SquarePen,
+  Trash2,
+  XIcon,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function AskAI() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [conversationsLoading, setConversationLoading] = useState(false);
+  const navigate = useNavigate();
+  const [userConversations, SetUserConversations] = useState([]);
+
+  async function createNewConversation() {
+    const response = await createConversationHandler();
+
+    fireSweetAlert({
+      success: response.success || false,
+      message:
+        response.message ||
+        (response.success
+          ? "Conversation Created Successfully"
+          : "Something Went Wrong !!"),
+    });
+
+    if (response.success) {
+      navigate(`${routeSet.authenticated.aiNotebook}/${response.data._id}`);
+    }
+  }
+
+  async function getConversations() {
+    const response = await getUserConversationsHandler();
+
+    if (response.success && response.data) {
+      SetUserConversations([...response.data]);
+    } else {
+      fireSweetAlert({
+        success: response.success || false,
+        message:
+          response.message ||
+          "Something Went Wrong While Fetching Conversations !!",
+      });
+    }
+  }
+
+  async function deleteConversation(id) {
+    const response = await deleteConversationHandler(id);
+
+    fireSweetAlert({
+      success: response.success || false,
+      message:
+        response.message ||
+        (response.success
+          ? "Conversation deleted successfully !!"
+          : "Something went wrong !!"),
+    });
+
+    if (response.success) {
+      getConversations();
+    }
+  }
+
+  useEffect(() => {
+    getConversations();
+  }, []);
 
   return (
     <main id="ask-ai-page">
@@ -86,7 +156,7 @@ export default function AskAI() {
             </div>
             <div className="col-lg-2 col-md-3 col-9 px-2 pt-3 pt-md-0">
               <button
-                onClick={() => navigate(`${routeSet.authenticated.aiNotebook}/123`)}
+                onClick={() => createNewConversation()}
                 className="btn bg-body-secondary w-100 py-2 py-md-3"
               >
                 Create New
@@ -98,17 +168,21 @@ export default function AskAI() {
             className="overflow-y-scroll border rounded-3 p-3 overflow-x-hidden mt-4"
             style={{ height: "60vh" }}
           >
-            {/* {notes.length > 0 ? (
+            {userConversations.length > 0 ? (
               <div className="row">
-                {notes?.map((note) => {
+                {userConversations?.map((conversation) => {
                   return (
-                    <div key={note?._id} className="col-lg-4 col-md-6 mb-3">
+                    <div
+                      key={conversation?._id}
+                      className="col-lg-4 col-md-6 mb-3"
+                    >
                       <div
                         className="card position-relative cursor-pointer rounded-3 py-5 px-3"
                         style={{ backgroundColor: "#f4f4f4" }}
                         onClick={() => {
-                          setViewModalData(note);
-                          setViewModalOpen(true);
+                          navigate(
+                            `${routeSet.authenticated.aiNotebook}/${conversation?._id}`,
+                          );
                         }}
                       >
                         <div className="d-inline-block position-absolute top-0 end-0 p-2">
@@ -117,14 +191,6 @@ export default function AskAI() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              setModalOpen(true);
-                              setFormData({
-                                _id: note?._id,
-                                title: note?.title,
-                                contentJson: note?.contentJson,
-                                contentText: note?.contentText,
-                                type: note?.type,
-                              });
                             }}
                           >
                             <SquarePen size={18} className="text-primary" />
@@ -133,7 +199,7 @@ export default function AskAI() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              deleteNote(note?._id);
+                              deleteConversation(conversation?._id);
                             }}
                           >
                             <Trash2 size={18} className="text-danger" />
@@ -141,24 +207,28 @@ export default function AskAI() {
                         </div>
 
                         <h3 className="fw-bold">
-                          {note?.title ? truncateText(note?.title, 20) : ""}
+                          {conversation?.title
+                            ? truncateText(conversation?.title, 20)
+                            : ""}
                         </h3>
                         <p className="form-control-text-color fs-14 m-0">
                           Manage your private notes and resources
                         </p>
                         <p className="form-control-text-color fs-14 m-0">
-                          {note?.createdAt
-                            ? new Date(note?.createdAt)
+                          {conversation?.createdAt
+                            ? new Date(conversation?.createdAt)
                                 .toLocaleString()
                                 .split(",")[0]
-                            : ""}
+                            : ""}{" "}
+                          <Dot /> {conversation?.allowed_sources?.length || 0}{" "}
+                          sources
                         </p>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            ) : ( */}
+            ) : (
               <div
                 className="align-content-center text-center h-100 rounded-3"
                 style={{ backgroundColor: "#f4f4f4" }}
@@ -170,7 +240,7 @@ export default function AskAI() {
                   </p>
                 </div>
               </div>
-            {/* )} */}
+            )}
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import logo from "@/assets/images/amn_logo.png";
 import {
   ChevronLeft,
@@ -20,9 +20,11 @@ import { Modal, ReactSelect } from "@/components";
 import { getNonPaginatedNotesHandler } from "@/services/apiHandlers";
 import useDebounce from "@/hooks/useDebounce";
 import { truncateText } from "@/utils/helpers";
+import { routeSet } from "@/routes/routeSet";
 
 export default function AINotebook() {
   const params = useParams();
+  const navigate = useNavigate();
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [publicNoteModalOpen, setPublicNoteModalOpen] = useState(false);
@@ -31,6 +33,11 @@ export default function AINotebook() {
   const debouncedPublicNoteSearchQuery = useDebounce(publicNoteSearchQuery);
   const [selectedPublicNotes, setSelectedPublicNotes] = useState([]);
   const [tempSelectedPublicNotes, setTempSelectedPublicNotes] = useState([]);
+
+
+  function closeCurrentConversation(){
+    navigate(routeSet.authenticated.askAI)
+  }
 
   async function fetchPublicNotes(search = "") {
     const response = await getNonPaginatedNotesHandler(search);
@@ -78,7 +85,12 @@ export default function AINotebook() {
           <img src={logo} alt="AMN Logo" style={{ maxWidth: 40 }} />
           <h3 className="mb-0 fw-bold text-black ps-2">{notebookTitle}</h3>
         </div>
-        <div>{/* Additional header actions can go here */}</div>
+        <div className="d-flex justify-content-between gap-3">
+          <button className="btn bg-success-subtle rounded-4">Connect</button>
+          <button onClick={closeCurrentConversation} className="btn bg-danger-subtle rounded-4">
+            Close Conversation
+          </button>
+        </div>
       </div>
 
       <div

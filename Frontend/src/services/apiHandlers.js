@@ -17,6 +17,9 @@ import {
   incrementNoteDownloadCount,
   deleteNotes,
   getNonPaginatedNotes,
+  createConversation,
+  getUserConversations,
+  deleteConversation,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -234,6 +237,49 @@ export async function updatePrivateNotesHandler(formData) {
 export async function deletePrivateNotesHandler(id) {
   const response = await fetch(`${deletePrivatNotes}/${id}`, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+// RAG AI Handlers
+
+export async function createConversationHandler(data = []) {
+  const response = await fetch(createConversation, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+    credentials: "include",
+  });
+
+  const result = await response.json();
+
+  return result;
+}
+
+export async function getUserConversationsHandler() {
+  const response = await fetch(getUserConversations, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function deleteConversationHandler(id = "") {
+  const response = await fetch(`${deleteConversation}/${id}`, {
+    method: "Delete",
     headers: {
       "Content-Type": "application/json",
     },

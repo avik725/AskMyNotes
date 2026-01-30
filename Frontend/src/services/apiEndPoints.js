@@ -29,3 +29,9 @@ export const getPrivateNotes = API_BASE_URL + "private-notes/get";
 export const createPrivateNotes = API_BASE_URL + "private-notes/create";
 export const updatePrivateNotes = API_BASE_URL + "private-notes/update";
 export const deletePrivatNotes = API_BASE_URL + "private-notes/delete";
+
+
+//RAG AI API End Points
+export const createConversation = API_BASE_URL + "ai/conversation/create";
+export const getUserConversations = API_BASE_URL + "ai/conversation/get";
+export const deleteConversation = API_BASE_URL + "ai/conversation/delete";
