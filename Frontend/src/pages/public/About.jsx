@@ -1,5 +1,5 @@
-import aboutOne from "@/assets/images/about/aboutOne.png";
-import aboutTwo from "@/assets/images/about/aboutTwo.png";
+import aboutOne from "@/assets/images/about/abouti.png"
+import aboutTwo from "@/assets/images/about/aboutii.png";
 import aboutFive from "@/assets/images/about/aboutFive.png";
 export default function About() {
   return (
