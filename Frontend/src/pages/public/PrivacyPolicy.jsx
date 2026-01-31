@@ -1,6 +1,26 @@
 import { Footer, Header } from "@/components";
 
 export default function PrivacyPolicy() {
+  const cardStyle = {
+    backgroundColor: "#ffffff",
+    padding: "25px",
+    borderRadius: "15px",
+    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.05)",
+    transition: "all 0.3s ease",
+    border: "1px solid #f0f0f0",
+    marginBottom: "20px"
+  };
+
+  const handleMouseEnter = (e) => {
+    e.currentTarget.style.transform = "translateY(-5px)";
+    e.currentTarget.style.boxShadow = "0 12px 30px rgba(0, 0, 0, 0.1)";
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.transform = "translateY(0)";
+    e.currentTarget.style.boxShadow = "0 4px 15px rgba(0, 0, 0, 0.05)";
+  };
+
   return (
     <main id="privacy-policy-page">
 
@@ -8,7 +28,13 @@ export default function PrivacyPolicy() {
       <section id="privacy-policy-section" className="pt-5 pb-4">
         <div className="container px-4">
           <h3 className="fs-34 fw-bold mb-4 pb-3">Privacy Policy</h3>
-          <div className="introduction mb-4">
+          
+          <div 
+            className="introduction mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Introduction</h4>
             <p className="fw-light text-justify fs-sm-15">
               Welcome to AskMyNotes's Privacy Policy. This policy outlines
@@ -18,7 +44,13 @@ export default function PrivacyPolicy() {
               and ensuring the security of your data.
             </p>
           </div>
-          <div className="data-collection mb-4">
+
+          <div 
+            className="data-collection mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Collection</h4>
             <p className="fw-light text-justify fs-sm-15">
               We collect various types of information to provide and improve our
@@ -30,7 +62,13 @@ export default function PrivacyPolicy() {
               platforms, if you choose to link your accounts.
             </p>
           </div>
-          <div className="data-usage mb-4">
+
+          <div 
+            className="data-usage mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Usage</h4>
             <p className="fw-light text-justify fs-sm-15">
               The information we collect is used for several purposes.
@@ -41,7 +79,13 @@ export default function PrivacyPolicy() {
               and analytics to understand user behavior and trends.
             </p>
           </div>
-          <div className="data-protection mb-4">
+
+          <div 
+            className="data-protection mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Protection</h4>
             <p className="fw-light text-justify fs-sm-15">
               We take the security of your data seriously and implement various
@@ -53,7 +97,13 @@ export default function PrivacyPolicy() {
               confidential.
             </p>
           </div>
-          <div className="user-rights mb-4">
+
+          <div 
+            className="user-rights mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">User Rights</h4>
             <p className="fw-light text-justify fs-sm-15">
               You have certain rights regarding your personal information. You
@@ -64,7 +114,13 @@ export default function PrivacyPolicy() {
               addressing your requests promptly and transparently.
             </p>
           </div>
-          <div className="changes-to-the-policy mb-4">
+
+          <div 
+            className="changes-to-the-policy mb-4" 
+            style={cardStyle} 
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+          >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Changes to This Policy</h4>
             <p className="fw-light text-justify fs-sm-15">
               We may update this Privacy Policy from time to time to reflect
@@ -75,6 +131,7 @@ export default function PrivacyPolicy() {
               we protect your information.
             </p>
           </div>
+
         </div>
       </section>
       {/* Privacy Policy Section Ends */}
