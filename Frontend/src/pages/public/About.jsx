@@ -1,6 +1,7 @@
-import aboutOne from "@/assets/images/about/aboutOne.png";
-import aboutTwo from "@/assets/images/about/aboutTwo.png";
+import aboutOne from "@/assets/images/about/abouti.png"
+import aboutTwo from "@/assets/images/about/aboutii.png";
 import aboutFive from "@/assets/images/about/aboutFive.png";
+import aboutThree from "@/assets/images/about/aboutiv.png";
 export default function About() {
   return (
     <main id="about-page">
@@ -41,12 +42,9 @@ export default function About() {
 
           {/* Section 1 - Introduction */}
           <div className="row mb-lg-5 mb-4 align-items-center about-card">
-            <div className="col-lg-5">
-              <img src={aboutOne} alt="Image" className="img-fluid img-style" />
-            </div>
-            <div className="col-lg-7">
-              <div className="introduction ps-lg-4 pt-4 pt-lg-0">
-                <h4 className="fs-24 fw-bold mb-3">Introduction</h4>
+            <div className="col-lg-7 order-1 order-lg-0">
+              <div className="introduction pe-lg-4 mt-4 mt-lg-0">
+                <h4 className="fs-24 fw-bold mb-3">Introoduction</h4>
                 <p className="fw-light text-justify fs-sm-15">
                   AskMyNotes is a student-centric academic platform crafted
                   to simplify access to a vast and diverse range of educational
@@ -72,12 +70,18 @@ export default function About() {
                 </p>
               </div>
             </div>
+            <div className="col-lg-5 order-0 order-lg-1">
+              <img src={aboutOne} alt="Image" className="img-fluid img-style" />
+            </div>
           </div>
 
           {/* Section 2 - Mission */}
-          <div className="row mb-lg-5 mb-4 about-card">
-            <div className="col-lg-12">
-              <div className="mission mb-0">
+         <div className="row mb-lg-5 mb-4 align-items-center about-card">
+            <div className="col-lg-5">
+              <img src={aboutThree} alt="Image" className="img-fluid img-style" />
+            </div>
+            <div className="col-lg-7">
+              <div className="mission ps-lg-4 pt-4 pt-lg-0">
                 <h4 className="fs-24 fw-bold mb-3">Our Mission</h4>
                 <p className="fw-light text-justify fs-sm-15">
                   Our mission is simple yet powerful — to empower students by

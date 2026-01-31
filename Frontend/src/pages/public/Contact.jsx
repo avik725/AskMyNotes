@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import supportImage from "@/assets/images/contact/support.png";
+import supportImage from "@/assets/images/contact/contact.png";
 import fireSweetAlert from "@/utils/fireSweetAlert";
 
 export default function Contact() {
