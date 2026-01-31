@@ -1,19 +1,48 @@
 import aboutOne from "@/assets/images/about/aboutOne.png";
 import aboutTwo from "@/assets/images/about/aboutTwo.png";
-import aboutFour from "@/assets/images/about/aboutFour.png";
-
+import aboutFive from "@/assets/images/about/aboutFive.png";
 export default function About() {
   return (
     <main id="about-page">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .about-card {
+          border: 1px solid transparent;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+          border-radius: 1.5rem;
+          background-color: #fff;
+          padding: 2rem;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-      {/* About Section Starts */}
+        .about-card:hover {
+          transform: translateY(-12px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+          border-color: #eee;
+        }
+
+        .img-style {
+          filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+          border-radius: 1rem;
+          transition: transform 0.4s ease;
+        }
+
+        .about-card:hover .img-style {
+          transform: scale(1.03);
+        }
+
+        .text-justify {
+          text-align: justify;
+        }
+      `}} />
+
       <section id="about-section" className="pt-5 light-black">
         <div className="container px-4">
-          <h3 className="fs-32 fw-bold mb-4 pb-3">About AskMyNotes</h3>
+          <h3 className="fs-32 fw-bold mb-4 pb-3 border-bottom border-dark d-inline-block">About AskMyNotes</h3>
 
-          <div className="row mb-lg-5 mb-4">
+          {/* Section 1 - Introduction */}
+          <div className="row mb-lg-5 mb-4 align-items-center about-card">
             <div className="col-lg-5">
-              <img src={aboutOne} alt="Image" className="img-fluid rounded-4" />
+              <img src={aboutOne} alt="Image" className="img-fluid img-style" />
             </div>
             <div className="col-lg-7">
               <div className="introduction ps-lg-4 pt-4 pt-lg-0">
@@ -45,9 +74,10 @@ export default function About() {
             </div>
           </div>
 
-          <div className="row mb-lg-5 mb-4">
+          {/* Section 2 - Mission */}
+          <div className="row mb-lg-5 mb-4 about-card">
             <div className="col-lg-12">
-              <div className="mission mb-4">
+              <div className="mission mb-0">
                 <h4 className="fs-24 fw-bold mb-3">Our Mission</h4>
                 <p className="fw-light text-justify fs-sm-15">
                   Our mission is simple yet powerful — to empower students by
@@ -74,7 +104,8 @@ export default function About() {
             </div>
           </div>
 
-          <div className="row mb-lg-5 mb-4">
+          {/* Section 3 - Who Can Use This? */}
+          <div className="row mb-lg-5 mb-4 align-items-center about-card">
             <div className="col-lg-7 order-1 order-lg-0">
               <div className="who-can-use-this pe-lg-4 mt-4 mt-lg-0">
                 <h4 className="fs-24 fw-bold mb-3">Who Can Use This?</h4>
@@ -112,70 +143,54 @@ export default function About() {
               </div>
             </div>
             <div className="col-lg-5 order-0 order-lg-1">
-              <img src={aboutTwo} alt="Image" className="img-fluid rounded-4" />
+              <img src={aboutTwo} alt="Image" className="img-fluid img-style" />
             </div>
           </div>
 
-          <div className="row mb-lg-5 mb-4">
+          {/* Section 4 - Features & Goals Grid */}
+          <div className="row mb-lg-5 mb-4 g-4">
             <div className="col-lg-6">
-              <div className="key-features mb-4">
+              <div className="key-features h-100 about-card">
                 <h4 className="fs-24 fw-bold mb-3">Key Features</h4>
                 <ul className="ps-3">
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Stream-wise categorization of notes for easy navigation
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Upload and download notes anytime, anywhere
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Smart search and filters to quickly find relevant materials
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Built by students, for students - we understand your needs
-                  </li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Stream-wise categorization of notes for easy navigation</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Upload and download notes anytime, anywhere</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Smart search and filters to quickly find relevant materials</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Built by students, for students - we understand your needs</li>
                 </ul>
               </div>
             </div>
             <div className="col-lg-6">
-              <div className="future-goals mb-4">
+              <div className="future-goals h-100 about-card">
                 <h4 className="fs-24 fw-bold mb-3">Future Goals</h4>
                 <ul className="ps-3">
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Add verified notes from faculty members
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Enable discussions and peer reviews for notes
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Support for MCQs, assignments, and other study materials
-                  </li>
-                  <li className="mb-2 fw-light fs-sm-15">
-                    Develop a mobile app for on-the-go access
-                  </li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Add verified notes from faculty members</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Enable discussions and peer reviews for notes</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Support for MCQs, assignments, and other study materials</li>
+                  <li className="mb-2 fw-light fs-sm-15 text-secondary">Develop a mobile app for on-the-go access</li>
                 </ul>
               </div>
             </div>
           </div>
 
-          <div className="row mb-lg-5 mb-4">
-            <div className="col-lg-12">
-              <div className="get-involved mb-4">
-                <h4 className="fs-24 fw-bold mb-3">Get Involved</h4>
-                <p className="fw-light mb-4 text-justify fs-sm-15">
-                  We encourage all students to contribute to the AskMyNotes
-                  community. Register yourself, Upload your notes, participate
-                  in discussions, and help us build a valuable resource for
-                  students everywhere.
+   {/* Section 5 - Get Involved */}
+            <div className="row mb-lg-5 mb-4 align-items-center about-card">
+            <div className="col-lg-7 order-1 order-lg-0">
+               <h4 className="fs-24 fw-bold mb-3">Get Involved</h4>
+                <p className="fw-light text-justify fs-sm-15">
+                  Join our community to collaborate, upload your own notes, 
+                  and benefit from the experiences of your peers. 
+                  By participating in discussions and contributing your materials,
+                   you help us create a space where every student has the tools they need to succeed. 
+                   Register today to get started and help us strengthen the AskMyNotes network for students across all disciplines.
                 </p>
-              </div>
             </div>
-            <div className="col-lg-12">
-              <img src={aboutFour} alt="Image" className="img-fluid rounded-4" />
+             <div className="col-lg-5 order-0 order-lg-1">
+              <img src={aboutFive} alt="Image" className="img-fluid img-style" />
             </div>
           </div>
         </div>
       </section>
-      {/* About Section Ends */}
     </main>
   );
 }
