@@ -4,33 +4,46 @@ import fireSweetAlert from "@/utils/fireSweetAlert";
 
 export default function Contact() {
   const [loading, setLoading] = useState(false);
+  const [emailInvalid, setEmailInvalid] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const email = e.target.email.value;
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzJVm1qdsiWR-4SWOXeXjdd9CXWKjDo2rYzOuC5ttV8lo3ofg-2Wxouq9Wey_l0sOih/exec'; 
-    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      fireSweetAlert({
+        success: false,
+        message: "Invalid Email Address !"
+      })
+      setEmailInvalid(true);
+      setLoading(false);
+      return;
+    }
+
+    const scriptURL =
+      "https://script.google.com/macros/s/AKfycbzJVm1qdsiWR-4SWOXeXjdd9CXWKjDo2rYzOuC5ttV8lo3ofg-2Wxouq9Wey_l0sOih/exec";
+
     try {
       const formData = new FormData(e.target);
-      
+
       await fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors', 
+        method: "POST",
+        mode: "no-cors",
         body: formData,
       });
-      
-      // Official Success Message
-      // alert("Thank you! Your message has been successfully submitted. We will get back to you shortly.");
+
       fireSweetAlert({
         success: true,
-        message: "Thank you! Your message has been successfully submitted."
-      })
-      e.target.reset(); 
-
+        message: "Thank you! Your message has been successfully submitted.",
+      });
+      e.target.reset();
     } catch (error) {
-      console.error('Error!', error.message);
-      
+      fireSweetAlert({
+        success: false,
+        message: "Something went wrong !!",
+      });
+      console.error("Error!", error.message);
     } finally {
       setLoading(false);
     }
@@ -45,21 +58,27 @@ export default function Contact() {
               <div className="section-title mb-4">
                 <h2 className="fw-bold mt-lg-0 fs-32">Contact Us</h2>
                 <p className="form-control-text-color fs-14">
-                  Have questions or feedback? Reach out to our team, and we will get back to you as soon as possible.
+                  Have questions or feedback? Reach out to our team, and we will
+                  get back to you as soon as possible.
                 </p>
               </div>
-              
+
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-12">
                     <div className="mb-3">
-                      <label htmlFor="full_name" className="form-label">Full Name</label>
+                      <label htmlFor="full_name" className="form-label">
+                        Full Name
+                      </label>
                       <input
                         type="text"
                         className="form-control py-md-3 py-2 rounded-4 bg-light fs-sm-14"
                         id="full_name"
                         onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                          e.target.value = e.target.value.replace(
+                            /[^a-zA-Z\s]/g,
+                            "",
+                          );
                         }}
                         name="full_name"
                         placeholder="Enter your full name"
@@ -69,11 +88,16 @@ export default function Contact() {
                   </div>
                   <div className="col-lg-12 col-md-6">
                     <div className="mb-3">
-                      <label htmlFor="email" className="form-label">Email Address</label>
+                      <label htmlFor="email" className="form-label">
+                        Email Address
+                      </label>
                       <input
                         type="email"
-                        className="form-control py-md-3 py-2 rounded-4 bg-light fs-sm-14"
+                        className={`form-control py-md-3 py-2 rounded-4 bg-light ${emailInvalid && "text-danger border border-danger"} fs-sm-14`}
                         id="email"
+                        onInput={() => {
+                          if (emailInvalid) setEmailInvalid(false);
+                        }}
                         name="email"
                         placeholder="Enter your email address"
                         required
@@ -82,14 +106,19 @@ export default function Contact() {
                   </div>
                   <div className="col-lg-12 col-md-6">
                     <div className="mb-3">
-                      <label htmlFor="mobile_number" className="form-label">Mobile Number</label>
+                      <label htmlFor="mobile_number" className="form-label">
+                        Mobile Number
+                      </label>
                       <input
                         type="text"
                         className="form-control py-md-3 py-2 rounded-4 bg-light fs-sm-14"
                         id="mobile_number"
                         name="mobile_number"
+                        maxLength="10"
                         onInput={(e) => {
-                          e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                          e.target.value = e.target.value
+                            .replace(/[^0-9]/g, "")
+                            .slice(0, 10);
                         }}
                         placeholder="Enter your mobile number"
                         required
@@ -98,7 +127,9 @@ export default function Contact() {
                   </div>
                   <div className="col-12">
                     <div className="mb-4 pb-2">
-                      <label htmlFor="message" className="form-label">Your Message</label>
+                      <label htmlFor="message" className="form-label">
+                        Your Message
+                      </label>
                       <textarea
                         name="message"
                         id="message"
