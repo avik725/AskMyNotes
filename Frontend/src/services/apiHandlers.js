@@ -22,6 +22,9 @@ import {
   deleteConversation,
   updateConversationSources,
   updateConversationTitle,
+  connectConversation,
+  checkConversationConnection,
+  disconnectConversation,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -263,6 +266,45 @@ export async function createConversationHandler(data = []) {
 
   const result = await response.json();
 
+  return result;
+}
+
+export async function connectConversationHandler(id = "") {
+  const response = await fetch(connectConversation(id), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function checkConversationConnectionHandler(id = ""){
+  const response = await fetch(checkConversationConnection(id), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function disconnectConversationHandler(id = "") {
+  const response = await fetch(disconnectConversation(id), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
   return result;
 }
 

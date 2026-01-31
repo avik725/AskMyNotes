@@ -2,6 +2,7 @@ import { Conversations } from "../models/conversations.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import { apiError } from "../utilities/apiError.js";
 import { apiResponse } from "../utilities/apiResponse.js";
+import * as chatService from "../services/chat.service.js";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -148,8 +149,48 @@ const updateConversationTitle = asyncHandler(async (req, res, next) => {
 
   return res
     .status(200)
+    .json(new apiResponse(200, conversation, "Title Updated Successfully !!"));
+});
+
+const connectConversation = asyncHandler(async (req, res, next) => {
+  await chatService.connectChat({
+    userId: req.user?.id,
+    conversationId: req.params.id,
+  });
+
+  res.json({ success: true, connected: true });
+});
+
+const checkConversationConnection = asyncHandler(async (req, res, next) => {
+  const result = await chatService.checkIfConnected({
+    userId: req.user?.id,
+    conversationId: req.params?.id,
+  });
+
+  if (!result.connected) {
+    res.status(200).json(new apiResponse(200, result, "Not Connected !!"));
+  }
+
+  res.status(200).json(new apiResponse(200, result, "Connected Successfully"));
+});
+
+const disconnectConversation = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  console.log("id : ", id);
+
+  if (!id) {
+    throw new apiError(400, "Conversation Id required !!");
+  }
+  const result = await chatService.disconnectChat(id);
+
+  return res
+    .status(200)
     .json(
-      new apiResponse(200, conversation, "Title Updated Successfully !!")
+      new apiResponse(
+        200,
+        null,
+        result.message || "Disconnected Successfully !!"
+      )
     );
 });
 
@@ -159,5 +200,8 @@ export {
   deleteConversations,
   getConversationById,
   updateConversationSources,
-  updateConversationTitle
+  updateConversationTitle,
+  connectConversation,
+  checkConversationConnection,
+  disconnectConversation,
 };

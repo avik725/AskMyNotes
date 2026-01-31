@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { Modal } from "@/components";
 import {
+  checkConversationConnectionHandler,
+  connectConversationHandler,
+  disconnectConversationHandler,
   getConversationByIdHandler,
   getNonPaginatedNotesHandler,
   updateConversationSourcesHandler,
@@ -32,6 +35,7 @@ import fireSweetAlert from "@/utils/fireSweetAlert";
 export default function AINotebook() {
   const params = useParams();
   const navigate = useNavigate();
+  const [isConversationConnected, setIsConversationConnected] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [publicNoteModalOpen, setPublicNoteModalOpen] = useState(false);
@@ -45,7 +49,87 @@ export default function AINotebook() {
   const [editedTitle, setEditedTitle] = useState("");
 
   function closeCurrentConversation() {
+    if (isConversationConnected) {
+      fireSweetAlert({
+        success: false,
+        message: "Disconnect Conversation to Close !!",
+      });
+      return;
+    }
     navigate(routeSet.authenticated.askAI);
+  }
+
+  async function connectConversation() {
+    try {
+      const response = await connectConversationHandler(params.id);
+
+      fireSweetAlert({
+        success: response.success,
+        message:
+          response.message ||
+          (response.success
+            ? "Connected Successfully !!"
+            : "Unable to Connect !!"),
+      });
+
+      if (response.success) {
+        setIsConversationConnected(true);
+      }
+    } catch (error) {
+      fireSweetAlert({
+        success: false,
+        message: error.message || "Unable to Connect !!",
+      });
+      console.error("Conversation Connection Error : ", error);
+    }
+  }
+
+  async function checkConversationConnection() {
+    try {
+      const response = await checkConversationConnectionHandler(params.id);
+
+      if (response.data?.connected) {
+        fireSweetAlert({
+          success: response.success,
+          message:
+            response.message ||
+            (response.success
+              ? "Connected Successfully !!"
+              : "Unable to Connect !!"),
+        });
+
+        setIsConversationConnected(true);
+      }
+    } catch (error) {
+      fireSweetAlert({
+        success: false,
+        message: error.message || "Unable to Disconnect !!",
+      });
+      console.error("Conversation Connection Error: ", error);
+    }
+  }
+
+  async function disconnectConversation() {
+    if (isConversationConnected) {
+      try {
+        const response = await disconnectConversationHandler(params.id);
+
+        if (response.success) {
+          fireSweetAlert({
+            success: response.success,
+            message:
+              response.message ||
+              (response.success
+                ? "Disconnected Successfully !!"
+                : "Unable to Connect !!"),
+          });
+
+          setIsConversationConnected(false);
+        }
+      } catch (error) {
+        console.error("Conversation Connection Error: ", error);
+      }
+    }
   }
 
   async function fetchPublicNotes(search = "") {
@@ -179,6 +263,10 @@ export default function AINotebook() {
     initializeData();
   }, [params.id]);
 
+  useEffect(() => {
+    checkConversationConnection();
+  }, []);
+
   // Styles for transitions
   const sidebarTransition = "all 0.3s ease-in-out";
 
@@ -217,7 +305,16 @@ export default function AINotebook() {
           )}
         </div>
         <div className="d-block d-md-flex justify-content-between text-center text-md-start gap-3 mt-2 mt-md-0">
-          <button className="btn bg-success-subtle rounded-4">Connect</button>
+          <button
+            className={`btn ${isConversationConnected ? "bg-danger-subtle" : "bg-success-subtle"} rounded-4`}
+            onClick={
+              isConversationConnected
+                ? disconnectConversation
+                : connectConversation
+            }
+          >
+            {!isConversationConnected ? "Connect" : "Disconnect"}
+          </button>
           <button
             onClick={closeCurrentConversation}
             className="btn bg-danger-subtle rounded-4 ms-4 ms-md-0"
@@ -228,12 +325,12 @@ export default function AINotebook() {
       </div>
 
       <div
-        className="d-flex flex-grow-1 position-relative"
+        className="d-flex flex-grow-1 position-relative pb-3"
         style={{ overflow: "hidden" }}
       >
         {/* Left Sidebar - Public Notes */}
         <div
-          className={`border rounded-4 bg-light d-flex flex-column ${!isLeftSidebarOpen ? "collapsed" : ""} mx-3 mt-0`}
+          className={`border shadow rounded-4 bg-light d-flex flex-column ${!isLeftSidebarOpen ? "collapsed" : ""} mx-3 mt-0`}
           style={{
             width: isLeftSidebarOpen ? "300px" : "50px",
             minWidth: isLeftSidebarOpen ? "300px" : "50px",
@@ -326,11 +423,11 @@ export default function AINotebook() {
 
         {/* Middle Section - Chat Interface */}
         <div
-          className="flex-grow-1 d-flex flex-column bg-white rounded-4 border me-3"
+          className="flex-grow-1 d-flex flex-column bg-light rounded-4 border me-3 overflow-hidden shadow"
           style={{ minWidth: "0" }}
         >
           <div className="flex-grow-1 overflow-auto">
-            <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <div className="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
               <div className="d-flex align-items-end gap-2">
                 <Bot size={22} />
                 <h6 className="mb-0 fw-semibold">Chat</h6>
@@ -348,21 +445,36 @@ export default function AINotebook() {
                   />
                 </div>
               </div>
-              <h5>Start chatting with your notes</h5>
-              <p className="small">
-                Select a note from the left to begin context-aware
-                conversations.
-              </p>
+              {isConversationConnected && selectedPublicNotes.length > 0 ? (
+                <>
+                  <h5>Start chatting with your notes</h5>
+                  <p className="small">
+                    Select a note from the left to begin context-aware
+                    conversations.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h5>Connect and Add Notes to Start chatting</h5>
+                  <p className="small">
+                    Select a note from the left and connect chat to begin
+                    context-aware conversations.
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
           {/* Chat Input Area */}
-          <div className="p-3 border-top">
+          <div className="p-3 border-top bg-white">
             <div className="input-group">
               <input
                 type="text"
                 className="form-control"
                 placeholder="Ask a question..."
+                disabled={
+                  !(isConversationConnected && selectedPublicNotes.length > 0)
+                }
               />
               <button className="btn theme-btn">
                 <ChevronRight size={18} />
@@ -428,7 +540,7 @@ export default function AINotebook() {
           </div>
         </div> */}
       </div>
-      <footer className="my-2">
+      <footer className="mb-2">
         <p className="m-0 text-center form-control-text-color fs-14">
           AskMyNotes AI can be inaccurate; please double-check its responses.
         </p>

@@ -23,4 +23,4 @@ const messageSchema = new mongoose.Schema(
 
 messageSchema.index({ coversation_id: 1, createdAt: -1 });
 
-export default mongoose.model("Message", messageSchema);
+export const Messages =  mongoose.model("Message", messageSchema, "messages");

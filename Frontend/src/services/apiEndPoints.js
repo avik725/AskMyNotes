@@ -32,6 +32,15 @@ export const deletePrivatNotes = API_BASE_URL + "private-notes/delete";
 
 //RAG AI API End Points
 export const createConversation = API_BASE_URL + "ai/conversation/create";
+export const connectConversation = (id) => {
+  return `${API_BASE_URL}ai/conversation/${id}/connect`;
+};
+export const checkConversationConnection = (id) => {
+  return `${API_BASE_URL}ai/conversation/${id}/checkConnection`;
+};
+export const disconnectConversation = (id) => {
+  return `${API_BASE_URL}ai/conversation/${id}/disconnect`;
+};
 export const getUserConversations = API_BASE_URL + "ai/conversation/get";
 export const updateConversationSources = (id) => {
   return `${API_BASE_URL}ai/conversation/${id}/update-sources`;
