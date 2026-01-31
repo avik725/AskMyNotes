@@ -85,8 +85,28 @@ export default function Home() {
       </section>
       {/* Hero Section Ends */}
 
-      {/* How It Works Section Starts */}
+   {/* How It Works Section Starts */}
       <section id="how-it-works-section" className="py-5 bg-white">
+        {/* Hover Effect CSS - Sirf is section ke liye */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          #how-it-works-section .card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(0,0,0,0.08);
+            cursor: pointer;
+          }
+          #how-it-works-section .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+            border-color: var(--bs-primary); /* Bootstrap primary color */
+          }
+          #how-it-works-section .theme-bg {
+            transition: transform 0.3s ease;
+          }
+          #how-it-works-section .card:hover .theme-bg {
+            transform: scale(1.1) rotate(5deg);
+          }
+        `}} />
+
         <div className="container">
           <div className="text-center mb-5">
             <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">How It Works</h2>
@@ -96,7 +116,7 @@ export default function Home() {
           </div>
           <div className="row g-4">
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
+              <div className="card rounded-4 p-4 h-100 shadow-sm">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <FileUp size={36} />
@@ -115,7 +135,7 @@ export default function Home() {
             </div>
 
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
+              <div className="card rounded-4 p-4 h-100 shadow-sm">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <Search size={36} />
@@ -134,7 +154,7 @@ export default function Home() {
             </div>
 
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
+              <div className="card rounded-4 p-4 h-100 shadow-sm">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <BrainCircuit size={36} />
@@ -156,76 +176,96 @@ export default function Home() {
       </section>
       {/* How It Works Section Ends */}
 
-      {/* Everything You Need to Excel Section Starts */}
-      <section
-        id="everything-you-need-to-excel-section"
-        className="py-5 bg-white"
-      >
-        <div className="container">
-          <div className="text-center mb-5">
-            <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">
-              Everything You Need to Excel
-            </h2>
-            <p className="text-black-50 fs-18 mt-2">
-              Powerful features designed specifically for students
-            </p>
+{/* Everything You Need to Excel Section Starts */}
+    <section
+      id="everything-you-need-to-excel-section"
+      className="py-5 bg-white"
+    >
+      {/* Matched Hover CSS - Same as How It Works */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        #everything-you-need-to-excel-section .card {
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          border: 1px solid rgba(0,0,0,0.08);
+          cursor: pointer;
+          background: #ffffff;
+        }
+        #everything-you-need-to-excel-section .card:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+          border-color: var(--bs-primary); /* Yahan se aayegi blue border */
+        }
+        #everything-you-need-to-excel-section .theme-bg {
+          transition: transform 0.3s ease;
+        }
+        #everything-you-need-to-excel-section .card:hover .theme-bg {
+          transform: scale(1.1) rotate(5deg);
+        }
+      `}} />
+
+      <div className="container">
+        <div className="text-center mb-5">
+          <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">
+            Everything You Need to Excel
+          </h2>
+          <p className="text-black-50 fs-18 mt-2">
+            Powerful features designed specifically for students
+          </p>
+        </div>
+        <div className="row g-4">
+          <div className="col-md-4">
+            <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                  <Upload size={36} />
+                </div>
+              </div>
+              <h4 className="fw-bold mb-3 text-start px-md-2">
+                Upload Notes
+              </h4>
+              <p className="text-black-50 text-start fs-16 px-md-2">
+                Easily upload your PDF notes and share them with fellow
+                students. Help others while building your repository.
+              </p>
+            </div>
           </div>
-          <div className="row g-4">
-            <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
-                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                    <Upload size={36} />
-                  </div>
-                </div>
-                <h4 className="fw-bold mb-3 text-start px-md-2">
-                  Upload Notes
-                </h4>
-                <p className="text-black-50 text-start fs-16 px-md-2">
-                  Easily upload your PDF notes and share them with fellow
-                  students.Help others while building your repository.
-                </p>
-              </div>
-            </div>
 
-            <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
-                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                    <Download size={36} />
-                  </div>
+          <div className="col-md-4">
+            <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                  <Download size={36} />
                 </div>
-                <h4 className="fw-bold mb-3 text-start px-md-2">
-                  Download Notes
-                </h4>
-                <p className="text-black-50 text-start fs-16 px-md-2">
-                  Access thousands of quality notes uploaded by students. Find
-                  exactly what you need for your subjects.
-                </p>
               </div>
+              <h4 className="fw-bold mb-3 text-start px-md-2">
+                Download Notes
+              </h4>
+              <p className="text-black-50 text-start fs-16 px-md-2">
+                Access thousands of quality notes uploaded by students. Find
+                exactly what you need for your subjects.
+              </p>
             </div>
+          </div>
 
-            <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4">
-                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                    <MessageSquare size={36} />
-                    
-                  </div>
+          <div className="col-md-4">
+            <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                  <MessageSquare size={36} />
                 </div>
-                <h4 className="fw-bold mb-3 text-start px-md-2">
-                  Ask AI from PDF
-                </h4>
-                <p className="text-black-50 text-start fs-16 px-md-2">
-                  Get instant answers from your PDFs using Al. Ask questions and
-                  understand concepts faster than ever before.
-                </p>
               </div>
+              <h4 className="fw-bold mb-3 text-start px-md-2">
+                Ask AI from PDF
+              </h4>
+              <p className="text-black-50 text-start fs-16 px-md-2">
+                Get instant answers from your PDFs using AI. Ask questions and
+                understand concepts faster than ever before.
+              </p>
             </div>
           </div>
         </div>
-      </section>
-      {/* How It Works Section Ends */}
+      </div>
+    </section>
+    {/* Everything You Need to Excel Section Ends */}
 
       {/* Notes Section Starts */}
       {/* <section id="notes-section" className="pb-lg-5 pb-md-3 pb-2">
