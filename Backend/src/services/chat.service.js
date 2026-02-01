@@ -1,14 +1,11 @@
 import { Conversations } from "../models/conversations.model.js";
 import { Messages } from "../models/messages.model.js";
-import redis from "../databases/redis.js";
+import redisConnection from "../config/redis.js";
 import { apiError } from "../utilities/apiError.js";
+import { REDIS_STORE_PREFIX, CHAT_TTL, RAG_CONTEXT_LIMIT } from "../constants.js";
 
-const CHAT_TTL = 60 * 30; // 30 minutes
-const CONTEXT_LIMIT = 8;
 
 export const connectChat = async ({ userId, conversationId }) => {
-  const prefix = `askai:chat:${conversationId}`;
-
   // 1️⃣ Validate conversation ownership
   const conversation = await Conversations.findOne({
     _id: conversationId,
@@ -20,7 +17,9 @@ export const connectChat = async ({ userId, conversationId }) => {
   }
 
   // 2️⃣ Check if already connected (avoid re-hydration)
-  const alreadyConnected = await redis.exists(`${prefix}:session`);
+  const alreadyConnected = await redisConnection.exists(
+    `${REDIS_STORE_PREFIX}:${conversationId}:session`
+  );
   if (alreadyConnected) {
     return { connected: true, cached: true };
   }
@@ -28,19 +27,24 @@ export const connectChat = async ({ userId, conversationId }) => {
   // 3️⃣ Fetch last N messages from DB
   const messages = await Messages.find({ conversationId })
     .sort({ createdAt: -1 })
-    .limit(CONTEXT_LIMIT)
+    .limit(RAG_CONTEXT_LIMIT)
     .lean();
 
   // 4️⃣ SESSION key (single source of truth)
-  await redis.set(`${prefix}:session`, "1", "EX", CHAT_TTL);
+  await redisConnection.set(
+    `${REDIS_STORE_PREFIX}:${conversationId}:session`,
+    "1",
+    "EX",
+    CHAT_TTL
+  );
 
   // 5️⃣ MESSAGES list
   if (messages.length > 0) {
-    await redis.del(`${prefix}:messages`);
+    await redisConnection.del(`${REDIS_STORE_PREFIX}:${conversationId}:messages`);
 
     for (const msg of messages.reverse()) {
-      await redis.rpush(
-        `${prefix}:messages`,
+      await redisConnection.rpush(
+        `${REDIS_STORE_PREFIX}:${conversationId}:messages`,
         JSON.stringify({
           role: msg.role,
           content: msg.content,
@@ -48,16 +52,19 @@ export const connectChat = async ({ userId, conversationId }) => {
       );
     }
 
-    await redis.expire(`${prefix}:messages`, CHAT_TTL);
+    await redisConnection.expire(
+      `${REDIS_STORE_PREFIX}:${conversationId}:messages`,
+      CHAT_TTL
+    );
   }
 
   // 6️⃣ SUMMARY (if exists)
   if (conversation.summary) {
-    await redis.set(`${prefix}:summary`, conversation.summary, "EX", CHAT_TTL);
+    await redisConnection.set(`${prefix}:summary`, conversation.summary, "EX", CHAT_TTL);
   }
 
   // 7️⃣ CHAT SETTINGS (RAG controls)
-  await redis.set(
+  await redisConnection.set(
     `${prefix}:settings`,
     JSON.stringify({
       allowed_sources: conversation.allowed_sources || [],
@@ -76,7 +83,7 @@ export const connectChat = async ({ userId, conversationId }) => {
 export const checkIfConnected = async ({ userId, conversationId }) => {
   const prefix = `askai:chat:${conversationId}`;
 
-  const alreadyConnected = await redis.exists(`${prefix}:session`);
+  const alreadyConnected = await redisConnection.exists(`${prefix}:session`);
 
   if (alreadyConnected) {
     return { connected: true, cached: true };
@@ -88,7 +95,7 @@ export const checkIfConnected = async ({ userId, conversationId }) => {
 export const disconnectChat = async (conversationId) => {
   const prefix = `askai:chat:${conversationId}`;
 
-  const alreadyConnected = await redis.exists(`${prefix}:session`);
+  const alreadyConnected = await redisConnection.exists(`${prefix}:session`);
 
   if (!alreadyConnected) {
     return {
@@ -98,10 +105,10 @@ export const disconnectChat = async (conversationId) => {
   }
 
   try {
-    await redis.del(`${prefix}:session`);
-    await redis.del(`${prefix}:messages`);
-    await redis.del(`${prefix}:summary`);
-    await redis.del(`${prefix}:settings`);
+    await redisConnection.del(`${prefix}:session`);
+    await redisConnection.del(`${prefix}:messages`);
+    await redisConnection.del(`${prefix}:summary`);
+    await redisConnection.del(`${prefix}:settings`);
   } catch (error) {
     throw new apiError(500, "Something Went Wrong !!", error);
   }

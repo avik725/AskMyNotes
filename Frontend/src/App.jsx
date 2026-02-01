@@ -3,7 +3,7 @@ import { RouterProvider } from "react-router";
 import { router } from "@/routes/routes";
 import { Provider, useDispatch } from "react-redux";
 import { getCurrentUserHandler } from "./services/apiHandlers";
-import { login } from "./store/authSlice";
+import { login, authCheckComplete } from "./store/authSlice";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -12,6 +12,9 @@ export default function App() {
       const response = await getCurrentUserHandler();
       if (response.success) {
         dispatch(login(response.data));
+      } else {
+        // Auth check finished but user is not logged in
+        dispatch(authCheckComplete());
       }
     };
     fetchUser();

@@ -8,7 +8,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "worker": "node -r dotenv/config src/workers/index.js",
+    "worker:dev": "nodemon -r dotenv/config src/workers/index.js"
   },
   "dependencies": {
     "@langchain/core": "^1.1.15",

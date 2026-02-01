@@ -3,6 +3,8 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
 import { apiError } from "../utilities/apiError.js";
 import { apiResponse } from "../utilities/apiResponse.js";
 import * as chatService from "../services/chat.service.js";
+import redisConnection from "../config/redis.js";
+import { REDIS_STORE_PREFIX } from "../constants.js";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -100,7 +102,7 @@ const updateConversationSources = asyncHandler(async (req, res, next) => {
     throw new apiError(400, "Sources are required !!");
   }
 
-  const conversation = await Conversations.updateOne(
+  const conversation = await Conversations.findByIdAndUpdate(
     { _id: id, is_deleted: false },
     {
       $set: {
@@ -108,10 +110,25 @@ const updateConversationSources = asyncHandler(async (req, res, next) => {
       },
     },
     { new: true }
-  );
+  ).select("title allowed_sources private_notes_allowed summary");
 
-  if (!conversation) {
-    throw new apiError(500, "Something went Wrong while updating sources !!");
+  const alreadyConnected = await redisConnection.exists(
+    `${REDIS_STORE_PREFIX}:${conversation._id}:session`
+  );
+  if (alreadyConnected) {
+    await redisConnection.set(
+      `${REDIS_STORE_PREFIX}:${conversation._id}:settings`,
+      JSON.stringify({
+        allowed_sources: conversation.allowed_sources || [],
+        private_notes_allowed: conversation.private_notes_allowed || false,
+      }),
+      "EX",
+      1800
+    );
+  }
+
+  if (!conversation.matchedCount === 0) {
+    throw new apiError(400, "Invalid Conversation Id !!");
   }
 
   return res

@@ -69,8 +69,7 @@ export default function UploadNotes() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    setIsUploading(true);
+    if (isUploading) return;
 
     // Validation
     if (!formData.title.trim()) {
@@ -120,6 +119,8 @@ export default function UploadNotes() {
       });
       return;
     }
+
+    setIsUploading(true);
 
     try {
       const formDataObj = new FormData();
