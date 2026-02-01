@@ -61,7 +61,7 @@ export default function Contact() {
     <main id="contact-page">
       <section id="contact-section" className="pt-5 pb-4 pb-lg-2">
         <div className="container">
-          <div className="row">
+          <div className="row d-flex align-items-stretch">
             <div className="col-lg-5 col-12 px-4 px-md-3">
               <div style={formCardStyle}>
                 <div className="section-title mb-4">
@@ -163,11 +163,12 @@ export default function Contact() {
               </div>
             </div>
             <div className="col-lg-6 col-12 offset-lg-1 px-4 px-md-3">
-              <div className="img-container mt-4 mt-lg-0">
+              <div className="img-container h-100 mt-4 mt-lg-0">
                 <img
                   src={supportImage}
                   alt="Customer Support"
-                  className="img-fluid border border-1 rounded-4"
+                  className="img-fluid border border-1 rounded-4 w-100 h-100"
+                  style={{ objectFit: "cover" }}
                 />
               </div>
             </div>

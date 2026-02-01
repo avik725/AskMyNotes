@@ -1,7 +1,7 @@
-import aboutOne from "@/assets/images/about/abouti.png"
-import aboutTwo from "@/assets/images/about/aboutii.png";
-import aboutFive from "@/assets/images/about/aboutFive.png";
-import aboutThree from "@/assets/images/about/aboutiv.png";
+import aboutOne from "@/assets/images/about/Two.png"
+import aboutTwo from "@/assets/images/about/One.png";
+import aboutFive from "@/assets/images/about/Four.png";
+import aboutThree from "@/assets/images/about/Three.png";
 export default function About() {
   return (
     <main id="about-page">
