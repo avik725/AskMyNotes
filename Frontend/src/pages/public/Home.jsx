@@ -34,7 +34,6 @@ export default function Home() {
     setModalOpen(true);
   }, []);
 
-  // Expose function to window for use in DataTable HTML strings
   useEffect(() => {
     window.buildModal = (title, file_url) => {
       openNoteModal(title, file_url);
@@ -52,9 +51,47 @@ export default function Home() {
     }
     getStreamWiseData();
   }, []);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show-pop");
+        } else {
+          entry.target.classList.remove("show-pop");
+        }
+      });
+    }, observerOptions);
+
+    const cards = document.querySelectorAll(".scroll-card");
+    cards.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main id="home-page">
-      {/* Hero Section Starts */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .scroll-card {
+          opacity: 0;
+          transform: scale(0.85) translateY(40px);
+          transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+          border: 1px solid rgba(0,0,0,0.05) !important;
+        }
+        .scroll-card.show-pop {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.5s; }
+      `}} />
+
       <section
         id="hero-section"
         className="d-flex justify-content-center align-items-center"
@@ -83,30 +120,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Hero Section Ends */}
 
-   {/* How It Works Section Starts */}
       <section id="how-it-works-section" className="py-5 bg-white">
-        {/* Hover Effect CSS - Sirf is section ke liye */}
-        <style dangerouslySetInnerHTML={{ __html: `
-          #how-it-works-section .card {
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(0,0,0,0.08);
-            cursor: pointer;
-          }
-          #how-it-works-section .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-            border-color: var(--bs-primary); /* Bootstrap primary color */
-          }
-          #how-it-works-section .theme-bg {
-            transition: transform 0.3s ease;
-          }
-          #how-it-works-section .card:hover .theme-bg {
-            transform: scale(1.1) rotate(5deg);
-          }
-        `}} />
-
         <div className="container">
           <div className="text-center mb-5">
             <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">How It Works</h2>
@@ -116,7 +131,7 @@ export default function Home() {
           </div>
           <div className="row g-4">
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="card scroll-card delay-1 rounded-4 p-4 h-100">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <FileUp size={36} />
@@ -135,7 +150,7 @@ export default function Home() {
             </div>
 
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="card scroll-card delay-2 rounded-4 p-4 h-100">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <Search size={36} />
@@ -154,7 +169,7 @@ export default function Home() {
             </div>
 
             <div className="col-md-4 text-center">
-              <div className="card rounded-4 p-4 h-100 shadow-sm">
+              <div className="card scroll-card delay-3 rounded-4 p-4 h-100">
                 <div className="d-flex justify-content-center align-items-center mb-3">
                   <div className="p-3 theme-bg rounded-circle d-inline-flex position-relative">
                     <BrainCircuit size={36} />
@@ -174,176 +189,71 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* How It Works Section Ends */}
 
-{/* Everything You Need to Excel Section Starts */}
-    <section
-      id="everything-you-need-to-excel-section"
-      className="py-5 bg-white"
-    >
-      {/* Matched Hover CSS - Same as How It Works */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        #everything-you-need-to-excel-section .card {
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-          border: 1px solid rgba(0,0,0,0.08);
-          cursor: pointer;
-          background: #ffffff;
-        }
-        #everything-you-need-to-excel-section .card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-          border-color: var(--bs-primary); /* Yahan se aayegi blue border */
-        }
-        #everything-you-need-to-excel-section .theme-bg {
-          transition: transform 0.3s ease;
-        }
-        #everything-you-need-to-excel-section .card:hover .theme-bg {
-          transform: scale(1.1) rotate(5deg);
-        }
-      `}} />
-
-      <div className="container">
-        <div className="text-center mb-5">
-          <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">
-            Everything You Need to Excel
-          </h2>
-          <p className="text-black-50 fs-18 mt-2">
-            Powerful features designed specifically for students
-          </p>
-        </div>
-        <div className="row g-4">
-          <div className="col-md-4">
-            <div className="card rounded-4 p-4 h-100 shadow-sm">
-              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                  <Upload size={36} />
-                </div>
-              </div>
-              <h4 className="fw-bold mb-3 text-start px-md-2">
-                Upload Notes
-              </h4>
-              <p className="text-black-50 text-start fs-16 px-md-2">
-                Easily upload your PDF notes and share them with fellow
-                students. Help others while building your repository.
-              </p>
-            </div>
+      <section id="everything-you-need-to-excel-section" className="py-5 bg-white">
+        <div className="container">
+          <div className="text-center mb-5">
+            <h2 className="fw-bold fs-36 fs-md-30 fs-sm-24">
+              Everything You Need to Excel
+            </h2>
+            <p className="text-black-50 fs-18 mt-2">
+              Powerful features designed specifically for students
+            </p>
           </div>
-
-          <div className="col-md-4">
-            <div className="card rounded-4 p-4 h-100 shadow-sm">
-              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                  <Download size={36} />
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="card scroll-card delay-1 rounded-4 p-4 h-100">
+                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                    <Upload size={36} />
+                  </div>
                 </div>
+                <h4 className="fw-bold mb-3 text-start px-md-2">
+                  Upload Notes
+                </h4>
+                <p className="text-black-50 text-start fs-16 px-md-2">
+                  Easily upload your PDF notes and share them with fellow
+                  students. Help others while building your repository.
+                </p>
               </div>
-              <h4 className="fw-bold mb-3 text-start px-md-2">
-                Download Notes
-              </h4>
-              <p className="text-black-50 text-start fs-16 px-md-2">
-                Access thousands of quality notes uploaded by students. Find
-                exactly what you need for your subjects.
-              </p>
             </div>
-          </div>
 
-          <div className="col-md-4">
-            <div className="card rounded-4 p-4 h-100 shadow-sm">
-              <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
-                <div className="p-3 theme-bg rounded-circle d-inline-flex">
-                  <MessageSquare size={36} />
+            <div className="col-md-4">
+              <div className="card scroll-card delay-2 rounded-4 p-4 h-100">
+                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                    <Download size={36} />
+                  </div>
                 </div>
+                <h4 className="fw-bold mb-3 text-start px-md-2">
+                  Download Notes
+                </h4>
+                <p className="text-black-50 text-start fs-16 px-md-2">
+                  Access thousands of quality notes uploaded by students. Find
+                  exactly what you need for your subjects.
+                </p>
               </div>
-              <h4 className="fw-bold mb-3 text-start px-md-2">
-                Ask AI from PDF
-              </h4>
-              <p className="text-black-50 text-start fs-16 px-md-2">
-                Get instant answers from your PDFs using AI. Ask questions and
-                understand concepts faster than ever before.
-              </p>
+            </div>
+
+            <div className="col-md-4">
+              <div className="card scroll-card delay-3 rounded-4 p-4 h-100">
+                <div className="d-flex justify-content-start align-items-center mb-3 px-md-2">
+                  <div className="p-3 theme-bg rounded-circle d-inline-flex">
+                    <MessageSquare size={36} />
+                  </div>
+                </div>
+                <h4 className="fw-bold mb-3 text-start px-md-2">
+                  Ask AI from PDF
+                </h4>
+                <p className="text-black-50 text-start fs-16 px-md-2">
+                  Get instant answers from your PDFs using AI. Ask questions and
+                  understand concepts faster than ever before.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-    {/* Everything You Need to Excel Section Ends */}
-
-      {/* Notes Section Starts */}
-      {/* <section id="notes-section" className="pb-lg-5 pb-md-3 pb-2">
-        <div className="container notes-container">
-          <div className="row">
-            {carouselItems?.map((row) => {
-              return (
-                <div key={row?.stream._id} className="col-12">
-                  <h3 className="fw-bold my-4 ps-2">{row?.stream?.name}</h3>
-                  <Carousel
-                    dots={false}
-                    slidesToShow={3}
-                    slidesToScroll={1}
-                    speed={2000}
-                    autoplay={true}
-                    autoplaySpeed={6000}
-                    lazyLoad={true}
-                  >
-                    {row?.notes.map((note) => {
-                      return (
-                        <div
-                          key={note._id}
-                          onClick={() =>
-                            openNoteModal(note.title, note.file_url)
-                          }
-                          className="px-lg-3 px-md-2 px-3 h-100"
-                        >
-                          <div className="card rounded-4 overflow-hidden border-0 shadow-sm h-100">
-                            <div className="card-img w-100 rounded-3">
-                              <img
-                                src={note.thumbnail}
-                                alt="card-image"
-                                className="img-fluid"
-                                style={{ maxHeight: 250 }}
-                              />
-                            </div>
-                            <div className="card-text px-4 py-3">
-                              <h5
-                                className="text-capitalize"
-                                style={{
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  maxWidth: "100%",
-                                }}
-                              >
-                                {note.title}
-                              </h5>
-                              <p className="text-black-50 fs-14">
-                                <span className="border-end border-1 pe-2 me-2 text-black-50">
-                                  {note?.course?.name}
-                                </span>
-                                {note?.semester
-                                  ? `Semester ${note?.semester}`
-                                  : `${note?.year} Year`}
-                              </p>
-                            </div>
-                            <div className="card-button mt-4 text-center px-4 py-2">
-                              <button
-                                className="theme-btn fs-14 rounded-pill w-100 fw-bold py-2 border-0"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </Carousel>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section> */}
-      {/* Notes Section Ends */}
+      </section>
 
       <Modal
         open={modalOpen}
