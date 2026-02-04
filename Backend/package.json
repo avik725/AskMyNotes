@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@langchain/core": "^1.1.15",
+    "@langchain/mongodb": "^1.1.0",
     "@langchain/openai": "^1.2.2",
     "@langchain/textsplitters": "^1.0.1",
     "axios": "^1.13.2",
@@ -28,10 +29,12 @@
     "jsonwebtoken": "^9.0.2",
     "langchain": "^1.2.10",
     "mammoth": "^1.11.0",
+    "mongodb": "^7.0.0",
     "mongoose": "^8.16.2",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "mongoose-paginate-v2": "^1.9.1",
     "multer": "^2.0.1",
+    "openai": "^6.17.0",
     "pdf-parse": "^2.4.5",
     "word-extractor": "^1.0.4"
   },

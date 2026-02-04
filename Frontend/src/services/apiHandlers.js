@@ -25,6 +25,7 @@ import {
   connectConversation,
   checkConversationConnection,
   disconnectConversation,
+  chatToRAG,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -282,7 +283,7 @@ export async function connectConversationHandler(id = "") {
   return result;
 }
 
-export async function checkConversationConnectionHandler(id = ""){
+export async function checkConversationConnectionHandler(id = "") {
   const response = await fetch(checkConversationConnection(id), {
     method: "GET",
     headers: {
@@ -369,6 +370,25 @@ export async function updateConversationTitleHandler(id, title) {
     },
     body: JSON.stringify({ title }),
     credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function chatToRAGHandler({
+  conversation_id = "",
+  user_query = "",
+}) {
+  const response = await fetch(chatToRAG(conversation_id), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      query: user_query,
+    }),
   });
 
   const result = await response.json();

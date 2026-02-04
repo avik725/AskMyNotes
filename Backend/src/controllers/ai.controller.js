@@ -4,7 +4,8 @@ import { apiError } from "../utilities/apiError.js";
 import { apiResponse } from "../utilities/apiResponse.js";
 import * as chatService from "../services/chat.service.js";
 import redisConnection from "../config/redis.js";
-import { REDIS_STORE_PREFIX } from "../constants.js";
+import { CHAT_TTL, REDIS_STORE_PREFIX } from "../constants.js";
+import { chatWithRAGMODEL } from "../services/rag.service.js";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -211,6 +212,77 @@ const disconnectConversation = asyncHandler(async (req, res, next) => {
     );
 });
 
+const chat = asyncHandler(async (req, res, next) => {
+  const { conversation_id } = req.params;
+  const { query } = req.body;
+
+  if (!query || typeof query !== "string") {
+    throw new apiError(400, "Query is Required !!");
+  }
+  const alreadyConnected = await redisConnection.exists(
+    `ai:chat:${conversation_id}:session`
+  );
+  // if (!Number(alreadyConnected)) {
+  //   throw new apiError(400, "Conversation Not Connected or Session expired !!");
+  // }
+
+  const summary = await redisConnection.get(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:summary`
+  );
+
+  const rawMessages = await redisConnection.lrange(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
+    0,
+    -1
+  );
+
+  const messages = rawMessages ? rawMessages.map((msg) => JSON.parse(msg)) : [];
+
+  const settings = await redisConnection.get(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:settings`
+  );
+
+  const response = await chatWithRAGMODEL({
+    conversationId: conversation_id,
+    ...(summary && { summary: summary }),
+    ...(messages.length > 0 && { messages }),
+    allowed_sources: JSON.parse(settings)?.allowed_sources,
+    private_notes_allowed: JSON.parse(settings)?.private_notes_allowed,
+    user_query: query,
+  });
+
+  await redisConnection.rpush(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
+    JSON.stringify({
+      role: "user",
+      content: query,
+    })
+  );
+
+  await redisConnection.rpush(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
+    JSON.stringify({
+      role: "assistant",
+      content: response.message,
+    })
+  );
+
+  await redisConnection.expire(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
+    CHAT_TTL
+  );
+
+  return res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { response: response.message },
+        "LLM Response request successfull !!"
+      )
+    );
+});
+
 export {
   createConversationNotebook,
   getUserConversations,
@@ -221,4 +293,5 @@ export {
   connectConversation,
   checkConversationConnection,
   disconnectConversation,
+  chat,
 };

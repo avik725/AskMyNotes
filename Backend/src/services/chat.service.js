@@ -6,7 +6,6 @@ import { REDIS_STORE_PREFIX, CHAT_TTL, RAG_CONTEXT_LIMIT } from "../constants.js
 
 
 export const connectChat = async ({ userId, conversationId }) => {
-  // 1️⃣ Validate conversation ownership
   const conversation = await Conversations.findOne({
     _id: conversationId,
     user_id: userId,
@@ -16,7 +15,6 @@ export const connectChat = async ({ userId, conversationId }) => {
     throw new apiError(400, "Conversation not found or access denied");
   }
 
-  // 2️⃣ Check if already connected (avoid re-hydration)
   const alreadyConnected = await redisConnection.exists(
     `${REDIS_STORE_PREFIX}:${conversationId}:session`
   );
@@ -24,13 +22,11 @@ export const connectChat = async ({ userId, conversationId }) => {
     return { connected: true, cached: true };
   }
 
-  // 3️⃣ Fetch last N messages from DB
   const messages = await Messages.find({ conversationId })
     .sort({ createdAt: -1 })
     .limit(RAG_CONTEXT_LIMIT)
     .lean();
 
-  // 4️⃣ SESSION key (single source of truth)
   await redisConnection.set(
     `${REDIS_STORE_PREFIX}:${conversationId}:session`,
     "1",
@@ -38,7 +34,6 @@ export const connectChat = async ({ userId, conversationId }) => {
     CHAT_TTL
   );
 
-  // 5️⃣ MESSAGES list
   if (messages.length > 0) {
     await redisConnection.del(`${REDIS_STORE_PREFIX}:${conversationId}:messages`);
 
@@ -58,14 +53,12 @@ export const connectChat = async ({ userId, conversationId }) => {
     );
   }
 
-  // 6️⃣ SUMMARY (if exists)
   if (conversation.summary) {
-    await redisConnection.set(`${prefix}:summary`, conversation.summary, "EX", CHAT_TTL);
+    await redisConnection.set(`${REDIS_STORE_PREFIX}:${conversationId}:summary`, conversation.summary, "EX", CHAT_TTL);
   }
 
-  // 7️⃣ CHAT SETTINGS (RAG controls)
   await redisConnection.set(
-    `${prefix}:settings`,
+    `${REDIS_STORE_PREFIX}:${conversationId}:settings`,
     JSON.stringify({
       allowed_sources: conversation.allowed_sources || [],
       private_notes_allowed: conversation.private_notes_allowed || false,

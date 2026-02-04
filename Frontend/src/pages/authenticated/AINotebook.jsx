@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Modal } from "@/components";
 import {
+  chatToRAGHandler,
   checkConversationConnectionHandler,
   connectConversationHandler,
   disconnectConversationHandler,
@@ -47,6 +48,8 @@ export default function AINotebook() {
   const [conversationInfo, setConversationInfo] = useState(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
+  const [user_query, setUserQuery] = useState("");
+  const [messages, setMessages] = useState([]);
 
   function closeCurrentConversation() {
     if (isConversationConnected) {
@@ -228,6 +231,27 @@ export default function AINotebook() {
       }
     });
   };
+
+  async function chatToRAG(e) {
+    if (!user_query || user_query.trim === "") {
+      return;
+    }
+
+    const query = user_query;
+    setUserQuery("");
+    setMessages((prev) => {
+      return [...prev, { role: "user", content: user_query }];
+    });
+
+    const response = await chatToRAGHandler({
+      conversation_id: params?.id,
+      user_query: query,
+    });
+
+    setMessages((prev) => {
+      return [...prev, { role: "assistant", content: response.data.response }];
+    });
+  }
 
   useEffect(() => {
     if (publicNoteModalOpen) {
@@ -426,7 +450,7 @@ export default function AINotebook() {
           className="flex-grow-1 d-flex flex-column bg-light rounded-4 border me-3 overflow-hidden shadow"
           style={{ minWidth: "0" }}
         >
-          <div className="flex-grow-1 overflow-auto">
+          <div className="d-flex flex-column flex-grow-1 overflow-auto">
             <div className="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
               <div className="d-flex align-items-end gap-2">
                 <Bot size={22} />
@@ -436,25 +460,55 @@ export default function AINotebook() {
                 <SlidersHorizontal size={20} />
               </div>
             </div>
-            <div className="text-center text-muted mt-5">
-              <div className="mb-3">
-                <div className="bg-light rounded-circle d-inline-flex p-3">
-                  <MessageSquare
-                    size={32}
-                    className="text-primary opacity-75"
-                  />
-                </div>
-              </div>
+            <div
+              className={`flex-grow-1 text-center text-muted mt-5 ${messages.length > 0 && "d-flex justify-content-end flex-column"}`}
+            >
               {isConversationConnected && selectedPublicNotes.length > 0 ? (
                 <>
-                  <h5>Start chatting with your notes</h5>
-                  <p className="small">
-                    Select a note from the left to begin context-aware
-                    conversations.
-                  </p>
+                  {messages.length > 0 ? (
+                    <>
+                      {messages.map((message) => {
+                        return (
+                          <div
+                            className={`d-flex ${message.role === "user" ? "justify-content-end" : "justify-content-start"} px-3 py-2`}
+                          >
+                            <div
+                              className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end" : "text-justify pe-5"}`}
+                            >
+                              {message.content}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      <div className="mb-3">
+                        <div className="bg-light rounded-circle d-inline-flex p-3">
+                          <MessageSquare
+                            size={32}
+                            className="text-primary opacity-75"
+                          />
+                        </div>
+                      </div>
+                      <h5>Start chatting with your notes</h5>
+                      <p className="small">
+                        Select a note from the left to begin context-aware
+                        conversations.
+                      </p>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
+                  <div className="mb-3">
+                    <div className="bg-light rounded-circle d-inline-flex p-3">
+                      <MessageSquare
+                        size={32}
+                        className="text-primary opacity-75"
+                      />
+                    </div>
+                  </div>
                   <h5>Connect and Add Notes to Start chatting</h5>
                   <p className="small">
                     Select a note from the left and connect chat to begin
@@ -468,15 +522,23 @@ export default function AINotebook() {
           {/* Chat Input Area */}
           <div className="p-3 border-top bg-white">
             <div className="input-group">
-              <input
+              <textarea
+                id="chat-input"
+                name="chat-input"
                 type="text"
-                className="form-control"
+                value={user_query}
+                onChange={(e) => setUserQuery(e.target.value)}
+                className="form-control text-wrap"
                 placeholder="Ask a question..."
                 disabled={
                   !(isConversationConnected && selectedPublicNotes.length > 0)
                 }
+                style={{
+                  resize: "none",
+                  maxHeight: "20vh",
+                }}
               />
-              <button className="btn theme-btn">
+              <button onClick={chatToRAG} className="btn theme-btn">
                 <ChevronRight size={18} />
               </button>
             </div>

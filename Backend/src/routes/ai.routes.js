@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
+  chat,
   checkConversationConnection,
   connectConversation,
   createConversationNotebook,
@@ -39,5 +40,7 @@ router
 router
   .route("/conversation/:id/disconnect")
   .post(verifyJWT, disconnectConversation);
+
+router.route("/conversation/:conversation_id/chat").post(verifyJWT, chat);
 
 export default router;

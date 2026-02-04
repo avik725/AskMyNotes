@@ -49,3 +49,7 @@ export const updateConversationTitle = (id) => {
   return `${API_BASE_URL}ai/conversation/${id}/update-title`;
 };
 export const deleteConversation = API_BASE_URL + "ai/conversation/delete";
+
+export const chatToRAG = (id) => {
+  return `${API_BASE_URL}ai/conversation/${id}/chat`;
+};
