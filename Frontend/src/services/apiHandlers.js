@@ -26,6 +26,7 @@ import {
   checkConversationConnection,
   disconnectConversation,
   chatToRAG,
+  getConversationMessages,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -273,6 +274,19 @@ export async function createConversationHandler(data = []) {
 export async function connectConversationHandler(id = "") {
   const response = await fetch(connectConversation(id), {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function getConversationMessagesHandler(id = "") {
+  const response = await fetch(getConversationMessages(id), {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },

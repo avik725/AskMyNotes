@@ -7,6 +7,7 @@ import redisConnection from "../config/redis.js";
 import { CHAT_TTL, REDIS_STORE_PREFIX } from "../constants.js";
 import { chatWithRAGMODEL } from "../services/rag.service.js";
 import { messagesQueue } from "../queues/messages.queue.js";
+import { Messages } from "../models/messages.model.js";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -171,6 +172,28 @@ const updateConversationTitle = asyncHandler(async (req, res, next) => {
     .json(new apiResponse(200, conversation, "Title Updated Successfully !!"));
 });
 
+const getConversationMessages = asyncHandler(async (req, res, next) => {
+  const { conversation_id } = req?.params;
+
+  if (!conversation_id) {
+    throw new apiError(400, "Conversation Id is Required to Fetch Messages !!");
+  }
+
+  const messages = await Messages.find({
+    conversation_id,
+  })
+    .sort({ createdAt: 1 })
+    .select("role content");
+
+  if (!(messages.length > 0)) {
+    throw new apiError(404, "No Messages found for the conversation");
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, messages, "Messages fetched Successfully !!"));
+});
+
 const connectConversation = asyncHandler(async (req, res, next) => {
   await chatService.connectChat({
     userId: req.user?.id,
@@ -315,6 +338,7 @@ export {
   getConversationById,
   updateConversationSources,
   updateConversationTitle,
+  getConversationMessages,
   connectConversation,
   checkConversationConnection,
   disconnectConversation,

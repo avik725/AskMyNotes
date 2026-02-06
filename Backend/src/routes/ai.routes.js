@@ -8,6 +8,7 @@ import {
   deleteConversations,
   disconnectConversation,
   getConversationById,
+  getConversationMessages,
   getUserConversations,
   updateConversationSources,
   updateConversationTitle,
@@ -32,6 +33,10 @@ router
   .put(verifyJWT, updateConversationTitle);
 
 router.route("/conversation/delete/:id").delete(verifyJWT, deleteConversations);
+
+router
+  .route("/conversation/:conversation_id/get-messages")
+  .get(verifyJWT, getConversationMessages);
 
 router.route("/conversation/:id/connect").post(verifyJWT, connectConversation);
 router

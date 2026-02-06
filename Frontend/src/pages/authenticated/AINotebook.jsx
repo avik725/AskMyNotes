@@ -24,6 +24,7 @@ import {
   connectConversationHandler,
   disconnectConversationHandler,
   getConversationByIdHandler,
+  getConversationMessagesHandler,
   getNonPaginatedNotesHandler,
   updateConversationSourcesHandler,
   updateConversationTitleHandler,
@@ -253,6 +254,27 @@ export default function AINotebook() {
     });
   }
 
+  async function getMessages() {
+    try {
+      const response = await getConversationMessagesHandler(params?.id);
+
+      if (response.data && Array.isArray(response.data)) {
+        setMessages([...response.data]);
+      }
+
+      if (!response.success) {
+        fireSweetAlert({
+          success: response.success || false,
+          message:
+            response.message ||
+            "Something went wrong while fetching messages !!",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to Fetch Messages : ", error.message);
+    }
+  }
+
   useEffect(() => {
     if (publicNoteModalOpen) {
       setTempSelectedPublicNotes(selectedPublicNotes);
@@ -289,6 +311,7 @@ export default function AINotebook() {
 
   useEffect(() => {
     checkConversationConnection();
+    getMessages();
   }, []);
 
   // Styles for transitions

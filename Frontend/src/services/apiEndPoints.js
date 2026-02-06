@@ -35,6 +35,10 @@ export const createConversation = API_BASE_URL + "ai/conversation/create";
 export const connectConversation = (id) => {
   return `${API_BASE_URL}ai/conversation/${id}/connect`;
 };
+
+export const getConversationMessages = (id) => {
+  return `${API_BASE_URL}ai/conversation/${id}/get-messages`;
+};
 export const checkConversationConnection = (id) => {
   return `${API_BASE_URL}ai/conversation/${id}/checkConnection`;
 };
