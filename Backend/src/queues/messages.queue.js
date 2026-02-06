@@ -1,11 +1,15 @@
 import { Queue, QueueEvents } from "bullmq";
-import { QUEUE_NAMES } from "../constants";
-import redisConnection from "../config/redis";
+import { QUEUE_NAMES } from "../constants.js";
+import redisConnection from "../config/redis.js";
 
 export const messagesQueue = new Queue(QUEUE_NAMES.MESSAGES, {
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 3,
+    backoff: {
+      type: "exponential",
+      delay: 1000,
+    },
     removeOnComplete: true,
     removeOnFail: 100,
   },

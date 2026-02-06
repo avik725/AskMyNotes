@@ -2,8 +2,11 @@ import { Conversations } from "../models/conversations.model.js";
 import { Messages } from "../models/messages.model.js";
 import redisConnection from "../config/redis.js";
 import { apiError } from "../utilities/apiError.js";
-import { REDIS_STORE_PREFIX, CHAT_TTL, RAG_CONTEXT_LIMIT } from "../constants.js";
-
+import {
+  REDIS_STORE_PREFIX,
+  CHAT_TTL,
+  RAG_CONTEXT_LIMIT,
+} from "../constants.js";
 
 export const connectChat = async ({ userId, conversationId }) => {
   const conversation = await Conversations.findOne({
@@ -35,7 +38,9 @@ export const connectChat = async ({ userId, conversationId }) => {
   );
 
   if (messages.length > 0) {
-    await redisConnection.del(`${REDIS_STORE_PREFIX}:${conversationId}:messages`);
+    await redisConnection.del(
+      `${REDIS_STORE_PREFIX}:${conversationId}:messages`
+    );
 
     for (const msg of messages.reverse()) {
       await redisConnection.rpush(
@@ -54,7 +59,12 @@ export const connectChat = async ({ userId, conversationId }) => {
   }
 
   if (conversation.summary) {
-    await redisConnection.set(`${REDIS_STORE_PREFIX}:${conversationId}:summary`, conversation.summary, "EX", CHAT_TTL);
+    await redisConnection.set(
+      `${REDIS_STORE_PREFIX}:${conversationId}:summary`,
+      conversation.summary,
+      "EX",
+      CHAT_TTL
+    );
   }
 
   await redisConnection.set(
@@ -110,4 +120,26 @@ export const disconnectChat = async (conversationId) => {
     success: true,
     message: "Conversation Disconnected Successfully !!",
   };
+};
+
+export const storeMessages = async ({ conversation_id, role, content }) => {
+  if (!conversation_id) {
+    throw new apiError(400, "conversation_id is required to store messages !!");
+  }
+
+  if (!role) {
+    throw new apiError(400, "role is required to store messages !!");
+  }
+
+  const storedMessage = Messages.create({
+    conversation_id,
+    role,
+    content: content || "",
+  });
+
+  if (!storedMessage) {
+    throw new apiError(500, "Internal Server error while storing messages !!");
+  }
+
+  return;
 };

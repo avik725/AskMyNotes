@@ -6,6 +6,7 @@ import * as chatService from "../services/chat.service.js";
 import redisConnection from "../config/redis.js";
 import { CHAT_TTL, REDIS_STORE_PREFIX } from "../constants.js";
 import { chatWithRAGMODEL } from "../services/rag.service.js";
+import { messagesQueue } from "../queues/messages.queue.js";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -242,6 +243,20 @@ const chat = asyncHandler(async (req, res, next) => {
     `${REDIS_STORE_PREFIX}:${conversation_id}:settings`
   );
 
+  await redisConnection.rpush(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
+    JSON.stringify({
+      role: "user",
+      content: query,
+    })
+  );
+
+  await messagesQueue.add("store-messages", {
+    conversation_id,
+    role: "user",
+    content: query,
+  });
+
   const response = await chatWithRAGMODEL({
     conversationId: conversation_id,
     ...(summary && { summary: summary }),
@@ -250,14 +265,6 @@ const chat = asyncHandler(async (req, res, next) => {
     private_notes_allowed: JSON.parse(settings)?.private_notes_allowed,
     user_query: query,
   });
-
-  await redisConnection.rpush(
-    `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
-    JSON.stringify({
-      role: "user",
-      content: query,
-    })
-  );
 
   await redisConnection.rpush(
     `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
@@ -271,6 +278,24 @@ const chat = asyncHandler(async (req, res, next) => {
     `${REDIS_STORE_PREFIX}:${conversation_id}:messages`,
     CHAT_TTL
   );
+  await redisConnection.expire(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:session`,
+    CHAT_TTL
+  );
+  await redisConnection.expire(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:settings`,
+    CHAT_TTL
+  );
+  await redisConnection.expire(
+    `${REDIS_STORE_PREFIX}:${conversation_id}:summary`,
+    CHAT_TTL
+  );
+
+  await messagesQueue.add("store-messages", {
+    conversation_id,
+    role: "assistant",
+    content: response.message,
+  });
 
   return res
     .status(200)

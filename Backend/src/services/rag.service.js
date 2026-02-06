@@ -51,7 +51,7 @@ export const chatWithRAGMODEL = async ({
       }
       : {};
 
-  console.log("publicNotesFilter:", JSON.stringify(publicNotesFilter, null, 2));
+  // console.log("publicNotesFilter:", JSON.stringify(publicNotesFilter, null, 2));
 
   const public_chunks = await public_notes_vectorStore.similaritySearch(
     user_query,
@@ -59,8 +59,8 @@ export const chatWithRAGMODEL = async ({
     publicNotesFilter
   );
 
-  console.log("public_chunks count:", public_chunks.length);
-  console.log("public_chunks:", public_chunks);
+  // console.log("public_chunks count:", public_chunks.length);
+  // console.log("public_chunks:", public_chunks);
 
   let private_chunks = [];
   if (private_notes_allowed && allowed_sources.length > 0) {
@@ -111,7 +111,7 @@ Instructions:
     content: user_query,
   });
 
-  console.log("Full chats Array : ", openAIMessages);
+  // console.log("Full chats Array : ", openAIMessages);
 
   const response = await clientOpenAI.chat.completions.create({
     model: "gpt-4o-mini",
