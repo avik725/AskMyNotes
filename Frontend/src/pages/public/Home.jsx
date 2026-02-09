@@ -94,7 +94,7 @@ export default function Home() {
 
       <section
         id="hero-section"
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex justify-content-center align-items-center pt-5 mt-4"
       >
         <div className="container">
           <div className="hero-text text-center">
