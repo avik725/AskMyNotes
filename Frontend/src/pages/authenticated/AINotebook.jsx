@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import logo from "@/assets/images/amn_logo.png";
 import {
@@ -51,6 +51,8 @@ export default function AINotebook() {
   const [editedTitle, setEditedTitle] = useState("");
   const [user_query, setUserQuery] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isGettingResponse, setIsGettingResponse] = useState(false);
+  const firstLoad = useRef(true);
 
   function closeCurrentConversation() {
     if (isConversationConnected) {
@@ -238,6 +240,7 @@ export default function AINotebook() {
       return;
     }
 
+    setIsGettingResponse(true);
     const query = user_query;
     setUserQuery("");
     setMessages((prev) => {
@@ -252,6 +255,8 @@ export default function AINotebook() {
     setMessages((prev) => {
       return [...prev, { role: "assistant", content: response.data.response }];
     });
+
+    setIsGettingResponse(false);
   }
 
   async function getMessages() {
@@ -313,6 +318,18 @@ export default function AINotebook() {
     checkConversationConnection();
     getMessages();
   }, []);
+
+  useEffect(() => {
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      return;
+    }
+    if (isConversationConnected && messages.length > 0) {
+      document
+        .getElementById("bottomAnchor")
+        .scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages, isConversationConnected]);
 
   // Styles for transitions
   const sidebarTransition = "all 0.3s ease-in-out";
@@ -503,6 +520,33 @@ export default function AINotebook() {
                           </div>
                         );
                       })}
+                      {isGettingResponse && (
+                        <div
+                          className={`d-flex justify-content-start px-3 py-2 gap-2`}
+                        >
+                          <div
+                            className="rounded-circle bg-black animate-pulse"
+                            style={{ width: 3, height: 3 }}
+                          ></div>
+                          <div
+                            className="rounded-circle bg-black animate-pulse"
+                            style={{
+                              width: 3,
+                              height: 3,
+                              animationDelay: "0.1s",
+                            }}
+                          ></div>
+                          <div
+                            className="rounded-circle bg-black animate-pulse"
+                            style={{
+                              width: 3,
+                              height: 3,
+                              animationDelay: "0.2s",
+                            }}
+                          ></div>
+                        </div>
+                      )}
+                      <div id="bottomAnchor"></div>
                     </>
                   ) : (
                     <>

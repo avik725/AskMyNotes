@@ -185,8 +185,14 @@ const getConversationMessages = asyncHandler(async (req, res, next) => {
     .sort({ createdAt: 1 })
     .select("role content");
 
-  if (!(messages.length > 0)) {
+  if(!messages){
     throw new apiError(404, "No Messages found for the conversation");
+  }
+
+  if (!(messages.length > 0)) {
+    return res
+    .status(200)
+    .json(new apiResponse(200, messages, "No Messages found for this coversation !!"));
   }
 
   return res
