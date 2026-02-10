@@ -289,6 +289,32 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
         &.theme-btn {
           font-weight: 600;
         }
+
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-block;
+        font-weight: 500;
+        position: relative;
+
+        &:hover {
+          transform: scale(1.05) translateY(-2px);
+          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &.active {
+          &::after{
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 0;
+            width: 60%;
+            height: 1px;
+            background-color: #000;
+          }
+        }
+      }
+      .nav-item {
+        perspective: 1000px;
       }
     }
   }

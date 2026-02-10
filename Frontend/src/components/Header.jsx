@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "@/assets/images/amn_logo.png";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
 import ThemeButton from "./themeButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,36 +27,23 @@ export default function Header() {
   }
 
   return (
-    <header 
-      id="header-section" 
-      className="px-4 shadow-sm bg-white" 
-      style={{ 
-        width: '100%' 
+    <header
+      id="header-section"
+      className="px-4 shadow-sm bg-white"
+      style={{
+        width: "100%",
       }}
     >
-      <style dangerouslySetInnerHTML={{ __html: `
-        .nav-link-custom {
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          display: inline-block;
-          font-weight: 500;
-        }
-        .nav-link-custom:hover {
-          transform: scale(1.05) translateY(-2px);
-          text-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .nav-item {
-          perspective: 1000px;
-        }
-      `}} />
-
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           <a
             className="navbar-brand d-flex align-items-end"
             href={routeSet.public.home}
           >
-            <img src={logo} alt="icon" style={{maxWidth: 40}} />
-            <h3 className="mb-0 ms-2 fs-26 d-none d-md-block fw-bold">AskMyNotes</h3>
+            <img src={logo} alt="icon" style={{ maxWidth: 40 }} />
+            <h3 className="mb-0 ms-2 fs-26 d-none d-md-block fw-bold">
+              AskMyNotes
+            </h3>
           </a>
           <button
             className="navbar-toggler"
@@ -75,20 +62,24 @@ export default function Header() {
           >
             <ul className="navbar-nav pt-2 ps-3 ps-md-4 align-items-center">
               <li className="nav-item">
-                <button
-                  className="nav-link me-3 text-black nav-link-custom shadow-none border-0 bg-transparent"
-                  onClick={() => navigate(routeSet.public.home)}
+                <NavLink
+                  to={routeSet.public.home}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive && "active"} me-3 text-black shadow-none border-0 bg-transparent`
+                  }
                 >
                   Home
-                </button>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <button
-                  className="nav-link me-3 text-black nav-link-custom shadow-none border-0 bg-transparent"
-                  onClick={()=>navigate(routeSet.public.notesGallery)}
+                <NavLink
+                  to={routeSet.public.notesGallery}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive && "active"} me-3 text-black shadow-none border-0 bg-transparent`
+                  }
                 >
                   Notes Library
-                </button>
+                </NavLink>
               </li>
 
               {!isLoggedIn ? (
@@ -96,7 +87,7 @@ export default function Header() {
                   <li className="nav-item">
                     <ThemeButton
                       onClick={() => navigate(routeSet.auth.login)}
-                      className="nav-link nav-link-custom"
+                      className="nav-link"
                     >
                       Login
                     </ThemeButton>
@@ -104,7 +95,7 @@ export default function Header() {
                   <li className="nav-item ms-lg-2">
                     <ThemeButton
                       onClick={() => navigate(routeSet.auth.register)}
-                      className="nav-link nav-link-custom"
+                      className="nav-link"
                     >
                       Register
                     </ThemeButton>
@@ -113,32 +104,38 @@ export default function Header() {
               ) : (
                 <>
                   <li className="nav-item">
-                    <button
-                      className="nav-link me-3 text-black nav-link-custom shadow-none border-0 bg-transparent"
-                      onClick={() => navigate(routeSet.authenticated.publishedNotes)}
+                    <NavLink
+                      to={routeSet.authenticated.publishedNotes}
+                      className={({ isActive }) =>
+                        `nav-link ${isActive && "active"} me-3 text-black shadow-none border-0 bg-transparent`
+                      }
                     >
                       Published Notes
-                    </button>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <button
-                      className="nav-link me-3 text-black nav-link-custom shadow-none border-0 bg-transparent"
-                      onClick={() => navigate(routeSet.authenticated.privateNotes)}
+                    <NavLink
+                      to={routeSet.authenticated.privateNotes}
+                      className={({ isActive }) =>
+                        `nav-link ${isActive && "active"} me-3 text-black shadow-none border-0 bg-transparent`
+                      }
                     >
                       Private Notes
-                    </button>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <button
-                      className="nav-link me-3 text-black nav-link-custom shadow-none border-0 bg-transparent"
-                      onClick={() => navigate(routeSet.authenticated.askAI)}
+                    <NavLink
+                      to={routeSet.authenticated.askAI}
+                      className={({ isActive }) =>
+                        `nav-link ${isActive && "active"} me-3 text-black shadow-none border-0 bg-transparent`
+                      }
                     >
                       Ask AI
-                    </button>
+                    </NavLink>
                   </li>
                   <li className="nav-item dropdown cursor-pointer ms-lg-3">
                     <span
-                      className="rounded-circle dropdown-toggle nav-link-custom"
+                      className="rounded-circle dropdown-toggle"
                       data-bs-toggle="dropdown"
                       data-bs-auto-close="outside"
                       aria-expanded="false"
@@ -153,7 +150,7 @@ export default function Header() {
                         }
                         alt="icon"
                         className="rounded-circle border"
-                        style={{ width: 40, height: 40, objectFit: 'cover' }}
+                        style={{ width: 40, height: 40, objectFit: "cover" }}
                       />
                     </span>
                     <ul className="dropdown-menu dropdown-menu-end mt-2 border-0 shadow-lg">

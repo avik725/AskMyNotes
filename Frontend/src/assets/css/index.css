@@ -489,13 +489,36 @@
 #header-section .navbar .navbar-nav .dropdown-toggle::after {
   display: none;
 }
+#header-section .navbar .navbar-nav .nav-link {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: inline-block;
+  font-weight: 500;
+  position: relative;
+}
 #header-section .navbar .navbar-nav .nav-link.theme-btn {
   font-weight: 600;
+}
+#header-section .navbar .navbar-nav .nav-link:hover {
+  transform: scale(1.05) translateY(-2px);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#header-section .navbar .navbar-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 0;
+  width: 60%;
+  height: 1px;
+  background-color: #000;
+}
+#header-section .navbar .navbar-nav .nav-item {
+  perspective: 1000px;
 }
 
 #home-page #hero-section {
   height: calc(100vh - 100px);
-  background-image: url("../images/banner_image2.png");
+  background-image: url("../images/banner_image.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

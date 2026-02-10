@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { html } from "gridjs";
 import { DataTable, Modal } from "@/components";
 import { getMyUploads } from "@/services/apiEndPoints";
@@ -14,11 +20,13 @@ export default function PublishedNotes() {
   const [totalUploads, setTotalUploads] = useState(0);
   const [totalDownloads, setTotalDownloads] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentNote, setCurrentNote] = useState({
     title: "",
     file_url: "",
     downloadEnable: false,
   });
+  const firstLoad = useRef(true);
 
   const openNoteModal = useCallback((title, file_url, downloadBtn = false) => {
     setCurrentNote({ title, file_url, downloadEnable: downloadBtn });
@@ -69,6 +77,17 @@ export default function PublishedNotes() {
     };
   }, [openNoteModal, downloadNote, deletePublicNote]);
 
+  useEffect(() => {
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      return;
+    }
+    const searchBox = document.querySelector(".gridjs-input");
+    searchBox.value = searchQuery;
+    const event = new Event("input", { bubbles: true });
+    searchBox.dispatchEvent(event);
+  }, [searchQuery]);
+
   return (
     <main id="myuploads-page">
       {/* My Uploads Section Starts */}
@@ -95,29 +114,18 @@ export default function PublishedNotes() {
                   id="search_notes_input"
                   name="search_notes_input"
                   placeholder="Search public notes..."
-                  onInput={(e) => {
-                    const searchBox = document.querySelector(".gridjs-input");
-                    searchBox.value = e.target.value;
-
-                    const event = new Event("input", { bubbles: true });
-                    searchBox.dispatchEvent(event);
-                  }}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14 w-100 py-3 h-100"
                 />
-                <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
-                  <XIcon
-                    className="form-control-text-color"
-                    onClick={() => {
-                      const searchBox = document.querySelector(
-                        "#search_notes_input",
-                      );
-                      searchBox.value = "";
-
-                      const event = new Event("input", { bubbles: true });
-                      searchBox.dispatchEvent(event);
-                    }}
-                  />
-                </span>
+                {searchQuery && (
+                  <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
+                    <XIcon
+                      className="form-control-text-color"
+                      onClick={() => setSearchQuery("")}
+                    />
+                  </span>
+                )}
               </div>
             </div>
             <div className="col-md-1 col-3 px-2 px-md-0 pt-3 pt-md-0">

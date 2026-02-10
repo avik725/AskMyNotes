@@ -16,7 +16,7 @@ export default function NotesLibrary() {
   const [streams, setStreams] = useState([]);
   const [courses, setCourses] = useState([]);
   const [semesters, setSemesters] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [currentNote, setCurrentNote] = useState({
     title: "",
@@ -88,15 +88,6 @@ export default function NotesLibrary() {
     }
   }
 
-  useEffect(() => {
-    async function getStreams() {
-      const response = await getStreamsHandler();
-      const option = { name: "Select Stream", _id: "" };
-      setStreams([option, ...response.data]);
-    }
-    getStreams();
-  }, []);
-
   const openNoteModal = useCallback((title, file_url, downloadBtn = false) => {
     setCurrentNote({ title, file_url, downloadEnable: downloadBtn });
     setModalOpen(true);
@@ -117,6 +108,22 @@ export default function NotesLibrary() {
   }, [openNoteModal]);
 
   useEffect(() => {
+    // if (firstLoad.current) {
+    //   firstLoad.current = false;
+    //   return;
+    // }
+    const searchBox = document.querySelector(".gridjs-input");
+    searchBox.value = searchQuery;
+    const event = new Event("input", { bubbles: true });
+    searchBox.dispatchEvent(event);
+  }, [searchQuery]);
+  useEffect(() => {
+    async function getStreams() {
+      const response = await getStreamsHandler();
+      const option = { name: "Select Stream", _id: "" };
+      setStreams([option, ...response.data]);
+    }
+    getStreams();
     getFeaturedNotes();
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]',
@@ -242,30 +249,21 @@ export default function NotesLibrary() {
                 type="text"
                 id="search_notes_input"
                 name="search_notes_input"
-                onInput={(e) => {
-                  const searchBox = document.querySelector(".gridjs-input");
-                  searchBox.value = e.target.value;
-
-                  const event = new Event("input", { bubbles: true });
-                  searchBox.dispatchEvent(event);
+                value={searchQuery}
+                onChange={(e) => {
+                  if (e.target.value !== "") setSearchQuery(e.target.value);
                 }}
                 placeholder="Search  for notes by title, course, or subject"
                 className="form-control border-0 py-3 ps-5 rounded-3 bg-body-secondary fs-sm-14"
               />
-              <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
-                <XIcon
-                  className="form-control-text-color"
-                  onClick={() => {
-                    const searchBox = document.querySelector(
-                      "#search_notes_input",
-                    );
-                    searchBox.value = "";
-
-                    const event = new Event("input", { bubbles: true });
-                    searchBox.dispatchEvent(event);
-                  }}
-                />
-              </span>
+              {searchQuery !== "" && (
+                <span className="d-inline-block position-absolute top-0 end-0 bottom-0 align-content-center px-3 cursor-pointer">
+                  <XIcon
+                    className="form-control-text-color"
+                    onClick={() => setSearchQuery("")}
+                  />
+                </span>
+              )}
             </div>
             <div className="featured-notes">
               <h5 className="fw-bold fs-18 my-4 ps-2">Featured Notes</h5>

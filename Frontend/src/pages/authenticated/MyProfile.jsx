@@ -91,10 +91,10 @@ export default function MyProfile() {
       return;
     }
 
-    if (!formData.email) {
+    if (!formData.email || !(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/).test(formData.email)) {
       fireSweetAlert({
         success: false,
-        message: "Please Enter Email Address",
+        message: "Please Enter Valid Email Address",
       });
       return;
     }

@@ -326,7 +326,7 @@ export default function PrivateNotes() {
       <Modal
         open={modalOpen}
         setOpen={setModalOpen}
-        title="Create New Private Note"
+        title={formData._id === "" ? "Create New Private Note" : "Update Your Private Note"}
         size="modal-lg"
         onClose={() => {
           editorRef.current.clear();
