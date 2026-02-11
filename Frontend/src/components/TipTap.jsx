@@ -313,8 +313,8 @@ const EditorBridge = forwardRef((_, ref) => {
   const editor = useCurrentEditor();
 
   useImperativeHandle(ref, () => ({
-    getText: () => editor?.editor.getText(),
-    getJSON: () => editor?.editor.getJSON(),
+    // getText: () => editor?.editor.getText(),
+    // getJSON: () => editor?.editor.getJSON(),
 
     clear: () => editor?.editor.commands.clearContent(),
 

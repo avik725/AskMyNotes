@@ -33,6 +33,24 @@ import useDebounce from "@/hooks/useDebounce";
 import { truncateText } from "@/utils/helpers";
 import { routeSet } from "@/routes/routeSet";
 import fireSweetAlert from "@/utils/fireSweetAlert";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
+
+function preprocessLatex(content) {
+  // Convert block-level LaTeX delimiters: \[...\] → $$...$$
+  const blockProcessed = content.replace(
+    /\\\[([\s\S]*?)\\\]/g,
+    (_, equation) => `$$${equation}$$`,
+  );
+  // Convert inline LaTeX delimiters: \(...\) → $...$
+  const inlineProcessed = blockProcessed.replace(
+    /\\\(([\s\S]*?)\\\)/g,
+    (_, equation) => `$${equation}$`,
+  );
+  return inlineProcessed;
+}
 
 export default function AINotebook() {
   const params = useParams();
@@ -324,7 +342,11 @@ export default function AINotebook() {
       firstLoad.current = false;
       return;
     }
-    if (isConversationConnected && messages.length > 0) {
+    if (
+      isConversationConnected &&
+      messages.length > 0 &&
+      document.getElementById("bottomAnchor")
+    ) {
       document
         .getElementById("bottomAnchor")
         .scrollIntoView({ behavior: "smooth", block: "end" });
@@ -501,70 +523,44 @@ export default function AINotebook() {
               </div>
             </div>
             <div
-              className={`flex-grow-1 text-center text-muted mt-5 ${messages.length > 0 && "d-flex justify-content-end flex-column"}`}
+              className={`flex-grow-1 text-center text-muted mt-5 ${messages.length > 0 && isConversationConnected && "d-flex justify-content-end flex-column"}`}
             >
-              {isConversationConnected && selectedPublicNotes.length > 0 ? (
+              {messages.length > 0 ? (
                 <>
-                  {messages.length > 0 ? (
-                    <>
-                      {messages.map((message) => {
-                        return (
-                          <div
-                            className={`d-flex ${message.role === "user" ? "justify-content-end" : "justify-content-start"} px-3 py-2`}
-                          >
-                            <div
-                              className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end" : "text-justify pe-5"}`}
-                            >
-                              {message.content}
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {isGettingResponse && (
-                        <div
-                          className={`d-flex justify-content-start px-3 py-2 gap-2`}
+                  {messages.map((message) => (
+                    <div
+                      key={message._id}
+                      className={`d-flex ${message.role === "user" ? "justify-content-end" : "justify-content-start"} px-3 py-2`}
+                    >
+                      <div
+                        className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end" : "text-justify pe-5"}`}
+                      >
+                        <ReactMarkdown
+                          remarkPlugins={[remarkMath]}
+                          rehypePlugins={[rehypeKatex]}
                         >
-                          <div
-                            className="rounded-circle bg-black animate-pulse"
-                            style={{ width: 3, height: 3 }}
-                          ></div>
-                          <div
-                            className="rounded-circle bg-black animate-pulse"
-                            style={{
-                              width: 3,
-                              height: 3,
-                              animationDelay: "0.1s",
-                            }}
-                          ></div>
-                          <div
-                            className="rounded-circle bg-black animate-pulse"
-                            style={{
-                              width: 3,
-                              height: 3,
-                              animationDelay: "0.2s",
-                            }}
-                          ></div>
-                        </div>
-                      )}
-                      <div id="bottomAnchor"></div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="mb-3">
-                        <div className="bg-light rounded-circle d-inline-flex p-3">
-                          <MessageSquare
-                            size={32}
-                            className="text-primary opacity-75"
-                          />
-                        </div>
+                          {preprocessLatex(message.content)}
+                        </ReactMarkdown>
                       </div>
-                      <h5>Start chatting with your notes</h5>
-                      <p className="small">
-                        Select a note from the left to begin context-aware
-                        conversations.
-                      </p>
-                    </>
+                    </div>
+                  ))}
+                  {isGettingResponse && (
+                    <div className="d-flex justify-content-start px-3 py-2 gap-2">
+                      <div
+                        className="rounded-circle bg-black animate-pulse"
+                        style={{ width: 3, height: 3 }}
+                      ></div>
+                      <div
+                        className="rounded-circle bg-black animate-pulse"
+                        style={{ width: 3, height: 3, animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="rounded-circle bg-black animate-pulse"
+                        style={{ width: 3, height: 3, animationDelay: "0.2s" }}
+                      ></div>
+                    </div>
                   )}
+                  <div id="bottomAnchor"></div>
                 </>
               ) : (
                 <>
@@ -576,11 +572,22 @@ export default function AINotebook() {
                       />
                     </div>
                   </div>
-                  <h5>Connect and Add Notes to Start chatting</h5>
-                  <p className="small">
-                    Select a note from the left and connect chat to begin
-                    context-aware conversations.
-                  </p>
+                  {isConversationConnected && selectedPublicNotes.length > 0 ? (
+                    <>
+                      <h5>Start chatting with your notes</h5>
+                      <p className="small">
+                        Ask questions about your selected notes.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h5>Connect and Add Notes to Start chatting</h5>
+                      <p className="small">
+                        Select a note from the left and connect chat to begin
+                        context-aware conversations.
+                      </p>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -595,8 +602,18 @@ export default function AINotebook() {
                 type="text"
                 value={user_query}
                 onChange={(e) => setUserQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.shiftKey && e.key === "Enter") {
+                    e.preventDefault();
+                    chatToRAG();
+                  }
+                }}
                 className="form-control text-wrap"
-                placeholder="Ask a question..."
+                placeholder={
+                  (isConversationConnected &&
+                  selectedPublicNotes.length > 0) ?
+                  "Ask a question..." : "Connect and Add Notes to Chat..."
+                }
                 disabled={
                   !(isConversationConnected && selectedPublicNotes.length > 0)
                 }
@@ -606,7 +623,7 @@ export default function AINotebook() {
                 }}
               />
               <button onClick={chatToRAG} className="btn theme-btn">
-                <ChevronRight size={18} />
+                Shift + Enter <ChevronRight size={18} />
               </button>
             </div>
           </div>

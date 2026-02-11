@@ -185,14 +185,20 @@ const getConversationMessages = asyncHandler(async (req, res, next) => {
     .sort({ createdAt: 1 })
     .select("role content");
 
-  if(!messages){
+  if (!messages) {
     throw new apiError(404, "No Messages found for the conversation");
   }
 
   if (!(messages.length > 0)) {
     return res
-    .status(200)
-    .json(new apiResponse(200, messages, "No Messages found for this coversation !!"));
+      .status(200)
+      .json(
+        new apiResponse(
+          200,
+          messages,
+          "No Messages found for this coversation !!"
+        )
+      );
   }
 
   return res
@@ -280,12 +286,6 @@ const chat = asyncHandler(async (req, res, next) => {
     })
   );
 
-  await messagesQueue.add("store-messages", {
-    conversation_id,
-    role: "user",
-    content: query,
-  });
-
   const response = await chatWithRAGMODEL({
     conversationId: conversation_id,
     ...(summary && { summary: summary }),
@@ -319,6 +319,12 @@ const chat = asyncHandler(async (req, res, next) => {
     `${REDIS_STORE_PREFIX}:${conversation_id}:summary`,
     CHAT_TTL
   );
+
+  await messagesQueue.add("store-messages", {
+    conversation_id,
+    role: "user",
+    content: query,
+  });
 
   await messagesQueue.add("store-messages", {
     conversation_id,
