@@ -28,7 +28,8 @@
     "react-slick": "^0.31.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.26.18"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

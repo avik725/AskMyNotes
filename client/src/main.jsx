@@ -6,11 +6,12 @@ import "@/assets/css/mermaid.min.css";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "./assets/js/jquery-3.7.1.min.js";
+import "./assets/js/bootstrap.bundle.min.js";
 
 import store from "@/store/store";
 import App from "./App";
 import { Provider } from "react-redux";
-
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>

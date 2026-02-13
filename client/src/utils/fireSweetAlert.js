@@ -1,3 +1,5 @@
+import Swal from "sweetalert2";
+
 function fireSweetAlert({ success, message, timer = 2000 }) {
   return Swal.fire({
     toast: true,
