@@ -7,7 +7,9 @@ import {
   getPrivateNotesHandler,
   updatePrivateNotesHandler,
 } from "@/services/apiHandlers";
-import fireSweetAlert from "@/utils/fireSweetAlert";
+import fireSweetAlert, {
+  fireSweetAlertWithButtons,
+} from "@/utils/fireSweetAlert";
 import { NOTE_TYPE_LABELS, truncateText } from "@/utils/helpers";
 import { Funnel, Plus, Search, SquarePen, Trash2, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -281,7 +283,13 @@ export default function PrivateNotes() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              deleteNote(note?._id);
+                              fireSweetAlertWithButtons({
+                                title: `Do you really want to delete\n"${note.title}"`,
+                                icon: "warning",
+                                cancelButtonText: "Cancel",
+                              }).then(({ isConfirmed }) => {
+                                if (isConfirmed) deleteNote(note?._id);
+                              });
                             }}
                           >
                             <Trash2 size={18} className="text-danger" />
@@ -326,7 +334,11 @@ export default function PrivateNotes() {
       <Modal
         open={modalOpen}
         setOpen={setModalOpen}
-        title={formData._id === "" ? "Create New Private Note" : "Update Your Private Note"}
+        title={
+          formData._id === ""
+            ? "Create New Private Note"
+            : "Update Your Private Note"
+        }
         size="modal-lg"
         onClose={() => {
           editorRef.current.clear();

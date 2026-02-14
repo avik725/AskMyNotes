@@ -13,7 +13,9 @@ import { FileText, Funnel, Plus, Search, XIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { routeSet } from "@/routes/routeSet";
 import { deleteNotesHandler } from "@/services/apiHandlers";
-import fireSweetAlert from "@/utils/fireSweetAlert";
+import fireSweetAlert, {
+  fireSweetAlertWithButtons,
+} from "@/utils/fireSweetAlert";
 
 export default function PublishedNotes() {
   const navigate = useNavigate();
@@ -67,8 +69,17 @@ export default function PublishedNotes() {
       downloadNote(title, file_url);
     };
 
-    window.deletePublicNote = (id) => {
-      deletePublicNote(id);
+    window.deletePublicNote = (id, title) => {
+      console.log(title)
+      fireSweetAlertWithButtons({
+        title: `Do you want to Delete \n "${title}"`,
+        icon: "warning",
+        cancelButtonText: "Cancel"
+      }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          deletePublicNote(id);
+        }
+      });
     };
     return () => {
       delete window.buildModal;
@@ -213,7 +224,7 @@ export default function PublishedNotes() {
                             <a href="#" onclick="downloadNote('${note.title}','${note.file_url}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
                               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
                             </a>
-                            <a href="#" onclick="deletePublicNote('${note._id}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
+                            <a href="#" onclick="deletePublicNote('${note._id}','${note.title}'); return false;" class="text-decoration-none form-control-text-color fw-semibold ps-lg-3 m-0" >
                               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </a>
                           </div>`,

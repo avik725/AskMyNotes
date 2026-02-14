@@ -220,6 +220,12 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
   }
 }
 
+@each $width in $responsive-widths {
+  .max-w-#{$width} {
+    max-width: #{$width * 1%} !important;
+  }
+}
+
 // Boostrap Modal Css
 
 .modal-dialog-scrollable .modal-content {
@@ -301,7 +307,7 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
         }
 
         &.active {
-          &::after{
+          &::after {
             content: "";
             position: absolute;
             bottom: 0;

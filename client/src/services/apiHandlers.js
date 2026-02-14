@@ -27,6 +27,7 @@ import {
   disconnectConversation,
   chatToRAG,
   getConversationMessages,
+  forgotUserPassword,
 } from "./apiEndPoints";
 
 // User Handlers
@@ -97,6 +98,20 @@ export async function userProfileUpdateHandler(formData) {
     method: "POST",
     credentials: "include",
     body: formData,
+  });
+
+  const result = await response.json();
+  return result;
+}
+
+export async function forgotUserPasswordHandler(data) {
+  const response = await fetch(forgotUserPassword, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+    credentials: "include",
   });
 
   const result = await response.json();

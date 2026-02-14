@@ -1,4 +1,8 @@
+import { routeSet } from "@/routes/routeSet";
+import { forgotUserPasswordHandler } from "@/services/apiHandlers.js";
+import fireSweetAlert from "@/utils/fireSweetAlert";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function ForgotPassword() {
   const [formData, setFormData] = useState({
@@ -8,6 +12,41 @@ export default function ForgotPassword() {
     newPassword: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
+
+  async function submit() {
+    try {
+      if (formData.newPassword !== formData.confirmPassword) {
+        fireSweetAlert({
+          success: false,
+          message: "Password and Confirm Password do not match",
+        });
+        return;
+      }
+
+      const response = await forgotUserPasswordHandler({
+        username: formData.username,
+        email: formData.email,
+        dob: formData.dob,
+        password: formData.confirmPassword,
+      });
+
+      if (response.success) {
+        fireSweetAlert({
+          success: response.success,
+          message: response.message || "Password Changed Successfully !!",
+        });
+        navigate(routeSet.auth.login);
+      }
+    } catch (error) {
+      fireSweetAlert({
+        success: false,
+        message:
+          error.message || "Something went wrong while updating password",
+      });
+      console.error("Forgot Password error : ", error);
+    }
+  }
   return (
     <main id="forgot-password-page">
       {/* Login Section Starts  */}
@@ -125,11 +164,12 @@ export default function ForgotPassword() {
                       <p
                         id="password_message"
                         className={`${
-                          formData.newPassword === formData.confirmPassword &&
-                          formData.newPassword !== "" &&
-                          formData.confirmPassword !== "" &&
-                          "d-none"
-                        } text-danger fs-14 ps-2 py-1`}
+                            formData.password === formData.confirmPassword ||
+                            (formData.password !== formData.confirmPassword &&
+                              formData.confirmPassword == "")
+                              ? "d-none"
+                              : ""
+                          } text-danger fs-14 ps-2 py-1`}
                       >
                         Passwords Mismatched !
                       </p>
@@ -138,7 +178,7 @@ export default function ForgotPassword() {
                     <div class="mb-2">
                       <button
                         class="btn submitBtn theme-bg w-100 py-2 rounded-pill fw-semibold fs-sm-14"
-                        type="submit"
+                        onClick={submit}
                       >
                         Submit
                       </button>

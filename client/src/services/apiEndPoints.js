@@ -8,6 +8,7 @@ export const checkUsernameIfAvailable =
   API_BASE_URL + "users/checkUsernameIfAvailable";
 export const userRegistration = API_BASE_URL + "users/register";
 export const updateUserProfile = API_BASE_URL + "users/update-profile";
+export const forgotUserPassword = API_BASE_URL + "users/forgot-password"; 
 
 // Public Notes Api End Points
 export const getStreams = API_BASE_URL + "notes/get-streams";

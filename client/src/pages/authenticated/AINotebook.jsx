@@ -305,9 +305,7 @@ export default function AINotebook() {
   }, [publicNoteModalOpen]);
 
   useEffect(() => {
-    if (debouncedPublicNoteSearchQuery) {
       fetchPublicNotes(debouncedPublicNoteSearchQuery);
-    }
   }, [debouncedPublicNoteSearchQuery]);
 
   useEffect(() => {
@@ -533,7 +531,7 @@ export default function AINotebook() {
                       className={`d-flex ${message.role === "user" ? "justify-content-end" : "justify-content-start"} px-3 py-2`}
                     >
                       <div
-                        className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end" : "text-justify pe-5"}`}
+                        className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end max-w-75" : "text-justify pe-5"}`}
                       >
                         <ReactMarkdown
                           remarkPlugins={[remarkMath]}

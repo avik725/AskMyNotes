@@ -45,12 +45,12 @@
 .tiptap {
   min-height: 280px;
   outline: none;
-  /* List styles */
-  /* Heading styles */
-  /* Code and preformatted text styles */
 }
 .tiptap :first-child {
   margin-top: 0;
+}
+.tiptap {
+  /* List styles */
 }
 .tiptap ul,
 .tiptap ol {
@@ -61,6 +61,9 @@
 .tiptap ol li p {
   margin-top: 0.25em;
   margin-bottom: 0.25em;
+}
+.tiptap {
+  /* Heading styles */
 }
 .tiptap h1,
 .tiptap h2,
@@ -90,6 +93,9 @@
 .tiptap h5,
 .tiptap h6 {
   font-size: 1rem;
+}
+.tiptap {
+  /* Code and preformatted text styles */
 }
 .tiptap code {
   background-color: var(--purple-light);

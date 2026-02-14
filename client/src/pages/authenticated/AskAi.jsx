@@ -4,7 +4,9 @@ import {
   deleteConversationHandler,
   getUserConversationsHandler,
 } from "@/services/apiHandlers";
-import fireSweetAlert from "@/utils/fireSweetAlert";
+import fireSweetAlert, {
+  fireSweetAlertWithButtons,
+} from "@/utils/fireSweetAlert";
 import { truncateText } from "@/utils/helpers";
 import {
   Dot,
@@ -49,8 +51,8 @@ export default function AskAI() {
       fireSweetAlert({
         success: response.success || false,
         message:
-        response.message ||
-        "Something Went Wrong While Fetching Conversations !!",
+          response.message ||
+          "Something Went Wrong While Fetching Conversations !!",
       });
     }
     setConversationLoading(false);
@@ -187,7 +189,7 @@ export default function AskAI() {
                           }}
                         >
                           <div className="d-inline-block position-absolute top-0 end-0 p-2">
-                            <span
+                            {/* <span
                               className="me-3"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -195,12 +197,20 @@ export default function AskAI() {
                               }}
                             >
                               <SquarePen size={18} className="text-primary" />
-                            </span>
+                            </span> */}
                             <span
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                deleteConversation(conversation?._id);
+                                fireSweetAlertWithButtons({
+                                  title: `Do you really want to delete conversation\n"${conversation?.title}"`,
+                                  icon: "warning",
+                                  cancelButtonText: "Cancel",
+                                }).then(({ isConfirmed }) => {
+                                  if (isConfirmed) {
+                                    deleteConversation(conversation?._id);
+                                  }
+                                });
                               }}
                             >
                               <Trash2 size={18} className="text-danger" />

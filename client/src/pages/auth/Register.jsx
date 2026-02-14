@@ -122,6 +122,9 @@ export default function RegisterPage() {
                             id="username"
                             name="username"
                             value={formData.username}
+                            onInput={()=>{
+                              SetIsUsernameAvailable(null)
+                            }}
                             onChange={(e) =>
                               setFormData((prev) => {
                                 return { ...prev, username: e.target.value };

@@ -19,4 +19,22 @@ function fireSweetAlert({ success, message, timer = 2000 }) {
   });
 }
 
-export default fireSweetAlert;
+function fireSweetAlertWithButtons({
+  title,
+  icon,
+  showConfirmButton = true,
+  showCancelButton = true,
+  confirmButtonText = "Yes",
+  cancelButtonText = "No",
+}) {
+  return Swal.fire({
+    title,
+    icon,
+    showConfirmButton,
+    confirmButtonText,
+    cancelButtonText,
+    showCancelButton,
+  });
+}
+
+export { fireSweetAlert as default, fireSweetAlertWithButtons };

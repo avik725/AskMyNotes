@@ -324,7 +324,9 @@ const getNotes = asyncHandler(async (req, res, next) => {
       dir = "desc",
     } = req.query;
 
-    const filters = {};
+    const filters = {
+      is_deleted: false,
+    };
     if (stream) filters.stream = stream;
     if (course) filters.course = course;
     if (semester) filters.semester = semester;
@@ -333,7 +335,7 @@ const getNotes = asyncHandler(async (req, res, next) => {
     let sortingOrder;
     if (column && dir) {
       const allowedColumns = ["title", "course", "createdAt"];
-      if (allowedColumns.includes(column)) {
+      if (allowedColumns.includes(column)){
         const sortDir = String(dir).toLowerCase() === "desc" ? -1 : 1;
         sortingOrder = { [column]: sortDir };
       }
