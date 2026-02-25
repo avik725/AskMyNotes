@@ -24,6 +24,17 @@ export default function UploadNotes() {
   const [semesters, setSemesters] = useState([]);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    if (notesFile) {
+      const url = URL.createObjectURL(notesFile);
+      setPdfPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPdfPreviewUrl(null);
+    }
+  }, [notesFile]);
 
   async function getCourses(stream_id) {
     const response = await getCoursesHandler(stream_id);
@@ -426,12 +437,24 @@ export default function UploadNotes() {
                   id="pdfContainer"
                   className="h-100 w-100 text-center align-content-center"
                 >
-                  <h3 className="fw-bold form-control-text-color">
-                    Select Notes File
-                  </h3>
-                  <p className="form-control-text-color">
-                    Pdf File will be Previewed here
-                  </p>
+                  {pdfPreviewUrl ? (
+                    <iframe
+                      src={`${pdfPreviewUrl}#toolbar=0`}
+                      title="PDF Preview"
+                      className="w-100 rounded-3"
+
+                      style={{ height: "100%", border: "none" }}
+                    />
+                  ) : (
+                    <>
+                      <h3 className="fw-bold form-control-text-color">
+                        Select Notes File
+                      </h3>
+                      <p className="form-control-text-color">
+                        Pdf File will be Previewed here
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

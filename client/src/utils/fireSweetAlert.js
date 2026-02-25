@@ -24,6 +24,7 @@ function fireSweetAlertWithButtons({
   icon,
   showConfirmButton = true,
   showCancelButton = true,
+  // confirmButtonColor = 'pink',
   confirmButtonText = "Yes",
   cancelButtonText = "No",
 }) {
@@ -32,6 +33,7 @@ function fireSweetAlertWithButtons({
     icon,
     showConfirmButton,
     confirmButtonText,
+    // confirmButtonColor,
     cancelButtonText,
     showCancelButton,
   });

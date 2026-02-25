@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:8000/api/v1/";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1/";
 
 // User End Points
 export const getCurrentUser = API_BASE_URL + "users/getCurrentUser";
@@ -8,7 +8,7 @@ export const checkUsernameIfAvailable =
   API_BASE_URL + "users/checkUsernameIfAvailable";
 export const userRegistration = API_BASE_URL + "users/register";
 export const updateUserProfile = API_BASE_URL + "users/update-profile";
-export const forgotUserPassword = API_BASE_URL + "users/forgot-password"; 
+export const forgotUserPassword = API_BASE_URL + "users/forgot-password";
 
 // Public Notes Api End Points
 export const getStreams = API_BASE_URL + "notes/get-streams";

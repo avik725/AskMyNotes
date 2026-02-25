@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+.git
+.DS_Store
+.vercel
+*.log
+npm-debug.log*
+.env
+.env.*
