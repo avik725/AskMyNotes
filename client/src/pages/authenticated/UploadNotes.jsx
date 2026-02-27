@@ -233,7 +233,7 @@ export default function UploadNotes() {
                         if (e.value) {
                           getCourses(e.value);
                         }
-                        $("#course").val("");
+                        // $("#course").val("");
                       }}
                       options={streams?.map((stream) => {
                         return { value: stream._id, label: stream.name };
@@ -253,7 +253,7 @@ export default function UploadNotes() {
                           semester: "",
                         });
                         setSemesters([]);
-                        $("#semester").val("");
+                        // $("#semester").val("");
                         if (e.value) {
                           setSemester(e.value);
                         }

@@ -160,7 +160,7 @@ export default function NotesLibrary() {
                       if (e.value) {
                         getCourses(e.value);
                       }
-                      $("#course").val("");
+                      // $("#course").val("");
                     }}
                     divSpacing={"mb-3 mt-4"}
                     options={streams?.map((stream) => {
@@ -180,7 +180,7 @@ export default function NotesLibrary() {
                         return { ...prev, course: e.value };
                       });
                       setSemesters([]);
-                      $("#semester").val("");
+                      // $("#semester").val("");
                       if (e.value) {
                         setSemester(e.value);
                       }
