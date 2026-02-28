@@ -8,6 +8,7 @@ import { CHAT_TTL, REDIS_STORE_PREFIX } from "../constants.js";
 import { chatWithRAGMODEL } from "../services/rag.service.js";
 import { messagesQueue } from "../queues/messages.queue.js";
 import { Messages } from "../models/messages.model.js";
+import { title } from "process";
 
 const createConversationNotebook = asyncHandler(async (req, res, next) => {
   const { sources } = req.body;
@@ -35,10 +36,13 @@ const createConversationNotebook = asyncHandler(async (req, res, next) => {
     );
 });
 
-const getUserConversations = asyncHandler(async (req, res, next) => {
+const getUserConversations = asyncHandler(async (req, res) => {
+  const { sort } = req.query;
+  const sortOrder = sort === "asc" ? 1 : -1;
+
   const conversationRecords = await Conversations.find({
     user_id: req.user?._id,
-  });
+  }).sort({ title: sortOrder });
 
   if (!conversationRecords) {
     throw new apiError(500, "Internal Server Error !!");

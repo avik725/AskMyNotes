@@ -11,7 +11,7 @@ import fireSweetAlert, {
   fireSweetAlertWithButtons,
 } from "@/utils/fireSweetAlert";
 import { NOTE_TYPE_LABELS, truncateText } from "@/utils/helpers";
-import { Funnel, Plus, Search, SquarePen, Trash2, XIcon } from "lucide-react";
+import { Funnel, MoveDown, MoveUp, Plus, Search, SquarePen, Trash2, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function PrivateNotes() {
@@ -20,6 +20,9 @@ export default function PrivateNotes() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    sortAsc: true,
+  })
   const [formData, setFormData] = useState({
     _id: "",
     title: "",
@@ -45,12 +48,12 @@ export default function PrivateNotes() {
   const [notes, setNotes] = useState([]);
 
   async function fetchPrivateNotes(search) {
-    const response = await getPrivateNotesHandler(search);
+    const response = await getPrivateNotesHandler(search, filters.sortAsc ? "asc": "desc");
     if (response.success) setNotes(response.data);
   }
   useEffect(() => {
     fetchPrivateNotes(debouncedSearchQuery);
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery,filters.sortAsc]);
 
   const formDataStruct = {
     _id: "",
@@ -209,27 +212,23 @@ export default function PrivateNotes() {
                 </button>
                 <ul className="dropdown-menu">
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Something else here
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Separated link
-                    </a>
+                    <div
+                      className="dropdown-item cursor-pointer m-0 d-flex justify-content-between pe-2"
+                      onClick={() =>
+                        setFilters((prev) => {
+                          return { ...prev, sortAsc: !prev.sortAsc };
+                        })
+                      }
+                    >
+                      <p className="m-0">Sort</p>
+                      <span>
+                        {filters.sortAsc ? (
+                          <MoveUp color="#a7a7a7" size={18} />
+                        ) : (
+                          <MoveDown color="#a7a7a7" size={18} />
+                        )}
+                      </span>
+                    </div>
                   </li>
                 </ul>
               </div>

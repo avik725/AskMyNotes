@@ -11,6 +11,8 @@ import { truncateText } from "@/utils/helpers";
 import {
   Dot,
   Funnel,
+  MoveDown,
+  MoveUp,
   Plus,
   Search,
   SquarePen,
@@ -25,6 +27,9 @@ export default function AskAI() {
   const [conversationsLoading, setConversationLoading] = useState(true);
   const navigate = useNavigate();
   const [userConversations, SetUserConversations] = useState([]);
+  const [filters, setFilters] = useState({
+    sortAsc: true,
+  });
 
   async function createNewConversation() {
     const response = await createConversationHandler();
@@ -44,7 +49,7 @@ export default function AskAI() {
   }
 
   async function getConversations() {
-    const response = await getUserConversationsHandler();
+    const response = await getUserConversationsHandler({ sort: filters.sortAsc ? "asc" : "desc" });
     if (response.success && response.data) {
       SetUserConversations([...response.data]);
     } else {
@@ -77,7 +82,7 @@ export default function AskAI() {
 
   useEffect(() => {
     getConversations();
-  }, []);
+  }, [filters.sortAsc]);
 
   return (
     <main id="ask-ai-page">
@@ -131,27 +136,23 @@ export default function AskAI() {
                 </button>
                 <ul className="dropdown-menu">
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Something else here
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Separated link
-                    </a>
+                    <div
+                      className="dropdown-item cursor-pointer m-0 d-flex justify-content-between pe-2"
+                      onClick={() =>
+                        setFilters((prev) => {
+                          return { ...prev, sortAsc: !prev.sortAsc };
+                        })
+                      }
+                    >
+                      <p className="m-0">Sort</p>
+                      <span>
+                        {filters.sortAsc ? (
+                          <MoveUp color="#a7a7a7" size={18} />
+                        ) : (
+                          <MoveDown color="#a7a7a7" size={18} />
+                        )}
+                      </span>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -228,8 +229,8 @@ export default function AskAI() {
                           <p className="form-control-text-color fs-14 m-0">
                             {conversation?.createdAt
                               ? new Date(conversation?.createdAt)
-                                  .toLocaleString()
-                                  .split(",")[0]
+                                .toLocaleString()
+                                .split(",")[0]
                               : ""}{" "}
                             <Dot /> {conversation?.allowed_sources?.length || 0}{" "}
                             sources

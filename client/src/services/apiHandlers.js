@@ -215,8 +215,8 @@ export async function incrementNotesDownloadCountHandler(id) {
 }
 
 // Private Notes Handlers
-export async function getPrivateNotesHandler(search = "") {
-  const response = await fetch(`${getPrivateNotes}?search=${search}`, {
+export async function getPrivateNotesHandler(search = "", sort = "") {
+  const response = await fetch(`${getPrivateNotes}?search=${search}&sort=${sort}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -338,14 +338,17 @@ export async function disconnectConversationHandler(id = "") {
   return result;
 }
 
-export async function getUserConversationsHandler() {
-  const response = await fetch(getUserConversations, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+export async function getUserConversationsHandler(filters) {
+  const response = await fetch(
+    `${getUserConversations}${filters.sort === "asc" ? `?sort=asc` : `?sort=desc`}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
     },
-    credentials: "include",
-  });
+  );
 
   const result = await response.json();
   return result;
