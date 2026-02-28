@@ -566,8 +566,8 @@
 
 #home-page #hero-section {
   height: calc(100vh - 100px);
-  background-image: url("../images/banner_image.png");
-  background-size: contain;
+  background-image: url("../images/banner_image2.png");
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }

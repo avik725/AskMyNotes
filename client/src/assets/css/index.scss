@@ -334,8 +334,8 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
   #hero-section {
     height: calc(100vh - 100px);
     background: {
-      image: url("../images/banner_image.png");
-      size: contain;
+      image: url("../images/banner_image2.png");
+      size: cover;
       repeat: no-repeat;
       position: center;
     }
