@@ -447,15 +447,48 @@ $responsive-widths: (10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100);
 }
 //Profile Page Ends
 
-//Private Notes Page Started
+//Private Notes, AskMyNotes Page Started
 
-#private-notes-page {
+#private-notes-page,
+#ask-ai-page {
   .dropdown-toggle::after {
     display: none;
   }
 }
 
-//Private Notes Page Ended
+//Private Notes, AskMyNotes Page Ended
+
+//About Page Starts
+#about-page {
+  .about-card {
+    border: 1px solid transparent;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    border-radius: 1.5rem;
+    background-color: #fff;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    &:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+      border-color: #eee;
+    }
+  }
+
+  .img-style {
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+    border-radius: 1rem;
+    transition: transform 0.4s ease;
+  }
+
+  .about-card:hover .img-style {
+    transform: scale(1.03);
+  }
+
+  .text-justify {
+    text-align: justify;
+  }
+}
+//About Page Ends
 
 // Page Loader Styles
 .page-loader {

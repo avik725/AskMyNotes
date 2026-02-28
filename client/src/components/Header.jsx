@@ -92,7 +92,7 @@ export default function Header() {
                       Login
                     </ThemeButton>
                   </li>
-                  <li className="nav-item ms-lg-2">
+                  <li className="nav-item ms-lg-2 py-2 py-lg-0">
                     <ThemeButton
                       onClick={() => navigate(routeSet.auth.register)}
                       className="nav-link"
@@ -153,7 +153,7 @@ export default function Header() {
                         style={{ width: 40, height: 40, objectFit: "cover" }}
                       />
                     </span>
-                    <ul className="dropdown-menu dropdown-menu-end mt-2 border-0 shadow-lg">
+                    <ul className="dropdown-menu position-absolute dropdown-menu-end mt-2 border-0 shadow-lg">
                       <li>
                         <button
                           className="btn dropdown-item"

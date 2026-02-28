@@ -31,6 +31,7 @@ export default function NotesLibrary() {
     sortOrder: "",
   });
 
+  const [filtersVisible, setFiltersVisible] = useState(false);
   const [featuredNotes, setFeaturedNotes] = useState([]);
 
   async function getFeaturedNotes() {
@@ -138,11 +139,20 @@ export default function NotesLibrary() {
           <div className="col-lg-3 col-12 filters-col transition">
             <h4 className="fw-bold mb-0 mb-lg-2 d-flex d-lg-block justify-content-between align-items-center fs-22">
               Filters
-              <span className="filter_trigger d-lg-none">
+              <span
+                className="filter_trigger d-lg-none"
+                onClick={(e) => {setFiltersVisible((prev) => !prev)
+                  e.target.style.rotate = filtersVisible ? '0deg' : '180deg'
+                }}
+                style={{ transition: "0.3s all" }}
+              >
                 <i className="fa-solid fa-chevron-down"></i>
               </span>
             </h4>
-            <div className="mb-3 mb-lg-0">
+            <div
+              className={`filters_div ${filtersVisible && window.innerWidth < 770 && "d-none"} mb-3 mb-lg-0`}
+              style={{ transition: "0.3s all" }}
+            >
               <div className="row">
                 <div className="col-lg-12 col-md-6">
                   <ReactSelect

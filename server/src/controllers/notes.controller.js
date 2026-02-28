@@ -88,7 +88,7 @@ const uploadNotes = asyncHandler(async (req, res, next) => {
       description: data.description || "",
       owner: req.user?._id,
       thumbnail: thumbnail ? thumbnail.url : "",
-      file_url: notes_file ? notes_file.url : "",
+      file_url: notes_file ? notes_file.secure_url : "",
     });
 
     if (!notes) {

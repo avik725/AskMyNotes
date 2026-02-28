@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     fullname,
     profile_pic: profilePic ? profilePic.url : "",
     email,
-    username: username.toLowerCase(),
+    username,
     password,
     role: "user",
   });

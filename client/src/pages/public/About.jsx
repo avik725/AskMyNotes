@@ -5,36 +5,6 @@ import aboutThree from "@/assets/images/about/Three.png";
 export default function About() {
   return (
     <main id="about-page">
-      <style dangerouslySetInnerHTML={{ __html: `
-        .about-card {
-          border: 1px solid transparent;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-          border-radius: 1.5rem;
-          background-color: #fff;
-          padding: 2rem;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .about-card:hover {
-          transform: translateY(-12px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
-          border-color: #eee;
-        }
-
-        .img-style {
-          filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
-          border-radius: 1rem;
-          transition: transform 0.4s ease;
-        }
-
-        .about-card:hover .img-style {
-          transform: scale(1.03);
-        }
-
-        .text-justify {
-          text-align: justify;
-        }
-      `}} />
 
       <section id="about-section" className="pt-5 light-black">
         <div className="container px-4">
