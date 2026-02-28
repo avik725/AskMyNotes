@@ -103,7 +103,7 @@ export default function PublishedNotes() {
     <main id="myuploads-page">
       {/* My Uploads Section Starts */}
       <section id="myuploads-section" className="py-5">
-        <div className="container px-5">
+        <div className="container px-3 px-md-5">
           <div className="row">
             <div className="col-12">
               <div className="section-title mb-4">

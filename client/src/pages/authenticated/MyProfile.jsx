@@ -193,7 +193,7 @@ export default function MyProfile() {
   return (
     <>
       <section id="profile-section" className="pt-5 pb-5">
-        <div className="container px-4">
+        <div className="container px-3 px-md-5">
           {/* Section Header */}
           <div className="section-title mb-4 text-center">
             <h2 className="fw-bold fs-32">My Profile</h2>

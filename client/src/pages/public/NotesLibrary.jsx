@@ -134,7 +134,7 @@ export default function NotesLibrary() {
 
   return (
     <section id="library-section" className="py-5">
-      <div className="container-fluid px-5">
+      <div className="container-fluid px-3 px-md-5">
         <div className="row">
           <div className="col-lg-3 col-12 filters-col transition">
             <h4 className="fw-bold mb-0 mb-lg-2 d-flex d-lg-block justify-content-between align-items-center fs-22">

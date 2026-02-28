@@ -88,7 +88,7 @@ export default function AskAI() {
     <main id="ask-ai-page">
       {/* AskAI Section Starts */}
       <section id="ask-ai-section" className="py-5">
-        <div className="container px-5">
+        <div className="container px-3 px-md-5">
           <div className="row">
             <div className="col-12">
               <div className="section-title mb-4">

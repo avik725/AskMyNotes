@@ -164,7 +164,7 @@ export default function PrivateNotes() {
     <main id="private-notes-page">
       {/* My Uploads Section Starts */}
       <section id="private-notes-section" className="py-5">
-        <div className="container px-5">
+        <div className="container px-3 px-md-5">
           <div className="row">
             <div className="col-12">
               <div className="section-title mb-4">

@@ -188,7 +188,7 @@ export default function UploadNotes() {
     <main id="upload-notes-page">
       {/* main section starts */}
       <section id="upload-section" className="py-5">
-        <div className="container-fluid px-5">
+        <div className="container-fluid px-4 px-md-5">
           <div className="row">
             <div className="col-lg-5">
               <form action="#" onSubmit={handleSubmit}>
