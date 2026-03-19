@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
           >
             <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Introduction</h4>
             <p className="fw-light text-justify fs-sm-15">
-              Welcome to AskMyNotes's Privacy Policy. This policy outlines
+              Welcome to AskMyNotes Privacy Policy. This policy outlines
               how we collect, use, and protect your personal information when
               you use our platform. By using AskMyNotes, you agree to the
               terms of this policy. We are committed to protecting your privacy
@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave}
           >
-            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Collection</h4>
+            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Data Collection</h4>
             <p className="fw-light text-justify fs-sm-15">
               We collect various types of information to provide and improve our
               services. This includes information you provide directly, such as
@@ -69,10 +69,10 @@ export default function PrivacyPolicy() {
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave}
           >
-            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Usage</h4>
+            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Data Usage</h4>
             <p className="fw-light text-justify fs-sm-15">
               The information we collect is used for several purposes.
-              Primarily, it helps us to personalize your experience, provide
+              Primarily, it helps us personalize your experience, provide
               relevant content, and improve our services. We use your data to
               communicate with you, respond to inquiries, and send important
               updates. Additionally, we may use your information for research
@@ -86,7 +86,7 @@ export default function PrivacyPolicy() {
             onMouseEnter={handleMouseEnter} 
             onMouseLeave={handleMouseLeave}
           >
-            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Date Protection</h4>
+            <h4 className="fs-22 fs-sm-20 fw-bold mb-3">Data Protection</h4>
             <p className="fw-light text-justify fs-sm-15">
               We take the security of your data seriously and implement various
               measures to protect it. This includes using encryption, access

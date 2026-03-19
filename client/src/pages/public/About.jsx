@@ -14,24 +14,23 @@ export default function About() {
           <div className="row mb-lg-5 mb-4 align-items-center about-card">
             <div className="col-lg-7 order-1 order-lg-0">
               <div className="introduction pe-lg-4 mt-4 mt-lg-0">
-                <h4 className="fs-24 fw-bold mb-3">Introoduction</h4>
+                <h4 className="fs-24 fw-bold mb-3">Introduction</h4>
                 <p className="fw-light text-justify fs-sm-15">
-                  AskMyNotes is a student-centric academic platform crafted
-                  to simplify access to a vast and diverse range of educational
-                  materials. Designed for learners at every stage, we support
-                  students pursuing Undergraduate (UG), Postgraduate (PG),
-                  Diploma, and Polytechnic courses across various streams and
-                  disciplines.
+                  AskMyNotes is a student-centric academic platform crafted 
+                  to simplify access to a vast and diverse range of educational 
+                  materials. Designed for learners at every stage, we support 
+                  students pursuing undergraduate (UG), postgraduate (PG), diploma, 
+                  and polytechnic courses across various streams and disciplines.
                 </p>
                 <p className="fw-light text-justify fs-sm-15">
-                  Our platform features a well-organized collection of
-                  high-quality notes, systematically categorized by stream,
-                  course, and semester, making it easier for students to find
-                  exactly what they need — whether they're preparing for exams,
-                  catching up on missed lectures, or revising key concepts. From
-                  science and engineering to commerce, arts, and professional
-                  courses, AskMyNotes aims to be your go-to academic
-                  companion throughout your educational journey.
+                  Our platform features a well-organized collection of 
+                  high-quality notes, systematically categorized by stream, 
+                  course, and semester, making it easier for students to find 
+                  exactly what they need—whether they're preparing for exams, 
+                  catching up on missed lectures, or revising key concepts. 
+                  From science and engineering to commerce, arts, and professional 
+                  courses, AskMyNotes aims to be your go-to academic companion throughout 
+                  your educational journey.
                 </p>
                 <p className="fw-light text-justify fs-sm-15">
                   We’re committed to making learning accessible, collaborative,
