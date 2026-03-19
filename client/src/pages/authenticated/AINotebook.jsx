@@ -2,15 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import logo from "@/assets/images/amn_logo.png";
 import {
-  ChevronLeft,
   ChevronRight,
   BookOpen,
   MessageSquare,
-  Files,
-  Upload,
   Search,
   PanelLeft,
-  PanelRight,
   Plus,
   SlidersHorizontal,
   Bot,
@@ -55,6 +51,7 @@ function preprocessLatex(content) {
 export default function AINotebook() {
   const params = useParams();
   const navigate = useNavigate();
+  const [mobileScreenChatActive, setMobileScreenChatActive] = useState(true);
   const [isConversationConnected, setIsConversationConnected] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
@@ -305,7 +302,7 @@ export default function AINotebook() {
   }, [publicNoteModalOpen]);
 
   useEffect(() => {
-      fetchPublicNotes(debouncedPublicNoteSearchQuery);
+    fetchPublicNotes(debouncedPublicNoteSearchQuery);
   }, [debouncedPublicNoteSearchQuery]);
 
   useEffect(() => {
@@ -360,7 +357,7 @@ export default function AINotebook() {
       style={{ height: "100vh", overflow: "hidden" }}
     >
       {/* Notebook Header */}
-      <div className="bg-white py-3 px-3 d-md-flex d-block align-items-center justify-content-between">
+      <div className="bg-white p-md-3 p-2 d-md-flex d-block align-items-center justify-content-between">
         <div className="d-flex align-items-center gap-2">
           <img src={logo} alt="AMN Logo" style={{ maxWidth: 40 }} />
           {isEditingTitle ? (
@@ -409,12 +406,26 @@ export default function AINotebook() {
       </div>
 
       <div
-        className="d-flex flex-grow-1 position-relative pb-3"
+        className="d-md-flex flex-grow-1 position-relative pb-3"
         style={{ overflow: "hidden" }}
       >
-        {/* Left Sidebar - Public Notes */}
+        <div className="d-md-none bg-white border shadow-sm d-flex justify-content-center py-2">
+          <button
+            className={`btn ${!mobileScreenChatActive && "border bg-light shadow-sm"}`}
+            onClick={() => setMobileScreenChatActive(false)}
+          >
+            Public Notes
+          </button>
+          <button
+            className={`btn ${mobileScreenChatActive && "border bg-light shadow-sm"}`}
+            onClick={() => setMobileScreenChatActive(true)}
+          >
+            Chat
+          </button>
+        </div>
+        {/* Left Sidebar */}
         <div
-          className={`border shadow rounded-4 bg-light d-flex flex-column ${!isLeftSidebarOpen ? "collapsed" : ""} mx-3 mt-0`}
+          className={`md-border md-shadow rounded-4 bg-md-light d-md-flex ${mobileScreenChatActive && "d-none"} flex-column ${!isLeftSidebarOpen ? "collapsed" : ""} mx-md-3 mx-auto mt-0`}
           style={{
             width: isLeftSidebarOpen ? "300px" : "50px",
             minWidth: isLeftSidebarOpen ? "300px" : "50px",
@@ -424,7 +435,7 @@ export default function AINotebook() {
           }}
         >
           <div
-            className={`py-3 ${isLeftSidebarOpen ? "px-3" : "px-2"} border-bottom d-flex ${isLeftSidebarOpen ? "justify-content-between" : "justify-content-center"} align-items-center bg-white`}
+            className={`py-3 ${isLeftSidebarOpen ? "px-3" : "px-2"} border-bottom d-md-flex d-none ${isLeftSidebarOpen ? "justify-content-between" : "justify-content-center"} align-items-center bg-white`}
             style={{ minWidth: isLeftSidebarOpen ? "300px" : "50px" }}
           >
             {isLeftSidebarOpen && (
@@ -507,19 +518,20 @@ export default function AINotebook() {
 
         {/* Middle Section - Chat Interface */}
         <div
-          className="flex-grow-1 d-flex flex-column bg-light rounded-4 border me-3 overflow-hidden shadow"
-          style={{ minWidth: "0" }}
+          className={`flex-grow-1 d-flex ${!mobileScreenChatActive && "d-none"} flex-column bg-light rounded-4 md-border me-md-3 overflow-hidden md-shadow mobile-chat-container`}
+          style={{ minWidth: "0", minHeight: 0 }}
         >
-          <div className="d-flex flex-column flex-grow-1 overflow-auto">
-            <div className="p-3 border-bottom d-flex justify-content-between align-items-center bg-white">
-              <div className="d-flex align-items-end gap-2">
-                <Bot size={22} />
-                <h6 className="mb-0 fw-semibold">Chat</h6>
-              </div>
-              <div className="">
-                <SlidersHorizontal size={20} />
-              </div>
+          <div className="p-3 border-bottom d-md-flex d-none justify-content-between align-items-center bg-white">
+            <div className="d-flex align-items-end gap-2">
+              <Bot size={22} />
+              <h6 className="mb-0 fw-semibold">Chat</h6>
             </div>
+            <div className="">
+              <SlidersHorizontal size={20} />
+            </div>
+          </div>
+
+          <div className="d-flex flex-column flex-grow-1 overflow-scroll">
             <div
               className={`flex-grow-1 text-center text-muted mt-5 ${messages.length > 0 && isConversationConnected && "d-flex justify-content-end flex-column"}`}
             >
@@ -531,7 +543,7 @@ export default function AINotebook() {
                       className={`d-flex ${message.role === "user" ? "justify-content-end" : "justify-content-start"} px-3 py-2`}
                     >
                       <div
-                        className={`d-inline-block ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end max-w-75" : "text-justify pe-5"}`}
+                        className={`d-inline-block fs-16 fs-sm-15 ${message.role === "user" ? "bg-white border px-3 py-2 rounded-top-4 rounded-start-4 shadow text-end max-w-md-75" : "text-justify pe-md-5 "}`}
                       >
                         <ReactMarkdown
                           remarkPlugins={[remarkMath]}
@@ -606,11 +618,11 @@ export default function AINotebook() {
                     chatToRAG();
                   }
                 }}
-                className="form-control text-wrap"
+                className="form-control text-wrap fs-sm-14"
                 placeholder={
-                  (isConversationConnected &&
-                  selectedPublicNotes.length > 0) ?
-                  "Ask a question..." : "Connect and Add Notes to Chat..."
+                  isConversationConnected && selectedPublicNotes.length > 0
+                    ? "Ask a question..."
+                    : "Connect and Add Notes to Chat..."
                 }
                 disabled={
                   !(isConversationConnected && selectedPublicNotes.length > 0)
@@ -620,8 +632,11 @@ export default function AINotebook() {
                   maxHeight: "20vh",
                 }}
               />
-              <button onClick={chatToRAG} className="btn theme-btn">
+              <button onClick={chatToRAG} className="btn theme-btn d-none d-md-block">
                 Shift + Enter <ChevronRight size={18} />
+              </button>
+              <button onClick={chatToRAG} className="btn theme-btn d-md-none">
+                <ChevronRight size={18} />
               </button>
             </div>
           </div>
@@ -684,8 +699,8 @@ export default function AINotebook() {
           </div>
         </div> */}
       </div>
-      <footer className="mb-2">
-        <p className="m-0 text-center form-control-text-color fs-14">
+      <footer className="mb-md-2">
+        <p className="m-0 text-center form-control-text-color fs-sm-12 fs-md-14">
           AskMyNotes AI can be inaccurate; please double-check its responses.
         </p>
       </footer>

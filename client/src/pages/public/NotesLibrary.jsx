@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { DataTable, Carousel, Card, Modal } from "@/components";
 import { getNotes } from "@/services/apiEndPoints";
 import {
@@ -18,6 +24,7 @@ export default function NotesLibrary() {
   const [semesters, setSemesters] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const firstRender = useRef(true);
   const [currentNote, setCurrentNote] = useState({
     title: "",
     file_url: "",
@@ -132,6 +139,23 @@ export default function NotesLibrary() {
     [...tooltipTriggerList].forEach((el) => new bootstrap.Tooltip(el));
   }, []);
 
+  useEffect(() => {
+    if (window.innerWidth > 770) {
+      setFiltersVisible(true);
+    }
+    function handleResizeFilters() {
+      if (window.innerWidth > 770) {
+        setFiltersVisible(true);
+      }
+    }
+
+    window.addEventListener("resize", handleResizeFilters);
+
+    return (_) => {
+      window.removeEventListener("resize", handleResizeFilters);
+    };
+  }, []);
+
   return (
     <section id="library-section" className="py-5">
       <div className="container-fluid px-3 px-md-5">
@@ -141,8 +165,11 @@ export default function NotesLibrary() {
               Filters
               <span
                 className="filter_trigger d-lg-none"
-                onClick={(e) => {setFiltersVisible((prev) => {return !prev})
-                  e.target.style.rotate = filtersVisible ? '0deg' : '180deg'
+                onClick={(e) => {
+                  setFiltersVisible((prev) => {
+                    return !prev;
+                  });
+                  e.target.style.rotate = filtersVisible ? "0deg" : "180deg";
                 }}
                 style={{ transition: "0.3s all" }}
               >
@@ -150,7 +177,7 @@ export default function NotesLibrary() {
               </span>
             </h4>
             <div
-              className={`filters_div ${filtersVisible && "d-none"} mb-3 mb-lg-0`}
+              className={`filters_div ${!filtersVisible && "d-none"} mb-3 mb-lg-0`}
               style={{ transition: "0.3s all" }}
             >
               <div className="row">

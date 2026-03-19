@@ -141,6 +141,10 @@
   display: none;
 }
 
+.fs-12 {
+  font-size: 12px !important;
+}
+
 .fs-14 {
   font-size: 14px !important;
 }
@@ -210,6 +214,9 @@
 }
 
 @media screen and (max-width: 768px) and (min-width: 481px) {
+  .fs-md-12 {
+    font-size: 12px !important;
+  }
   .fs-md-14 {
     font-size: 14px !important;
   }
@@ -263,6 +270,9 @@
   }
 }
 @media screen and (max-width: 480px) {
+  .fs-sm-12 {
+    font-size: 12px !important;
+  }
   .fs-sm-14 {
     font-size: 14px !important;
   }
@@ -487,6 +497,11 @@
   max-width: 100% !important;
 }
 
+@media screen and (max-width: 480px) {
+  .max-w-md-75 {
+    max-width: 75% !important;
+  }
+}
 .modal-dialog-scrollable .modal-content {
   height: 75%;
 }
@@ -736,5 +751,14 @@
   50% {
     transform: translate(-50%, -50%) scale(0.85);
     opacity: 0.7;
+  }
+}
+/* AINotebook: constrain chat container height on mobile */
+@media screen and (max-width: 767.98px) {
+  .mobile-chat-container {
+    height: calc(100vh - 160px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 }/*# sourceMappingURL=index.css.map */
