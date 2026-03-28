@@ -38,6 +38,26 @@ export default function NotesLibrary() {
     sortOrder: "",
   });
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    stream: "",
+    course: "",
+    semesterOrYear: "",
+    sortOrder: "",
+  });
+
+  const filteredUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (appliedFilters.stream) params.append("stream", appliedFilters.stream);
+    if (appliedFilters.course) params.append("course", appliedFilters.course);
+    if (appliedFilters.semesterOrYear) params.append("semester", appliedFilters.semesterOrYear);
+    if (appliedFilters.sortOrder) {
+      params.append("column", "createdAt");
+      params.append("dir", appliedFilters.sortOrder == 1 ? "asc" : "desc");
+    }
+    const queryString = params.toString();
+    return queryString ? `${getNotes}?${queryString}` : getNotes;
+  }, [appliedFilters]);
+
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [featuredNotes, setFeaturedNotes] = useState([]);
 
@@ -263,9 +283,24 @@ export default function NotesLibrary() {
                     ]}
                   />
                 </div>
-                <div className="col-lg-12 col-md-6">
-                  <button className="btn apply-filters theme-btn rounded-pill fw-bold fs-14 py-2 px-3">
+                <div className="col-lg-12 col-md-6 d-flex gap-2">
+                  <button
+                    className="btn apply-filters theme-btn rounded-pill fw-bold fs-14 py-2 px-3"
+                    onClick={() => setAppliedFilters({ ...selectedFilters })}
+                  >
                     Apply Filters
+                  </button>
+                  <button
+                    className="btn btn-outline-secondary rounded-pill fw-bold fs-14 py-2 px-3"
+                    onClick={() => {
+                      const empty = { stream: "", course: "", semesterOrYear: "", sortOrder: "" };
+                      setSelectedFilters(empty);
+                      setAppliedFilters(empty);
+                      setCourses([]);
+                      setSemesters([]);
+                    }}
+                  >
+                    Clear Filters
                   </button>
                 </div>
               </div>
@@ -373,7 +408,7 @@ export default function NotesLibrary() {
                     ],
                     [],
                   )}
-                  url={getNotes}
+                  url={filteredUrl}
                   thenFn={useCallback(
                     (data) =>
                       data.data.docs.map((note) => [
